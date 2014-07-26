@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="jquery.js"></script>
+        <script src="drop.js"></script>
+        <script src="drop_extend_methods.js"></script>
+        <style>
+            body{margin: 0;}
+            .drop{display: none;}
+        </style>
+    </head>
+    <body>
+        <h3>Simple drop inline</h3>
+        <button type="button" data-drop=".drop-simple">click</button>
+        <div class="drop drop-simple">
+            <div class="drop-content-default">
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+                1234<br/>
+            </div>    
+        </div>
+        <script>
+            $.drop.extendDrop('droppable', 'noinherit', 'heightContent', 'scroll', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPrompt');
+            $('[data-drop]').drop();
+        </script>
+    </body>
+</html>
