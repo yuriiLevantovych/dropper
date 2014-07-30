@@ -28,24 +28,20 @@
             console.log(msg);
         }
     };
-    var isTouch = 'ontouchstart' in document.documentElement;
     var aC = 'active';
     var methods = {
         init: function(options) {
+            var set = $.extend({}, $.drop.dP, options);
             this.each(function() {
                 var el = methods.destroy($(this)),
-                        elSet = el.data(),
-                        trigger = methods._checkProp(elSet, options, 'trigger'),
-                        triggerOn = methods._checkProp(elSet, options, 'triggerOn'),
-                        triggerOff = methods._checkProp(elSet, options, 'triggerOff'),
-                        condTrigger = methods._checkProp(elSet, options, 'condTrigger'),
-                        notify = methods._checkProp(elSet, options, 'notify');
-                if (notify)
-                    methods._notifyTrigger(el, elSet, options);
+                        opt = $.extend({}, set, el.data());
+
+                if (opt.notify)
+                    methods._notifyTrigger(el, opt);
                 var rel = this.rel;
                 if (rel) {
                     rel = rel.replace(methods._reg(), '');
-                    var source = el.data('source') || this.href;
+                    var source = el.data('source') || $(this).attr('href');
                     if (source) {
                         if (!$.drop.drp.galleries[rel])
                             $.drop.drp.galleries[rel] = new Array();
@@ -53,34 +49,44 @@
                     }
                 }
 
-                el.data({
-                    'drp': options
-                }).addClass('isDrop');
-                if (triggerOn || triggerOff)
-                    el.data({'triggerOn': triggerOn, 'triggerOff': triggerOff}).on(triggerOn + '.' + $.drop.nS + ' ' + triggerOff + '.' + $.drop.nS, function(e) {
-                        e.stopPropagation();
-                        e.preventDefault();
-                    }).on(triggerOn + '.' + $.drop.nS, function(e) {
-                        if (condTrigger && eval('(function(){' + condTrigger + '})()'))
-                            methods.open(options, null, $(this), e);
-                    }).on(triggerOff + '.' + $.drop.nS, function() {
-                        methods.close($(el.attr('data-drop')));
-                    });
-                else
-                    el.data('trigger', trigger).on(trigger + '.' + $.drop.nS, function(e) {
-                        if (el.parent().hasClass(aC))
+                el.data('drp', opt).addClass('isDrop');
+
+                if (!opt.context) {
+                    if (opt.triggerOn || opt.triggerOff)
+                        el.on(opt.triggerOn + '.' + $.drop.nS + ' ' + opt.triggerOff + '.' + $.drop.nS, function(e) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                        }).on(opt.triggerOn + '.' + $.drop.nS, function(e) {
+                            if (opt.condTrigger && eval('(function(){' + opt.condTrigger + '})()'))
+                                methods.open(opt, null, $(this), e);
+                        }).on(opt.triggerOff + '.' + $.drop.nS, function() {
                             methods.close($(el.attr('data-drop')));
-                        else
-                            methods.open(options, null, $(this), e);
-                        e.stopPropagation();
+                        });
+                    else
+                        el.on(opt.trigger + '.' + $.drop.nS, function(e) {
+                            if (el.hasClass(aC))
+                                methods.close($(el.attr('data-drop')));
+                            else
+                                methods.open(opt, null, $(this), e);
+                            e.stopPropagation();
+                            e.preventDefault();
+                        });
+                }
+                else {
+                    el.on('contextmenu.' + $.drop.nS, function(e) {
                         e.preventDefault();
                     });
-                el.on('contextmenu.' + $.drop.nS, function(e) {
-                    e.preventDefault();
-                });
+                    el.on('mouseup.' + $.drop.nS, function(e) {
+                        e.preventDefault();
+                        if (el.hasClass(aC))
+                            methods.close($(el.attr('data-drop')));
+                        if (e.button === 2)
+                            methods.open($.extend(opt, {place: 'noinherit', limitSize: true}), null, $(this), e);
+                    });
+                }
                 var href = el.data('href');
                 if (href && window.location.hash.indexOf(href) !== -1 && !$.drop.drp.hrefs[href])
-                    methods.open(options, null, el, null);
+                    methods.open(opt, null, el, null);
                 if (/#/.test(href) && !$.drop.drp.hrefs[href])
                     $.drop.drp.hrefs[href] = el;
             });
@@ -90,96 +96,93 @@
             return $(this);
         },
         destroy: function(el) {
-            el = el ? el : this;
-            el.each(function() {
+            return (el || this).each(function() {
                 var el = $(this),
-                        elSet = el.data();
+                        opt = el.data('drp');
+                if (!opt)
+                    return;
+
                 el.removeClass('isDrop');
-                if (elSet.trigger)
-                    el.off(elSet.trigger + '.' + $.drop.nS).removeData(elSet.trigger);
-                if (elSet.triggerOn)
-                    el.off(elSet.triggerOn + '.' + $.drop.nS).removeData(elSet.triggerOn);
-                if (elSet.triggerOff)
-                    el.off(elSet.triggerOff + '.' + $.drop.nS).removeData(elSet.triggerOff);
+                if (opt.trigger)
+                    el.off(opt.trigger + '.' + $.drop.nS).removeData(opt.trigger);
+                if (opt.triggerOn)
+                    el.off(opt.triggerOn + '.' + $.drop.nS).removeData(opt.triggerOn);
+                if (opt.triggerOff)
+                    el.off(opt.triggerOff + '.' + $.drop.nS).removeData(opt.triggerOff);
+                el.off('contextmenu.' + $.drop.nS).off('mouseup.' + $.drop.nS);
             });
-            return el;
         },
-        get: function(el, set, e, hashChange) {
+        _get: function(el, opt, e, hashChange) {
             if (!el)
                 el = this;
-            if (!set)
-                set = el.data('drp');
-            var elSet = el.data(),
-                    source = methods._checkProp(elSet, set, 'source') || el.attr('href'),
-                    always = methods._checkProp(elSet, set, 'always'),
-                    notify = methods._checkProp(elSet, set, 'notify'),
-                    type = methods._checkProp(elSet, set, 'type'),
-                    dataType = methods._checkProp(elSet, set, 'dataType'),
-                    datas = methods._checkProp(elSet, set, 'datas');
+            var elSet = el.data();
+            $.extend(opt, elSet);
+            delete opt.drp;
+
             var rel = null;
             if (el.get(0).rel)
                 rel = el.get(0).rel.replace(methods._reg(), '');
             function _update(data) {
                 $.drop.hideActivity();
-                if (!always && !notify)
-                    $.drop.drp.drops[source.replace(methods._reg(), '')] = data;
-                var drop = methods._pasteDrop($.extend({}, $.drop.dP, set, elSet), methods._checkProp(elSet, set, 'pattern'), $.drop.drp.curDefault, rel);
-                drop.attr('pattern', 'yes');
-                drop.find($(methods._checkProp(elSet, set, 'placePaste'))).html(data);
-                methods._show(el, e, set, data, hashChange);
+                if (!opt.always && !opt.notify)
+                    $.drop.drp.drops[opt.source.replace(methods._reg(), '')] = data;
+                var drop = methods._pasteDrop(opt, opt.pattern, rel, $.drop.drp.curDefault);
+                drop.attr('pattern', true);
+                drop.find($(opt.placePaste)).html(data);
+                methods._show(el, e, opt, hashChange);
             }
 
-            if ($.drop.drp.drops[source.replace(methods._reg(), '')]) {
-                methods._pasteDrop($.extend({}, $.drop.dP, set, elSet), $.drop.drp.drops[source.replace(methods._reg(), '')], null, rel);
-                methods._show(el, e, set, false, hashChange);
+            if ($.drop.drp.drops[opt.source.replace(methods._reg(), '')]) {
+                methods._pasteDrop(opt, $.drop.drp.drops[opt.source.replace(methods._reg(), '')], rel);
+                methods._show(el, e, opt, hashChange);
                 return el;
             }
-            if (elSet.drop)
+            if (elSet.drop && !$.existsN(elSet.drop))
                 $.ajax({
-                    type: type,
-                    data: datas,
-                    url: source,
+                    type: opt.type,
+                    data: opt.datas,
+                    url: opt.source,
                     beforeSend: function() {
-                        if (!methods._checkProp(elSet, set, 'moreOne'))
+                        if (!opt.moreOne)
                             methods._closeMoreOne();
                         $.drop.showActivity();
                     },
-                    dataType: notify ? 'json' : dataType,
+                    dataType: opt.notify ? 'json' : opt.dataType,
                     success: function(data) {
                         $.drop.hideActivity();
-                        if (!always && !notify)
-                            $.drop.drp.drops[source.replace(methods._reg(), '')] = data;
-                        if (notify)
-                            methods._pasteModal(el, data, set, rel, hashChange);
+                        if (opt.notify)
+                            methods._pasteNotify(el, data, opt, rel, hashChange);
                         else {
-                            methods._pasteDrop($.extend({}, $.drop.dP, set, elSet), data, null, rel);
+                            if (!opt.always)
+                                $.drop.drp.drops[opt.source.replace(methods._reg(), '')] = data;
+                            methods._pasteDrop(opt, data, rel);
                             var drop = $(elSet.drop);
                             $(document).trigger({
                                 type: 'successHtml.' + $.drop.nS,
                                 el: drop,
                                 datas: data
                             });
-                            methods._show(el, e, set, data, hashChange);
+                            methods._show(el, e, opt, hashChange);
                         }
                     }
                 });
             else {
-                $.drop.drp.curDefault = methods._checkProp(elSet, set, 'defaultClassBtnDrop') + (rel ? rel : (source ? source.replace(methods._reg(), '') : (new Date()).getTime()));
+                $.drop.drp.curDefault = opt.defaultClassBtnDrop + (rel ? rel : (opt.source ? opt.source.replace(methods._reg(), '') : (new Date()).getTime()));
                 el.data('drop', '.' + $.drop.drp.curDefault).attr('data-drop', '.' + $.drop.drp.curDefault);
                 $.drop.showActivity();
-                if (source.match(/jpg|gif|png|bmp|jpeg/)) {
+                if (opt.source.match(/jpg|gif|png|bmp|jpeg/)) {
                     var img = new Image();
                     $(img).load(function() {
                         _update($(this));
                     });
-                    img.src = source;
+                    img.src = opt.source;
                 }
                 else
                     $.ajax({
-                        type: type,
-                        url: source,
-                        data: datas,
-                        dataType: dataType ? dataType : 'html',
+                        type: opt.type,
+                        url: opt.source,
+                        data: opt.datas,
+                        dataType: opt.dataType ? opt.dataType : 'html',
                         success: function(data) {
                             _update(data);
                         }
@@ -189,86 +192,82 @@
         },
         open: function(opt, datas, $this, e, hashChange) {
             e = e ? e : window.event;
+            opt = $.extend({}, $.drop.dP, opt);
             if (!$this) {
                 if ($(this).hasClass('isDrop'))
                     $this = this;
                 else {
                     if (datas) {
-                        var notifyBtnDrop = methods._checkProp(null, opt, 'notifyBtnDrop');
-                        if (!$.exists('[data-drop="' + notifyBtnDrop + '"]')) {
-                            $this = $('<div><button data-drop="' + notifyBtnDrop + '" data-notify="true"></button></div>').appendTo($('body')).hide().children();
-                            methods._pasteDrop($.extend({}, $.drop.dP, opt, $this.data()), methods._checkProp($this.data(), opt, 'patternNotif'));
+                        if (!$.exists('[data-drop="' + opt.notifyBtnDrop + '"]')) {
+                            $this = $('<div><button data-drop="' + opt.notifyBtnDrop + '" data-notify="true"></button></div>').appendTo($('body')).hide().children();
+                            methods._pasteDrop($.extend(opt, $this.data()), opt.patternNotif);
                         }
                         else
-                            $this = $('[data-drop="' + notifyBtnDrop + '"]');
+                            $this = $('[data-drop="' + opt.notifyBtnDrop + '"]');
                         $this.data('datas', datas);
-                        methods._notifyTrigger($this, $this.data(), opt);
+                        methods._notifyTrigger($this, $.extend(opt, $this.data()));
                     }
                     else {
-                        var sourcePref = opt.source.replace(methods._reg(), ''),
-                                defaultClassBtnDrop = methods._checkProp(null, opt, 'defaultClassBtnDrop');
-                        if (!$.exists('.refer' + defaultClassBtnDrop + sourcePref))
-                            $this = $('<div><button class="refer' + (defaultClassBtnDrop + sourcePref) + '"></button></div>').appendTo($('body')).hide().children();
+                        var sourcePref = opt.source.replace(methods._reg(), '');
+                        if (!$.exists('.refer' + opt.defaultClassBtnDrop + sourcePref))
+                            $this = $('<div><button class="refer' + (opt.defaultClassBtnDrop + sourcePref) + '"></button></div>').appendTo($('body')).hide().children();
                         else
-                            $this = $('.refer' + defaultClassBtnDrop + sourcePref);
+                            $this = $('.refer' + opt.defaultClassBtnDrop + sourcePref);
                     }
                 }
             }
             $this.each(function() {
-                var $this = $(this),
-                        elSet = $this.data(),
-                        moreOne = methods._checkProp(elSet, opt, 'moreOne'),
-                        source = methods._checkProp(elSet, opt, 'source') || $this.attr('href'),
-                        notify = methods._checkProp(elSet, opt, 'notify'),
-                        always = methods._checkProp(elSet, opt, 'always'),
-                        drop = $(elSet.drop),
-                        dropFilter = methods._checkProp(elSet, opt, 'dropFilter'),
-                        start = elSet.start;
-                if (always && $.existsN(drop) && !notify) {
+                var $this = $(this);
+                $.extend(opt, $this.data());
+                delete opt.drp;
+                var drop = $(opt.drop);
+                opt.source = opt.source || $this.attr('href');
+                if (opt.always && opt.source && $.existsN(drop) && !opt.notify) {
                     drop.remove();
-                    delete $.drop.drp.drops[source.replace(methods._reg(), '')];
+                    delete $.drop.drp.drops[opt.source.replace(methods._reg(), '')];
                 }
-                elSet.source = source; //may delete?
-                if (dropFilter && !elSet.drop) {
-                    drop = methods._filterSource($this, dropFilter);
-                    var _classFilter = methods._checkProp(elSet, opt, 'defaultClassBtnDrop') + (new Date()).getTime();
+                if (opt.dropFilter && !opt.drop) {
+                    drop = methods._filterSource($this, opt.dropFilter);
+                    var _classFilter = opt.defaultClassBtnDrop + (new Date()).getTime();
                     $this.attr('data-drop', '.' + _classFilter);
-                    elSet.drop = '.' + _classFilter;
+                    opt.drop = '.' + _classFilter;
                     drop.addClass(_classFilter);
                 }
                 function _confirmF() {
-                    if (!$.existsN(drop) || $.existsN(drop) && source && !$.drop.drp.drops[source.replace(methods._reg(), '')] || notify || always) {
-                        if (datas && notify)
-                            methods._pasteModal($this, datas, opt, null, hashChange);
-                        else
-                            methods.get($this, opt, e, hashChange);
+                    if (!$.existsN(drop) || $.existsN(drop) && opt.source && !$.drop.drp.drops[opt.source.replace(methods._reg(), '')] || opt.notify || opt.always) {
+                        if (datas && opt.notify)
+                            methods._pasteNotify($this, datas, opt, null, hashChange);
+                        else if (opt.source)
+                            methods._get($this, opt, e, hashChange);
                     }
                     else
-                        methods._show($this, e, opt, false, hashChange);
+                        methods._show($this, e, opt, hashChange);
                 }
-
-                if (!$this.parent().hasClass(aC)) {
-                    if (!moreOne && !start)
+                if (!$this.hasClass(aC)) {
+                    if (!opt.moreOne && !opt.start)
                         methods._closeMoreOne();
                     if (!$this.is(':disabled')) {
-                        var confirm = methods._checkProp(elSet, opt, 'confirm'),
-                                prompt = methods._checkProp(elSet, opt, 'prompt');
-                        if (start && !eval(start)($this, drop))
+                        if (opt.start && !eval(opt.start).call($this, drop, opt))
                             return false;
-                        if (($.existsN(drop) && !notify || source && $.drop.drp.drops[source.replace(methods._reg(), '')]) && !always && !confirm && !prompt) {
-                            methods._pasteDrop($.extend({}, $.drop.dP, opt, elSet), $.existsN(drop) ? drop : $.drop.drp.drops[source.replace(methods._reg(), '')]);
-                            methods._show($this, e, opt, false, hashChange);
+
+                        if (opt.notify)//for front validations
+                            methods._pasteNotify($this, datas, opt, null, hashChange);
+                        else {
+                            if (opt.prompt || opt.confirm || opt.source && !$.existsN(drop) || opt.source && opt.always) {
+                                if (!opt.confirm && !opt.prompt)
+                                    _confirmF();
+                                else//for cofirm && prompt
+                                    methods._checkMethod(function() {
+                                        methods.confirmPrompt(opt, methods, hashChange, _confirmF, e);
+                                    });
+                            }
+                            else if ($.existsN(drop) || opt.source && $.drop.drp.drops[opt.source.replace(methods._reg(), '')]) {
+                                methods._pasteDrop(opt, $.existsN(drop) ? drop : $.drop.drp.drops[opt.source.replace(methods._reg(), '')]);
+                                methods._show($this, e, opt, hashChange);
+                            }
+                            else
+                                returnMsg('insufficient data');
                         }
-                        else if (prompt || confirm || source || always) {
-                            if (!confirm && !prompt)
-                                _confirmF();
-                            else//for cofirm && prompt
-                                methods._checkMethod(function() {
-                                    methods.confirmPrompt(source, methods, elSet, opt, hashChange, _confirmF, e);
-                                });
-                        }
-                        else //for front validations
-                            methods._pasteModal($this, datas, opt, null, hashChange);
                     }
                 }
                 else
@@ -277,128 +276,129 @@
             return $this;
         },
         close: function(sel, hashChange, f) {
-            var sel2 = sel;
-            if (!sel2)
-                sel2 = this.self ? this.self : this;
-            var drop = sel2 instanceof jQuery ? sel2 : $('[data-elrun].' + aC);
-            if ((drop instanceof jQuery) && $.existsN(drop)) {
-                clearTimeout($.drop.drp.closeDropTime);
-                drop.each(function() {
-                    var drop = $(this),
-                            set = $.extend({}, drop.data('drp'));
-                    if (set && drop.is(':visible') && (set.notify || sel || set.place !== 'inherit' || set.inheritClose || set.overlayOpacity !== 0)) {
-                        var $thisB = set.elrun;
-                        if ($thisB) {
-                            var durOff = set.durationOff;
-                            function _hide() {
-                                $thisB.parent().removeClass(aC);
-                                $thisB.each(function() {
-                                    var $thisHref = $(this).data('href');
-                                    if ($thisHref) {
-                                        clearTimeout($.drop.drp.curHashTimeout);
-                                        $.drop.drp.curHash = hashChange ? $thisHref : null;
-                                        $.drop.drp.scrollTop = wnd.scrollTop();
-                                        location.hash = location.hash.replace($thisHref, '');
-                                        $.drop.drp.curHashTimeout = setTimeout(function() {
-                                            $.drop.drp.curHash = null;
-                                            $.drop.drp.scrollTop = null;
-                                        }, 400);
-                                    }
-                                });
-                                drop.removeClass(aC);
-                                if (methods.placeAfterClose)
-                                    methods._checkMethod(function() {
-                                        methods.placeAfterClose(drop, $thisB, set);
-                                    });
-                                if (set.droppableIn)
-                                    drop.data('drp').positionDroppableIn = {'left': drop.css('left'), 'top': drop.css('top')}
-                                drop[set.effectOff](durOff, function() {
-                                    var $this = $(this),
-                                            ev = set.drop ? set.drop.replace(methods._reg(), '') : '';
-                                    if (set.forCenter)
-                                        set.forCenter.hide();
-                                    wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
-                                    $('body').off('keyup.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS);
-                                    var zInd = 0,
-                                            drpV = null;
-                                    $('[data-elrun]:visible').each(function() {
-                                        var $this = $(this);
-                                        if (parseInt($this.css('z-index')) > zInd) {
-                                            zInd = parseInt($this.css('z-index'));
-                                            drpV = $.extend({}, $this.data('drp'));
-                                        }
-                                    });
-                                    if (drpV && drpV.overlayOpacity !== 0 && !isTouch)
-                                        $('body').addClass('isScroll').css({
-                                            'overflow': 'hidden',
-                                            'margin-right': $.drop.widthScroll
-                                        });
-                                    else
-                                        $('body').removeClass('isScroll').css({
-                                            'overflow': '',
-                                            'margin-right': ''
-                                        });
-                                    if (set.dropOver && !f)
-                                        set.dropOver.fadeOut(durOff);
-                                    methods._resetStyleDrop($(this));
-                                    $this.removeClass(set.place);
-                                    if (set.closed)
-                                        set.closed($thisB, $this);
-                                    if (set.elClosed)
-                                        eval(set.elClosed)($thisB, $this);
-                                    if (set.closedG)
-                                        eval(set.closedG)($thisB, $this);
-                                    $this.add($(document)).trigger({
-                                        type: 'closed.' + $.drop.nS,
-                                        el: $thisB,
-                                        drop: $this
-                                    });
-                                    var dC = $this.find($(set.dropContent)).data('jsp');
-                                    if (dC)
-                                        dC.destroy();
-                                    if (f)
-                                        f();
-                                    if (!$.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
-                                        $('body, html').css('height', '');
-                                });
-                            }
-                            drop.add($(document)).trigger({
-                                type: 'close.' + $.drop.nS,
-                                el: $thisB,
-                                drop: drop
-                            });
-                            var close = set.elClose || set.close || set.closeG;
-                            if (close) {
-                                if (typeof close === 'string')
-                                    var res = eval(close)($thisB, $(this));
-                                else
-                                    var res = close($thisB, $(this));
-                                if (res === false && res !== true)
-                                    returnMsg(res);
-                                else
-                                    _hide();
-                            }
-                            else
-                                _hide();
+            var sel2 = sel || this,
+                    drop = sel2 instanceof jQuery ? sel2 : $('[data-elrun].' + aC);
+
+            if (!((drop instanceof jQuery) && $.existsN(drop)))
+                return false;
+
+            clearTimeout($.drop.drp.closeDropTime);
+            drop.each(function() {
+                var drop = $(this),
+                        opt = drop.data('drp');
+                if (!(opt && drop.is(':visible') && (opt.notify || sel || opt.place !== 'inherit' || opt.inheritClose || opt.overlayOpacity !== 0)))
+                    return false;
+
+                var $thisB = opt.elrun;
+                if (!$thisB)
+                    return false;
+                var durOff = opt.durationOff;
+                function _hide() {
+                    $thisB.removeClass(aC);
+                    $thisB.each(function() {
+                        var $thisHref = $(this).data('href');
+                        if ($thisHref) {
+                            clearTimeout($.drop.drp.curHashTimeout);
+                            $.drop.drp.curHash = hashChange ? $thisHref : null;
+                            $.drop.drp.scrollTop = wnd.scrollTop();
+                            location.hash = location.hash.replace($thisHref, '');
+                            $.drop.drp.curHashTimeout = setTimeout(function() {
+                                $.drop.drp.curHash = null;
+                                $.drop.drp.scrollTop = null;
+                            }, 400);
                         }
+                    });
+                    drop.removeClass(aC);
+                    if (methods.placeAfterClose)
+                        methods._checkMethod(function() {
+                            methods.placeAfterClose(drop, $thisB, opt);
+                        });
+                    if (opt.droppableIn)
+                        drop.data('drp').positionDroppableIn = {'left': drop.css('left'), 'top': drop.css('top')}
+
+                    var ev = opt.drop ? opt.drop.replace(methods._reg(), '') : '';
+                    wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
+                    $('body').off('keyup.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS);
+
+                    drop[opt.effectOff](durOff, function() {
+                        var $this = $(this);
+                        if (opt.forCenter)
+                            opt.forCenter.hide();
+                        var zInd = 0,
+                                drpV = null;
+                        $('[data-elrun]:visible').each(function() {
+                            var $this = $(this);
+                            if (parseInt($this.css('z-index')) > zInd) {
+                                zInd = parseInt($this.css('z-index'));
+                                drpV = $.extend({}, $this.data('drp'));
+                            }
+                        });
+
+                        if (opt.dropOver && !f)
+                            opt.dropOver.fadeOut(durOff);
+                        if (!opt.context)
+                            methods._resetStyleDrop($(this));
+                        $this.removeClass(opt.place);
+                        if (opt.closed)
+                            opt.closed.call($thisB, $this, opt);
+                        if (opt.elClosed)
+                            eval(opt.elClosed).call($thisB, $this, opt);
+                        if (opt.closedG)
+                            opt.closedG.call($thisB, $this);
+                        $this.add($(document)).trigger({
+                            type: 'closed.' + $.drop.nS,
+                            drp: {
+                                el: $thisB,
+                                drop: $this,
+                                options: opt
+                            }
+                        });
+                        var dC = $this.find($(opt.dropContent)).data('jsp');
+                        if (dC)
+                            dC.destroy();
+                        if (f)
+                            f();
+                        if (!$.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
+                            $('body, html').css('height', '');
+                    });
+                }
+                drop.add($(document)).trigger({
+                    type: 'close.' + $.drop.nS,
+                    drp: {
+                        el: $thisB,
+                        drop: drop,
+                        options: opt
                     }
                 });
-            }
-            return sel;
+                var close = opt.elClose || opt.close || opt.closeG;
+                if (close) {
+                    if (typeof close === 'string')
+                        var res = eval(close).call($thisB, $(this), opt);
+                    else
+                        var res = close.call($thisB, $(this), opt);
+                    if (res === false && res !== true)
+                        returnMsg(res);
+                    else
+                        _hide();
+                }
+                else
+                    _hide();
+            });
+
+            return sel2;
         },
-        center: function(drop, start) {
-            if (!drop)
-                drop = this.self ? this.self : this;
-            drop.each(function() {
+        center: function(drop) {
+            drop = drop ? drop : this;
+            return drop.each(function() {
                 var drop = $(this),
                         drp = drop.data('drp');
                 if (drp && !drp.droppableIn) {
-                    var method = drp.animate && !start ? 'animate' : 'css',
+                    var method = drp.animate ? 'animate' : 'css',
                             dropV = drop.is(':visible'),
                             w = dropV ? drop.outerWidth() : drop.actual('outerWidth'),
                             h = dropV ? drop.outerHeight() : drop.actual('outerHeight'),
-                            top = Math.floor((wnd.height() - h) / 2),
-                            left = Math.floor((wnd.width() - w - $.drop.widthScroll) / 2);
+                            top = Math.floor((wnd.height() - h) / 2) + (drp.centerOnScroll ? wnd.scrollTop() : 0),
+                            left = Math.floor((wnd.width() - w) / 2) + (drp.centerOnScroll ? wnd.scrollLeft() : 0);
                     drop[method]({
                         'top': top > 0 ? top : 0,
                         'left': left > 0 ? left : 0
@@ -413,13 +413,10 @@
                         'left': drp.positionDroppableIn.left
                     });
             });
-            return drop;
         },
         _resetStyleDrop: function(drop) {
             return drop.css({
                 'z-index': '',
-                'width': '',
-                'height': '',
                 'top': '',
                 'left': '',
                 'bottom': '',
@@ -427,153 +424,138 @@
                 'position': ''
             });
         },
-        _checkProp: function(elSet, opt, prop) {
-            if (!elSet)
-                elSet = {};
-            if (!opt)
-                opt = {};
-            if (!isNaN(parseFloat($.drop.dP[prop])) && isFinite($.drop.dP[prop]))
-                return +((elSet[prop] !== undefined && elSet[prop] !== null ? elSet[prop].toString() : elSet[prop]) || (opt[prop] !== undefined && opt[prop] !== null ? opt[prop].toString() : opt[prop]) || $.drop.dP[prop].toString());
-            if ($.drop.dP[prop] !== undefined && $.drop.dP[prop] !== null && ($.drop.dP[prop].toString().toLowerCase() === 'false' || $.drop.dP[prop].toString().toLowerCase() === 'true'))
-                return ((/^true$/i).test(elSet[prop] !== undefined && elSet[prop] !== null ? elSet[prop].toString().toLowerCase() : elSet[prop])) || ((/^true$/i).test(opt[prop] !== undefined && opt[prop] !== null ? opt[prop].toString().toLowerCase() : opt[prop])) || (elSet[prop] !== undefined && elSet[prop] !== null || opt[prop] !== undefined && opt[prop] !== null ? false : $.drop.dP[prop]);
-            else
-                return elSet[prop] || (opt[prop] ? opt[prop] : false) || $.drop.dP[prop];
-            return this;
-        },
         _closeMoreOne: function() {
             if ($.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
                 methods.close($('[data-elrun].center:visible, [data-elrun].noinherit:visible'));
             return this;
         },
-        _notifyTrigger: function(el, elSet, set) {
+        _notifyTrigger: function(el, opt) {
             el.off('successJson.' + $.drop.nS).on('successJson.' + $.drop.nS, function(e) {
-                if (e.datas) {
-                    if (e.datas.answer === "success")
-                        e.el.find(methods._checkProp(elSet, set, 'notifyPlace')).empty().append(methods._checkProp(elSet, set, 'message').success(e.datas.data));
-                    else if (e.datas.answer === "error")
-                        e.el.find(methods._checkProp(elSet, set, 'notifyPlace')).empty().append(methods._checkProp(elSet, set, 'message').error(e.datas.data));
-                    else
-                        e.el.find(methods._checkProp(elSet, set, 'notifyPlace')).empty().append(methods._checkProp(elSet, set, 'message').info(e.datas.data));
-                }
+                e = e.drp;
+                if (!e)
+                    return false
+
+                if (e.datas.answer === "success")
+                    $(e.el).find(opt.notifyPlace).empty().append(opt.message.success(e.datas.data));
+                else if (e.datas.answer === "error")
+                    $(e.el).find(opt.notifyPlace).empty().append(opt.message.error(e.datas.data));
+                else
+                    $(e.el).find(opt.notifyPlace).empty().append(opt.message.info(e.datas.data));
             });
             return this;
         },
-        _pasteModal: function(el, datas, set, rel, hashChange) {
-            var elSet = el.data(),
-                    drop = $(elSet.drop);
+        _pasteNotify: function(el, datas, opt, rel, hashChange) {
             datas = datas || el.data('datas');
-            methods._pasteDrop($.extend({}, $.drop.dP, set, elSet), drop, null, rel);
+
+            methods._pasteDrop(opt, opt.drop, rel);
             el.trigger({
                 type: 'successJson.' + $.drop.nS,
-                el: drop,
-                datas: datas
+                drp: {
+                    el: opt.drop,
+                    datas: datas
+                }
             });
-            methods._show(el, null, set, datas, hashChange);
+            methods._show(el, null, opt, hashChange);
             return this;
         },
         _reg: function() {
             return /[^a-zA-Z0-9]+/ig;
         },
-        _pasteDrop: function(set, drop, addClass, rel) {
+        _pasteDrop: function(opt, drop, rel, aClass) {
+            var sourcePref = opt.source ? opt.source.replace(methods._reg(), '') : '';
             if (drop instanceof jQuery && drop.attr('pattern'))
-                drop.find(drop.data('drp').placePaste).empty().append($.drop.drp.drops[set.source.replace(methods._reg(), '')]);
-            addClass = addClass ? addClass : '';
-            rel = rel ? rel : '';
-            if (set.place === 'inherit') {
-                if (set.placeInherit)
-                    drop = $(drop).appendTo($(set.placeInherit).empty());
+                drop.find(drop.data('drp').placePaste).empty().append($.drop.drp.drops[sourcePref]);
+            var sdrop = opt.drop;
+            if (!opt.drop)
+                if (rel)
+                    opt.drop = '.' + opt.defaultClassBtnDrop + rel;
+                else
+                    opt.drop = '.' + opt.defaultClassBtnDrop + sourcePref;
+            if (opt.place === 'inherit') {
+                if (opt.placeInherit)
+                    drop = $(drop).appendTo($(opt.placeInherit).empty());
             }
             else {
                 function _for_center(rel) {
-                    $('body').append('<div class="forCenter" data-rel="' + rel + '" style="left: 0;width: 100%;display:none;height: 100%;position: absolute;height: 100%;overflow-x: auto;overflow-y: scroll;"></div>');
+                    $('body').append('<div class="forCenter" data-rel="' + rel + '" style="left: 0;top: 0;width: 100%;display:none;height: 100%;position: absolute;height: 100%;"></div>');
                 }
-                if (set.place === 'noinherit')
+                if (opt.place === 'noinherit')
                     drop = $(drop).appendTo($('body'));
                 else {
-                    var sel = '[data-rel="' + set.drop + '"].forCenter';
+                    var sel = '[data-rel="' + opt.drop + '"].forCenter';
                     if (!$.exists(sel))
-                        _for_center(set.drop);
-                    var drp = $(sel).find('[data-elrun]').data('drp') || {};
-                    drop = $(drop).appendTo($(sel).empty());
-                    drop.data('drp', drp);
+                        _for_center(opt.drop);
+                    drop = $(drop).appendTo($(sel).empty()).data('drp', $(sel).find('[data-elrun]').data('drp') || {});
                 }
             }
-            return drop.addClass(addClass).filter(set.drop).attr('data-rel', rel).attr('data-elrun', set.drop);
+            drop = $(drop).addClass(aClass).attr('data-rel', rel).attr('data-elrun', opt.drop);
+            if (sdrop)
+                drop = drop.filter(sdrop);
+            return drop;
         },
         _pasteContent: function($this, drop, opt) {
             function _pasteContent(content, place) {
-                if (content) {
-                    place = drop.find(place);
-                    if (typeof content === 'string' || typeof content === 'number' || typeof content === 'object')
-                        place.empty().append(content);
-                    else if (typeof content === 'function')
-                        content(place, $this, drop);
-                }
+                if (!content)
+                    return false;
+
+                place = drop.find(place);
+                if (typeof content === 'string' || typeof content === 'number' || typeof content === 'object')
+                    place.empty().append(content);
+                else if (typeof content === 'function')
+                    content(place, $this, drop);
             }
             _pasteContent(opt.contentHeader, opt.dropHeader);
             _pasteContent(opt.contentContent, opt.dropContent);
             _pasteContent(opt.contentFooter, opt.dropFooter);
             return this;
         },
-        _show: function($this, e, set, data, hashChange) {
-            $this = $this ? $this : this;
+        _show: function($this, e, opt, hashChange) {
+            $this = $this || this;
             e = e ? e : window.event;
             var elSet = $this.data(),
                     rel = null,
-                    opt = {},
                     self = $this.get(0);
-            set = $.extend({}, set ? set : elSet.drp);
+            $.extend(opt, elSet);
+            delete opt.drp;
             if (self.rel)
                 rel = self.rel.replace(methods._reg(), '');
-            for (var i in $.drop.dP)
-                opt[i] = methods._checkProp(elSet, set, i);
+
             //callbacks for element, options and global $.drop.dP
-            opt.elStart = elSet.start;
-            opt.elBefore = elSet.before;
-            opt.elAfter = elSet.after;
-            opt.elClose = elSet.close;
-            opt.elClosed = elSet.closed;
+            opt.elBefore = elSet.elBefore;
+            opt.elAfter = elSet.elAfter;
+            opt.elClose = elSet.elClose;
+            opt.elClosed = elSet.elClosed;
             //
-            opt.before = set.before;
-            opt.after = set.after;
-            opt.close = set.close;
-            opt.closed = set.closed;
+            opt.beforeG = $.drop.dP.beforeG;
+            opt.afterG = $.drop.dP.afterG;
+            opt.closeG = $.drop.dP.closeG;
+            opt.closedG = $.drop.dP.closedG;
             //
-            opt.beforeG = $.drop.dP.before;
-            opt.afterG = $.drop.dP.after;
-            opt.closeG = $.drop.dP.close;
-            opt.closedG = $.drop.dP.closed;
-            //
-            opt.drop = elSet.drop;
-            var drop = $('[data-elrun="' + opt.drop + '"]'),
-                    drp = $.extend({}, drop.data('drp'));
-            opt.elrun = drp.elrun ? drp.elrun.add($this) : $this;
+            var drop = $('[data-elrun="' + opt.drop + '"]');
+
+            opt = $.extend({}, drop.data('drp'), opt);
+            opt.elrun = opt.elrun ? opt.elrun.add($this) : $this;
             opt.rel = rel;
-            $this.attr({
-                'data-drop': opt.drop
-            }).parent().addClass(aC);
-            drop.data('drp', $.extend(drp, opt, {
-                'methods': $.extend({}, {
-                    'self': drop,
-                    'elrun': opt.elrun
-                }, $.drop.methods())
-            }));
+
+            $this.addClass(aC);
+            drop.data('drp', opt);
+
             if (rel)
                 methods._checkMethod(function() {
-                    methods.galleries($this, set, methods);
+                    methods.galleries($this, opt, methods);
                 });
             var overlays = $('.overlayDrop').css('z-index', 1103),
                     condOverlay = opt.overlayOpacity !== 0,
                     dropOver = null;
+
             if (condOverlay) {
                 if (!$.exists('[data-rel="' + opt.drop + '"].overlayDrop'))
                     $('body').append('<div class="overlayDrop" data-rel="' + opt.drop + '" style="display:none;position:absolute;width:100%;left:0;top:0;"></div>');
                 dropOver = $('[data-rel="' + opt.drop + '"].overlayDrop');
-                drop.data('drp').dropOver = dropOver;
+                opt.dropOver = dropOver;
                 dropOver.css('height', '').css({
                     'background-color': opt.overlayColor,
                     'opacity': opt.overlayOpacity,
-                    'height': $(document).height(),
                     'z-index': overlays.length + 1103
                 });
             }
@@ -584,47 +566,30 @@
             if ($.existsN(objForC))
                 forCenter = objForC;
             if (forCenter) {
-                if (isTouch)
-                    forCenter.css('height', '').css('height', $(document).height());
-                drop.data('drp').forCenter = forCenter;
+                opt.forCenter = forCenter;
                 forCenter.css('z-index', overlays.length + 1104);
             }
+            methods._setHeightAddons(dropOver, forCenter);
             drop.css('z-index', overlays.length + 1104);
             methods._pasteContent($this, drop, opt);
             if (opt.elBefore)
-                eval(opt.elBefore)($this, drop, data);
+                eval(opt.elBefore).call($this, drop, opt);
             if (opt.before)
-                opt.before($this, drop, data);
+                opt.before.call($this, drop, opt);
+            //end
             if (opt.beforeG)
-                opt.beforeG($this, drop, data);
+                opt.beforeG.call($this, drop);
             drop.add($(document)).trigger({
-                'type': 'before.' + $.drop.nS,
-                'el': $this,
-                'drop': drop,
-                'datas': data
+                type: 'before.' + $.drop.nS,
+                drp: {
+                    el: $this,
+                    drop: drop,
+                    options: opt
+                }
             });
             drop.addClass(opt.place);
             methods._positionType(drop);
-            if (!isTouch && opt.place !== 'inherit' && opt.overlayOpacity !== 0)
-                $('body').addClass('isScroll').css({'overflow': 'hidden', 'margin-right': $.drop.widthScroll});
-            if (opt.limitSize)
-                methods._checkMethod(function() {
-                    methods.limitSize(drop);
-                });
-            if (opt.limitContentSize)
-                methods._checkMethod(function() {
-                    methods.heightContent(drop);
-                });
-            if (forCenter)
-                forCenter.css('top', wnd.scrollTop()).show();
-            if (methods.placeBeforeShow)
-                methods._checkMethod(function() {
-                    methods.placeBeforeShow(drop, $this, methods, opt.place, opt.placeBeforeShow);
-                });
-            if (opt.place !== 'inherit')
-                methods._checkMethod(function() {
-                    methods[opt.place](drop);
-                });
+
             var href = $this.data('href');
             if (href) {
                 clearTimeout($.drop.drp.curHashTimeout);
@@ -645,25 +610,31 @@
                 setTimeout(focusConfirm, 0);
                 drop.click(focusConfirm);
             }
-            $(opt.next).add($(opt.prev)).css('height', drop.actual('height'));
+
             var ev = opt.drop ? opt.drop.replace(methods._reg(), '') : '';
+
             wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function() {
-                if (opt.limitSize)
+                if (opt.limitSize) {
                     methods._checkMethod(function() {
                         methods.limitSize(drop);
                     });
-                if (opt.limitContentSize)
                     methods._checkMethod(function() {
                         methods.heightContent(drop);
                     });
+                }
                 if (opt.place !== 'inherit')
-                    methods[opt.place](drop);
+                    methods._checkMethod(function() {
+                        methods[opt.place](drop);
+                    }, opt.place);
                 setTimeout(function() {
-                    if (dropOver)
-                        dropOver.css('height', '').css('height', $(document).height());
-                    if (forCenter && isTouch)
-                        forCenter.css('height', '').css('height', $(document).height());
+                    methods._setHeightAddons(dropOver, forCenter);
                 }, 100);
+            });
+            wnd.off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function() {
+                if (opt.place === 'center' && opt.centerOnScroll)
+                    methods._checkMethod(function() {
+                        methods[opt.place](drop);
+                    }, opt.place);
             });
             if (condOverlay)
                 dropOver.stop().fadeIn(opt.durationOn / 2);
@@ -694,12 +665,41 @@
                     if (key === 27)
                         methods.close(false);
                 });
-            $('html').css('height', '100%');
-            $('body').css('height', '100%').off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
+            $('html, body').css('height', '100%');
+            $('body').off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                 if (opt.closeClick && !$.existsN($(e.target).closest('[data-elrun]')))
                     methods.close(false);
             });
+            if (opt.context) {
+                var collect = drop.add(dropOver).add(forCenter);
+                collect.on('contextmenu.' + $.drop.nS, function(e) {
+                    e.preventDefault();
+                });
+            }
+            if (opt.limitSize) {
+                methods._checkMethod(function() {
+                    methods.limitSize(drop);
+                });
+                methods._checkMethod(function() {
+                    methods.heightContent(drop);
+                });
+            }
+            if (methods.placeBeforeShow)
+                methods._checkMethod(function() {
+                    methods.placeBeforeShow(drop, $this, methods, opt.place, opt.placeBeforeShow, e);
+                });
+            if (opt.place !== 'inherit')
+                methods._checkMethod(function() {
+                    methods[opt.place](drop, e);
+                }, opt.place);
+
+            if (forCenter)
+                forCenter.show();
+
             drop[opt.effectOn](opt.durationOn, function(e) {
+                methods._setHeightAddons(dropOver, forCenter);
+                if (opt.context)
+                    collect.off('contextmenu.' + $.drop.nS);
                 var drop = $(this);
                 $.drop.drp.curDrop = drop;
                 if ($.existsN(drop.find('[data-drop]')))
@@ -711,29 +711,27 @@
                     }, opt.timeclosenotify);
                 var cB = opt.elAfter;
                 if (cB)
-                    eval(cB)($this, drop, data);
+                    eval(cB).call($this, drop, opt);
                 if (opt.after)
-                    opt.after($this, drop, data);
+                    opt.after.call($this, drop, opt);
                 if (opt.afterG)
-                    opt.afterG($this, drop, data);
+                    opt.afterG.call($this, drop, opt);
                 drop.add($(document)).trigger({
-                    'type': 'after.' + $.drop.nS,
-                    'el': $this,
-                    'drop': drop,
-                    'datas': data
+                    type: 'after.' + $.drop.nS,
+                    drp: {
+                        el: $this,
+                        drop: drop,
+                        options: opt
+                    }
                 });
                 if (opt.droppable && opt.place !== 'inherit')
                     methods._checkMethod(function() {
                         methods.droppable(drop);
                     });
-                wnd.off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function(e) {
-                    if (opt.place === 'center')
-                        methods.center(drop);
-                });
                 if (rel && opt.keyNavigate && methods.galleries)
                     $('body').off('keyup.' + $.drop.nS + ev).on('keyup.' + $.drop.nS + ev, function(e) {
-                        $(this).off('keyup.' + $.drop.nS + ev);
                         var key = e.keyCode;
+                      
                         if (key === 37)
                             $(opt.prev).trigger('click.' + $.drop.nS);
                         if (key === 39)
@@ -742,12 +740,15 @@
             });
             return this;
         },
-        _checkMethod: function(f) {
+        _setHeightAddons: function(dropOver, forCenter) {
+            $(dropOver).add(forCenter).css('height', '').css('height', $(document).height());
+        },
+        _checkMethod: function(f, nm) {
             try {
                 f();
             } catch (e) {
                 var method = f.toString().match(/\.\S*\(/);
-                returnMsg('need connect ' + method[0].substring(1, method[0].length - 1) + ' method');
+                returnMsg('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
             }
             return this;
         },
@@ -797,6 +798,7 @@
             return newM;
         };
         this.dP = {
+            drop: null,
             source: null,
             dataPrompt: null,
             dropContent: '.drop-content-default',
@@ -814,54 +816,50 @@
             dropFilter: null,
             message: {
                 success: function(text) {
-                    return '<div class = "msg js-msg"><div class = "success"><span class = "icon_info"></span><div class="text-el">' + text + '</div></div></div>';
+                    return '<div class = "drop-msg"><div class = "drop-success"><span class = "drop-icon_info"></span><div class="drop-text-el">' + text + '</div></div></div>';
                 },
                 error: function(text) {
-                    return '<div class = "msg js-msg"><div class = "error"><span class = "icon_info"></span><div class="text-el">' + text + '</div></div></div>';
+                    return '<div class = "drop-msg"><div class = "drop-error"><span class = "drop-icon_info"></span><div class="drop-text-el">' + text + '</div></div></div>';
                 },
                 info: function(text) {
-                    return '<div class = "msg js-msg"><div class = "info"><span class = "icon_info"></span><div class="text-el">' + text + '</div></div></div>';
+                    return '<div class = "drop-msg"><div class = "drop-info"><span class = "drop-icon_info"></span><div class="drop-text-el">' + text + '</div></div></div>';
                 }
             },
             trigger: 'click',
-            triggerOn: '',
-            triggerOff: '',
-            exit: '[data-closed = "closed-js"]',
+            triggerOn: null,
+            triggerOff: null,
+            exit: '[data-closed]',
             effectOn: 'fadeIn',
             effectOff: 'fadeOut',
             place: 'center',
             placement: 'top left',
-            overlayColor: '#fff',
+            overlayColor: '#000',
+            overlayOpacity: .6,
             position: 'absolute',
             placeBeforeShow: 'center center',
             placeAfterClose: 'center center',
-            before: function() {
-            },
-            after: function() {
-            },
-            close: function() {
-            },
-            closed: function() {
-            },
-            pattern: '<div class="drop drop-style drop-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed="closed-js" style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default"></div><div class="drop-content-default"><button class="drop-prev" type="button"  style="display:none;font-size: 30px;position:absolute;width: 35%;left: 20px;top:0;text-align: left;"><</button><button class="drop-next" type="button" style="display:none;font-size: 30px;position:absolute;width: 35%;right: 20px;top:0;text-align: right;">></button><div class="inside-padd placePaste" style="padding: 20px 40px;text-align: center;"></div></div><div class="drop-footer-default"></div></div>',
+            beforeG: null,
+            afterG: null,
+            closeG: null,
+            closedG: null,
+            pattern: '<div class="drop drop-style drop-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default"></div><div class="drop-content-default"><button class="drop-prev" type="button"  style="height:100%;display:none;font-size: 30px;position:absolute;width: 35%;left: 20px;top:0;text-align: left;"><</button><button class="drop-next" type="button" style="height:100%;display:none;font-size: 30px;position:absolute;width: 35%;right: 20px;top:0;text-align: right;">></button><div class="inside-padd placePaste" style="padding: 20px 40px;text-align: center;"></div></div><div class="drop-footer-default"></div></div>',
             notifyBtnDrop: '#drop-notification-default',
             defaultClassBtnDrop: 'drop-default',
             patternNotif: '<div class="drop drop-style" id="drop-notification-default" style="background-color: #fff;"><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;"></div><div class="drop-content-default"><div class="inside-padd drop-notification-default"></div></div><div class="drop-footer-default"></div></div>',
             confirmBtnDrop: '#drop-confirm-default',
             confirmActionBtn: '[data-button-confirm]',
-            patternConfirm: '<div class="drop drop-style" id="drop-confirm-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed="closed-js" style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;">Confirm</div><div class="drop-content-default"><div class="inside-padd" style="padding: 20px 40px;text-align: center;"><div class="drop-btn-confirm" style="margin-right: 10px;"><button type="button" data-button-confirm><span class="text-el">confirm</span></button></div><div class="drop-btn-cancel"><button type="button" data-closed="closed-js"><span class="text-el">cancel</span></button></div></div></div><div class="drop-footer-default"></div></div>',
+            patternConfirm: '<div class="drop drop-style" id="drop-confirm-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;">Confirm</div><div class="drop-content-default"><div class="inside-padd" style="padding: 20px 40px;text-align: center;"><div class="drop-btn-confirm" style="margin-right: 10px;"><button type="button" data-button-confirm><span class="text-el">confirm</span></button></div><div class="drop-btn-cancel"><button type="button" data-closed><span class="text-el">cancel</span></button></div></div></div><div class="drop-footer-default"></div></div>',
             promptBtnDrop: '#drop-prompt-default',
             promptActionBtn: '[data-button-prompt]',
             promptInput: '[name="promptInput"]',
-            patternPrompt: '<div class="drop drop-style" id="drop-prompt-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed="closed-js" style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;">Prompt</div><div class="drop-content-default"><form class="inside-padd" style="padding: 20px 40px;text-align: center;"><input type="text" name="promptInput"/><div class="drop-btn-prompt" style="margin-right: 10px;"><button type="button" data-button-prompt><span class="text-el">ok</span></button></div><div class="drop-btn-cancel"><button type="submit" data-closed="closed-js"><span class="text-el">cancel</span></button></div></form></div><div class="drop-footer-default"></div></div>',
-            promptInputValue: '',
+            patternPrompt: '<div class="drop drop-style" id="drop-prompt-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;">Prompt</div><div class="drop-content-default"><form class="inside-padd" style="padding: 20px 40px;text-align: center;"><input type="text" name="promptInput"/><div class="drop-btn-prompt" style="margin-right: 10px;"><button data-button-prompt type="submit"><span class="text-el">ok</span></button></div><div class="drop-btn-cancel"><button type="button" data-closed><span class="text-el">cancel</span></button></div></form></div><div class="drop-footer-default"></div></div>',
+            promptInputValue: null,
             next: '.drop-next',
             prev: '.drop-prev',
             type: 'post',
             dataType: null,
-            overlayOpacity: 0.7,
-            durationOn: 200,
-            durationOff: 100,
+            durationOn: 300,
+            durationOff: 40,
             timeclosenotify: 2000,
             notify: false,
             confirm: false,
@@ -871,14 +869,15 @@
             moreOne: false,
             closeClick: true,
             closeEsc: false,
-            droppable: true,
+            droppable: false,
             cycle: false,
             limitSize: false,
-            limitContentSize: false,
-            scrollContent: false,
             droppableLimit: false,
             inheritClose: false,
-            keyNavigate: false
+            keyNavigate: true,
+            context: false,
+            minHeightContent: 100,
+            centerOnScroll: false
         };
         this.drp = {
             hrefs: {},
@@ -898,16 +897,10 @@
         };
     };
     $(document).ready(function() {
-        var body = $('body'),
-                el = $('<div/>').appendTo(body).css({
-            'height': 100,
-            'width': 100,
-            'overflow': 'scroll'
-        }).wrap($('<div style="width:0;height:0;overflow:hidden;"></div>'));
-        $.dropInit.prototype.widthScroll = el.width() - el.get(0).clientWidth;
-        el.parent().remove();
+        var body = $('body');
+
         var loadingTimer, loadingFrame = 1,
-                loading = $('<div id="fancybox-loading"><div></div></div>').appendTo(body);
+                loading = $('<div id="drop-loading"><div></div></div>').appendTo(body);
 
         function _animate_loading() {
             if (!loading.is(':visible')) {
