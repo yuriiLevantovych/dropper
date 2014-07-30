@@ -217,25 +217,26 @@ $.dropInit.prototype.extendDrop = function() {
                 }
             });
         },
-        galleries: function($this, opt, methods) {
-            var relO = $this.get(0).rel;
+        galleries: function(drop, opt, methods) {
+            var $this = this,
+                    relO = $this.get(0).rel,
+                    relA = $.drop.drp.galleries[opt.rel];
+
             if (relO === '' && relO === undefined)
                 return false;
-            var relA = $.drop.drp.galleries[opt.rel],
-                    drop = $('[data-elrun][data-rel="' + opt.rel + '"]');
-            
+
             if (relA !== undefined) {
                 var relL = relA.length,
-                        relP = $.inArray(opt.source ? opt.source : drop.find($(opt.placePaste)).find('img').attr('src'), relA);
-                $(opt.prev).add($(opt.next)).hide().attr('disabled', 'disabled');
+                        relP = $.inArray(opt.source ? opt.source : drop.find(opt.placePaste).find('img').attr('src'), relA);
+                drop.find(opt.prev).add(drop.find(opt.next)).hide().attr('disabled', 'disabled');
                 if (relP >= 0 && relP !== relL - 1)
-                    $(opt.next).show().removeAttr('disabled');
+                    drop.find(opt.next).show().removeAttr('disabled');
                 if (relP <= relL - 1 && relP !== 0)
-                    $(opt.prev).show().removeAttr('disabled');
+                    drop.find(opt.prev).show().removeAttr('disabled');
                 if (opt.cycle)
-                    $(opt.prev).add($(opt.next)).show().removeAttr('disabled');
+                    drop.find(opt.prev).add(drop.find(opt.next)).show().removeAttr('disabled');
             }
-            $(opt.prev).add($(opt.next)).attr('data-rel', opt.rel).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
+            drop.find(opt.prev).add(drop.find(opt.next)).attr('data-rel', opt.rel).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                 e.stopPropagation();
                 var $thisB = $(this).attr('disabled', 'disabled'),
                         relNext = relP + ($thisB.is(opt.prev) ? -1 : 1);
@@ -248,7 +249,7 @@ $.dropInit.prototype.extendDrop = function() {
                 if (relA[relNext]) {
                     var $this = $('[data-source="' + relA[relP] + '"][rel], [href="' + relA[relP] + '"][rel]').filter(':last'),
                             $next = $('[data-source="' + relA[relNext] + '"][rel], [href="' + relA[relNext] + '"][rel]').filter(':last');
-                    methods.close($($this.data('drop')), undefined, function() {
+                    methods.close.call($($this.data('drop')), undefined, function() {
                         methods.open({}, undefined, $next);
                     });
                 }
@@ -290,10 +291,10 @@ $.dropInit.prototype.extendDrop = function() {
                     'top': $this.offset().top
                 });
         },
-        placeAfterClose: function(drop, $this, set) {
+        placeAfterClose: function(drop, $this, opt) {
             var
-                    method = set.animate ? 'animate' : 'css',
-                    pmt = set.placeAfterClose.toLowerCase().split(' '),
+                    method = opt.animate ? 'animate' : 'css',
+                    pmt = opt.placeAfterClose.toLowerCase().split(' '),
                     t = -drop.actual('outerHeight'),
                     l = -drop.actual('outerWidth');
             if (pmt[0] === 'bottom' || pmt[1] === 'bottom')
@@ -324,7 +325,7 @@ $.dropInit.prototype.extendDrop = function() {
                     'left': l
                 }, {
                     queue: false,
-                    duration: set.durationOff
+                    duration: opt.durationOff
                 });
             if (pmt[0] === 'inherit')
                 drop.stop()[method]({
@@ -332,7 +333,7 @@ $.dropInit.prototype.extendDrop = function() {
                     'top': $this.offset().top
                 }, {
                     queue: false,
-                    duration: set.durationOff
+                    duration: opt.durationOff
                 });
         },
         confirmPrompt: function(opt, methods, hashChange, _confirmF, e) {
@@ -350,11 +351,11 @@ $.dropInit.prototype.extendDrop = function() {
                 else
                     methods._pasteDrop($.extend({}, opt, confirmBtn.data()), $(opt.confirmBtnDrop));
 
-                methods._show(confirmBtn, e, opt, hashChange);
+                methods._show.call(confirmBtn, e, opt, hashChange);
 
                 $(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                     e.stopPropagation();
-                    methods.close($(opt.confirmBtnDrop));
+                    methods.close.call($(opt.confirmBtnDrop));
                     if (opt.source)
                         _confirmF();
                 });
@@ -374,11 +375,11 @@ $.dropInit.prototype.extendDrop = function() {
                 else
                     methods._pasteDrop($.extend({}, opt, promptBtn.data()), $(opt.promptBtnDrop));
 
-                methods._show(promptBtn, e, opt, hashChange);
+                methods._show.call(promptBtn, e, opt, hashChange);
 
                 $(opt.promptActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                     e.stopPropagation();
-                    methods.close($(opt.promptBtnDrop));
+                    methods.close.call($(opt.promptBtnDrop));
                     function getUrlVars(url) {
                         var hash, myJson = {}, hashes = url.slice(url.indexOf('?') + 1).split('&');
                         for (var i = 0; i < hashes.length; i++) {
