@@ -1,4 +1,4 @@
-$.dropInit.prototype.extendDrop = function() {
+$.drop.extendDrop = function() {
     var wnd = $(window);
     var addmethods = {
         droppable: function(drop) {
@@ -40,8 +40,8 @@ $.dropInit.prototype.extendDrop = function() {
                 });
             });
         },
-        noinherit: function(drop, e) {
-            return (drop || this).each(function() {
+        noinherit: function(e) {
+            return this.each(function() {
                 var drop = $(this),
                         drp = drop.data('drp');
                 if (drp && !drp.droppableIn) {
@@ -250,7 +250,7 @@ $.dropInit.prototype.extendDrop = function() {
                     var $this = $('[data-source="' + relA[relP] + '"][rel], [href="' + relA[relP] + '"][rel]').filter(':last'),
                             $next = $('[data-source="' + relA[relNext] + '"][rel], [href="' + relA[relNext] + '"][rel]').filter(':last');
                     methods.close.call($($this.data('drop')), undefined, function() {
-                        methods.open({}, undefined, $next);
+                        methods.open.call($next, {}, undefined);
                     });
                 }
             });
@@ -263,7 +263,7 @@ $.dropInit.prototype.extendDrop = function() {
                     l = -drop.actual('outerWidth');
             if (pmt[0] === 'center' || pmt[1] === 'center') {
                 methods._checkMethod(function() {
-                    methods[place](drop, e);
+                    methods[place].call(drop, e);
                 });
                 t = drop.css('top');
                 l = drop.css('left');

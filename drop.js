@@ -32,7 +32,7 @@
     var methods = {
         init: function(options) {
             var set = $.extend({}, $.drop.dP, options);
-            
+
             this.each(function() {
                 var el = methods.destroy($(this)),
                         opt = $.extend({}, set, el.data());
@@ -60,10 +60,10 @@
                         }).on(opt.triggerOn + '.' + $.drop.nS, function(e) {
                             if (opt.condTrigger) {
                                 if (eval('(function(){' + opt.condTrigger + '})()'))
-                                    methods.open(opt, null, $(this), e);
+                                    methods.open.call($(this), opt, null, e);
                             }
                             else
-                                methods.open(opt, null, $(this), e);
+                                methods.open.call($(this), opt, null, e);
                         }).on(opt.triggerOff + '.' + $.drop.nS, function() {
                             methods.close.call($(el.attr('data-drop')));
                         });
@@ -72,7 +72,7 @@
                             if (el.hasClass(aC))
                                 methods.close.call($(el.attr('data-drop')));
                             else
-                                methods.open(opt, null, $(this), e);
+                                methods.open.call($(this), opt, null, e);
                             e.stopPropagation();
                             e.preventDefault();
                         });
@@ -86,12 +86,12 @@
                         if (el.hasClass(aC))
                             methods.close.call($(el.attr('data-drop')));
                         if (e.button === 2)
-                            methods.open($.extend(opt, {place: 'noinherit', limitSize: true}), null, $(this), e);
+                            methods.open.call($(this), $.extend(opt, {place: 'noinherit', limitSize: true}), null, e);
                     });
                 }
                 var href = el.data('href');
                 if (href && window.location.hash.indexOf(href) !== -1 && !$.drop.drp.hrefs[href])
-                    methods.open(opt, null, el, null);
+                    methods.open.call(el, opt, null, null);
                 if (/#/.test(href) && !$.drop.drp.hrefs[href])
                     $.drop.drp.hrefs[href] = el;
             });
@@ -128,7 +128,7 @@
                 rel = el.get(0).rel.replace(methods._reg(), '');
             function _update(data) {
                 $.drop.hideActivity();
-                if (!opt.always && !opt.notify)
+                if (!opt.always && !opt.notify && opt.source)
                     $.drop.drp.drops[opt.source.replace(methods._reg(), '')] = data;
                 var drop = methods._pasteDrop(opt, opt.pattern, rel, $.drop.drp.curDefault);
                 drop.attr('pattern', true);
@@ -195,10 +195,11 @@
             }
             return el;
         },
-        open: function(opt, datas, $this, e, hashChange) {
+        open: function(opt, datas, e, hashChange) {
+            var $this = this;
             e = e ? e : window.event;
             opt = $.extend({}, $.drop.dP, opt);
-            if (!$this) {
+            if (!$this || !($this instanceof jQuery)) {
                 if ($(this).hasClass('isDrop'))
                     $this = this;
                 else {
@@ -212,16 +213,26 @@
                         $this.data('datas', datas);
                         methods._notifyTrigger.call($this, $.extend(opt, $this.data()));
                     }
-                    else {
+                    else if (opt.source) {
                         var sourcePref = opt.source.replace(methods._reg(), '');
                         if (!$.exists('.refer' + opt.defaultClassBtnDrop + sourcePref))
                             $this = $('<div><button class="refer' + (opt.defaultClassBtnDrop + sourcePref) + '"></button></div>').appendTo($('body')).hide().children();
                         else
                             $this = $('.refer' + opt.defaultClassBtnDrop + sourcePref);
                     }
+                    else {
+                        $.drop.drp.curDefault = opt.defaultClassBtnDrop + (new Date()).getTime();
+                        if (!$.exists('[data-drop=".' + $.drop.drp.curDefault + '"]'))
+                            $this = $('<div><button data-drop=".' + $.drop.drp.curDefault + '"></button></div>').appendTo($('body')).hide().children();
+                        else
+                            $this = $('[data-drop=".' + $.drop.drp.curDefault + '"] ');
+                        methods._pasteDrop($.extend(opt, $this.data()), '<div>' + opt.html + '</div>', null, $.drop.drp.curDefault);
+                    }
                 }
             }
-            $this.each(function() {
+            if (!($this instanceof jQuery))
+                return this;
+            return $this.each(function() {
                 var $this = $(this);
                 $.extend(opt, $this.data());
                 var drop = $(opt.drop);
@@ -277,7 +288,6 @@
                 else
                     methods.close.call($($this.data('drop')));
             });
-            return $this;
         },
         close: function(hashChange, f) {
             var sel = this,
@@ -290,6 +300,7 @@
             drop.each(function() {
                 var drop = $(this),
                         opt = drop.data('drp');
+
                 if (!(opt && drop.is(':visible') && (opt.notify || sel || opt.place !== 'inherit' || opt.inheritClose || opt.overlayOpacity !== 0)))
                     return false;
 
@@ -364,6 +375,10 @@
                             f();
                         if (!$.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
                             $('body, html').css('height', '');
+                        if (opt.html) {
+                            $(opt.elrun).parent().remove();
+                            $(opt.dropOver).add($(opt.forCenter)).remove();
+                        }
                     });
                 }
                 drop.add($(document)).trigger({
@@ -391,9 +406,8 @@
 
             return sel;
         },
-        center: function(drop) {
-            drop = drop ? drop : this;
-            return drop.each(function() {
+        center: function() {
+            return this.each(function() {
                 var drop = $(this),
                         drp = drop.data('drp');
                 if (drp && !drp.droppableIn) {
@@ -522,7 +536,7 @@
                     rel = null,
                     self = $this.get(0);
             $.extend(opt, elSet);
-                console.log(elSet)
+
             if (self.rel)
                 rel = self.rel.replace(methods._reg(), '');
 
@@ -619,7 +633,7 @@
 
             var ev = opt.drop ? opt.drop.replace(methods._reg(), '') : '';
 
-            wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function() {
+            wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function(e) {
                 if (opt.limitSize) {
                     methods._checkMethod(function() {
                         methods.limitSize(drop);
@@ -630,16 +644,16 @@
                 }
                 if (opt.place !== 'inherit')
                     methods._checkMethod(function() {
-                        methods[opt.place](drop);
+                        methods[opt.place].call(drop, e);
                     }, opt.place);
                 setTimeout(function() {
                     methods._setHeightAddons(dropOver, forCenter);
                 }, 100);
             });
-            wnd.off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function() {
+            wnd.off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function(e) {
                 if (opt.place === 'center' && opt.centerOnScroll)
                     methods._checkMethod(function() {
-                        methods[opt.place](drop);
+                        methods[opt.place].call(drop, e);
                     }, opt.place);
             });
             if (condOverlay)
@@ -669,12 +683,12 @@
                 $('body').on('keyup.' + $.drop.nS, function(e) {
                     var key = e.keyCode;
                     if (key === 27)
-                        methods.close.call(false);
+                        methods.close();
                 });
             $('html, body').css('height', '100%');
             $('body').off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                 if (opt.closeClick && !$.existsN($(e.target).closest('[data-elrun]')))
-                    methods.close.call(false);
+                    methods.close();
             });
             if (opt.context) {
                 var collect = drop.add(dropOver).add(forCenter);
@@ -696,7 +710,7 @@
                 });
             if (opt.place !== 'inherit')
                 methods._checkMethod(function() {
-                    methods[opt.place](drop, e);
+                    methods[opt.place].call(drop, e);
                 }, opt.place);
 
             if (forCenter)
@@ -750,12 +764,12 @@
             $(dropOver).add(forCenter).css('height', '').css('height', $(document).height());
         },
         _checkMethod: function(f, nm) {
-            try {
-                f();
-            } catch (e) {
-                var method = f.toString().match(/\.\S*\(/);
-                returnMsg('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
-            }
+            //try {
+            f();
+//            } catch (e) {
+//                var method = f.toString().match(/\.\S*\(/);
+//                returnMsg('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
+//            }
             return this;
         },
         _positionType: function(drop) {
@@ -789,119 +803,125 @@
             $.error('Method ' + method + ' does not exist on $.drop');
         }
     };
-    $.dropInit = function() {
-        this.nS = 'drop';
-        this.method = function(m) {
-            if (!/_/.test(m))
-                return methods[m];
-        };
-        this.methods = function() {
-            var newM = {};
-            for (var i in methods) {
-                if (!/_/.test(i))
-                    newM[i] = methods[i];
-            }
-            return newM;
-        };
-        this.dP = {
-            drop: null,
-            source: null,
-            dataPrompt: null,
-            dropContent: '.drop-content-default',
-            dropHeader: '.drop-header-default',
-            dropFooter: '.drop-footer-default',
-            placePaste: '.placePaste',
-            notifyPlace: '.drop-notification-default',
-            datas: null,
-            contentHeader: null,
-            contentFooter: null,
-            contentContent: null,
-            start: null,
-            placeInherit: null,
-            condTrigger: null,
-            dropFilter: null,
-            message: {
-                success: function(text) {
-                    return '<div class = "drop-msg"><div class = "drop-success"><span class = "drop-icon_info"></span><div class="drop-text-el">' + text + '</div></div></div>';
-                },
-                error: function(text) {
-                    return '<div class = "drop-msg"><div class = "drop-error"><span class = "drop-icon_info"></span><div class="drop-text-el">' + text + '</div></div></div>';
-                },
-                info: function(text) {
-                    return '<div class = "drop-msg"><div class = "drop-info"><span class = "drop-icon_info"></span><div class="drop-text-el">' + text + '</div></div></div>';
-                }
-            },
-            trigger: 'click',
-            triggerOn: null,
-            triggerOff: null,
-            exit: '[data-closed]',
-            effectOn: 'fadeIn',
-            effectOff: 'fadeOut',
-            place: 'center',
-            placement: 'top left',
-            overlayColor: '#000',
-            overlayOpacity: .6,
-            position: 'absolute',
-            placeBeforeShow: 'center center',
-            placeAfterClose: 'center center',
-            beforeG: null,
-            afterG: null,
-            closeG: null,
-            closedG: null,
-            pattern: '<div class="drop drop-style drop-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default"></div><div class="drop-content-default"><button class="drop-prev" type="button"  style="height:100%;display:none;font-size: 30px;position:absolute;width: 35%;left: 20px;top:0;text-align: left;"><</button><button class="drop-next" type="button" style="height:100%;display:none;font-size: 30px;position:absolute;width: 35%;right: 20px;top:0;text-align: right;">></button><div class="inside-padd placePaste" style="padding: 20px 40px;text-align: center;"></div></div><div class="drop-footer-default"></div></div>',
-            notifyBtnDrop: '#drop-notification-default',
-            defaultClassBtnDrop: 'drop-default',
-            patternNotif: '<div class="drop drop-style" id="drop-notification-default" style="background-color: #fff;"><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;"></div><div class="drop-content-default"><div class="inside-padd drop-notification-default"></div></div><div class="drop-footer-default"></div></div>',
-            confirmBtnDrop: '#drop-confirm-default',
-            confirmActionBtn: '[data-button-confirm]',
-            patternConfirm: '<div class="drop drop-style" id="drop-confirm-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;">Confirm</div><div class="drop-content-default"><div class="inside-padd" style="padding: 20px 40px;text-align: center;"><div class="drop-btn-confirm" style="margin-right: 10px;"><button type="button" data-button-confirm><span class="text-el">confirm</span></button></div><div class="drop-btn-cancel"><button type="button" data-closed><span class="text-el">cancel</span></button></div></div></div><div class="drop-footer-default"></div></div>',
-            promptBtnDrop: '#drop-prompt-default',
-            promptActionBtn: '[data-button-prompt]',
-            promptInput: '[name="promptInput"]',
-            patternPrompt: '<div class="drop drop-style" id="drop-prompt-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;">Prompt</div><div class="drop-content-default"><form class="inside-padd" style="padding: 20px 40px;text-align: center;"><input type="text" name="promptInput"/><div class="drop-btn-prompt" style="margin-right: 10px;"><button data-button-prompt type="submit"><span class="text-el">ok</span></button></div><div class="drop-btn-cancel"><button type="button" data-closed><span class="text-el">cancel</span></button></div></form></div><div class="drop-footer-default"></div></div>',
-            promptInputValue: null,
-            next: '.drop-next',
-            prev: '.drop-prev',
-            type: 'post',
-            dataType: null,
-            durationOn: 300,
-            durationOff: 40,
-            timeclosenotify: 2000,
-            notify: false,
-            confirm: false,
-            prompt: false,
-            always: false,
-            animate: false,
-            moreOne: false,
-            closeClick: true,
-            closeEsc: false,
-            droppable: false,
-            cycle: false,
-            limitSize: false,
-            droppableLimit: false,
-            inheritClose: false,
-            keyNavigate: true,
-            context: false,
-            minHeightContent: 100,
-            centerOnScroll: false
-        };
-        this.drp = {
-            hrefs: {},
-            drops: {},
-            galleries: {},
-            scrollemulatetimeout: null,
-            curHash: null,
-            curDrop: null,
-            curHashTimeout: null,
-            scrollTop: null
-        };
-        this.setParameters = function(options) {
-            $.extend(this.dP, options);
-        };
-        this.setMethods = function(ms) {
-            $.extend(methods, ms);
-        };
+    $.drop = function(m, opt) {
+        if (methods[m] && !/_/.test(m))
+            methods[m].call(null, opt);
+        if (typeof m === 'string')
+            methods.open.call(null, $.extend(opt, {'html': m}));
     };
+    $.drop.nS = 'drop';
+    $.drop.dP = {
+        drop: null,
+        source: null,
+        dataPrompt: null,
+        dropContent: '.drop-content-default',
+        dropHeader: '.drop-header-default',
+        dropFooter: '.drop-footer-default',
+        placePaste: '.placePaste',
+        notifyPlace: '.drop-notification-default',
+        datas: null,
+        contentHeader: null,
+        contentFooter: null,
+        contentContent: null,
+        start: null,
+        placeInherit: null,
+        condTrigger: null,
+        dropFilter: null,
+        message: {
+            success: function(text) {
+                return '<div class = "drop-msg"><div class = "drop-success"><span class = "drop-icon_info"></span><div class="drop-text-el">' + text + '</div></div></div>';
+            },
+            error: function(text) {
+                return '<div class = "drop-msg"><div class = "drop-error"><span class = "drop-icon_info"></span><div class="drop-text-el">' + text + '</div></div></div>';
+            },
+            info: function(text) {
+                return '<div class = "drop-msg"><div class = "drop-info"><span class = "drop-icon_info"></span><div class="drop-text-el">' + text + '</div></div></div>';
+            }
+        },
+        trigger: 'click',
+        triggerOn: null,
+        triggerOff: null,
+        exit: '[data-closed]',
+        effectOn: 'fadeIn',
+        effectOff: 'fadeOut',
+        place: 'center',
+        placement: 'top left',
+        overlayColor: '#000',
+        overlayOpacity: .6,
+        position: 'absolute',
+        placeBeforeShow: 'center center',
+        placeAfterClose: 'center center',
+        beforeG: null,
+        afterG: null,
+        closeG: null,
+        closedG: null,
+        pattern: '<div class="drop drop-style drop-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default"></div><div class="drop-content-default"><button class="drop-prev" type="button"  style="height:100%;display:none;font-size: 30px;position:absolute;width: 35%;left: 20px;top:0;text-align: left;"><</button><button class="drop-next" type="button" style="height:100%;display:none;font-size: 30px;position:absolute;width: 35%;right: 20px;top:0;text-align: right;">></button><div class="inside-padd placePaste" style="padding: 20px 40px;text-align: center;"></div></div><div class="drop-footer-default"></div></div>',
+        notifyBtnDrop: '#drop-notification-default',
+        defaultClassBtnDrop: 'drop-default',
+        patternNotif: '<div class="drop drop-style" id="drop-notification-default" style="background-color: #fff;"><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;"></div><div class="drop-content-default"><div class="inside-padd drop-notification-default"></div></div><div class="drop-footer-default"></div></div>',
+        confirmBtnDrop: '#drop-confirm-default',
+        confirmActionBtn: '[data-button-confirm]',
+        patternConfirm: '<div class="drop drop-style" id="drop-confirm-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;">Confirm</div><div class="drop-content-default"><div class="inside-padd" style="padding: 20px 40px;text-align: center;"><div class="drop-btn-confirm" style="margin-right: 10px;"><button type="button" data-button-confirm><span class="text-el">confirm</span></button></div><div class="drop-btn-cancel"><button type="button" data-closed><span class="text-el">cancel</span></button></div></div></div><div class="drop-footer-default"></div></div>',
+        promptBtnDrop: '#drop-prompt-default',
+        promptActionBtn: '[data-button-prompt]',
+        promptInput: '[name="promptInput"]',
+        patternPrompt: '<div class="drop drop-style" id="drop-prompt-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;">Prompt</div><div class="drop-content-default"><form class="inside-padd" style="padding: 20px 40px;text-align: center;"><input type="text" name="promptInput"/><div class="drop-btn-prompt" style="margin-right: 10px;"><button data-button-prompt type="submit"><span class="text-el">ok</span></button></div><div class="drop-btn-cancel"><button type="button" data-closed><span class="text-el">cancel</span></button></div></form></div><div class="drop-footer-default"></div></div>',
+        promptInputValue: null,
+        next: '.drop-next',
+        prev: '.drop-prev',
+        type: 'post',
+        dataType: null,
+        durationOn: 300,
+        durationOff: 40,
+        timeclosenotify: 2000,
+        notify: false,
+        confirm: false,
+        prompt: false,
+        always: false,
+        animate: false,
+        moreOne: false,
+        closeClick: true,
+        closeEsc: false,
+        droppable: false,
+        cycle: false,
+        limitSize: false,
+        droppableLimit: false,
+        inheritClose: false,
+        keyNavigate: true,
+        context: false,
+        minHeightContent: 100,
+        centerOnScroll: false
+    };
+    $.drop.drp = {
+        hrefs: {},
+        drops: {},
+        galleries: {},
+        scrollemulatetimeout: null,
+        curHash: null,
+        curDrop: null,
+        curHashTimeout: null,
+        scrollTop: null
+    };
+    $.drop.setParameters = function(options) {
+        $.extend($.drop.dP, options);
+    };
+    $.drop.setMethods = function(ms) {
+        $.extend(methods, ms);
+    };
+    $.drop.position = function() {
+        $('[data-elrun].' + aC).each(function() {
+            var $this = $(this);
+            var drp = $this.data('drp');
+            if (drp && drp.place !== 'inherit')
+                methods._checkMethod(function() {
+                    methods[drp.place].call($this);
+                }, drp.place);
+        });
+    };
+    $.drop.close = function() {
+        methods.close();
+    };
+
     $(document).ready(function() {
         var body = $('body');
 
@@ -917,17 +937,16 @@
             loadingFrame = (loadingFrame + 1) % 12;
         }
 
-        $.dropInit.prototype.showActivity = function() {
+        $.drop.showActivity = function() {
             clearInterval(loadingTimer);
             loading.show();
             loadingTimer = setInterval(_animate_loading, 66);
         };
-        $.dropInit.prototype.hideActivity = function() {
+        $.drop.hideActivity = function() {
             loading.hide();
         };
     });
 
-    $.drop = new $.dropInit();
     var wLH = window.location.hash;
     wnd.off('hashchange.' + $.drop.nS).on('hashchange.' + $.drop.nS, function(e) {
         e.preventDefault();
@@ -937,7 +956,7 @@
         if (!$.drop.drp.curHash)
             for (var i in $.drop.drp.hrefs) {
                 if (wLH.indexOf(i) === -1 && wLHN.indexOf(i) !== -1)
-                    methods.open({}, null, $.drop.drp.hrefs[i], e, true);
+                    methods.open.call($.drop.drp.hrefs[i], {}, null, e, true);
                 else
                     methods.close.call($($.drop.drp.hrefs[i].data('drop')), true);
             }
