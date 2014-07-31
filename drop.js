@@ -174,6 +174,7 @@
                 $.drop.drp.curDefault = opt.defaultClassBtnDrop + (rel ? rel : (opt.source ? opt.source.replace(methods._reg(), '') : (new Date()).getTime()));
                 el.attr('data-drop', '.' + $.drop.drp.curDefault).data('drop', '.' + $.drop.drp.curDefault);
                 opt.drop = '.' + $.drop.drp.curDefault;
+                //zzz
                 $.drop.showActivity();
                 if (opt.source.match(/jpg|gif|png|bmp|jpeg/)) {
                     var img = new Image();
@@ -491,10 +492,9 @@
                     opt.drop = '.' + opt.defaultClassBtnDrop + rel;
                 else
                     opt.drop = '.' + opt.defaultClassBtnDrop + sourcePref;
-            if (opt.place === 'inherit') {
-                if (opt.placeInherit)
-                    drop = $(drop).appendTo($(opt.placeInherit).empty());
-            }
+            
+            if (opt.place === 'inherit' && opt.placeInherit)
+                drop = $(drop).appendTo($(opt.placeInherit).empty());
             else {
                 function _for_center(rel) {
                     $('body').append('<div class="forCenter" data-rel="' + rel + '" style="left: 0;top: 0;width: 100%;display:none;height: 100%;position: absolute;height: 100%;"></div>');
@@ -535,7 +535,6 @@
             var elSet = $this.data(),
                     rel = null,
                     self = $this.get(0);
-            $.extend(opt, elSet);
 
             if (self.rel)
                 rel = self.rel.replace(methods._reg(), '');
