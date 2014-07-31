@@ -205,8 +205,8 @@ $.drop.extendDrop = function() {
                             h = drop.outerHeight(),
                             ws = drop.width(),
                             hs = drop.height();
-                    if (w + $.drop.widthScroll > wndW)
-                        drop.css('width', wndW - w + ws - $.drop.widthScroll);
+                    if (w > wndW)
+                        drop.css('width', wndW - w + ws);
                     if (h > wndH)
                         drop.css('height', wndH - h + hs);
                     if (!dropV) {

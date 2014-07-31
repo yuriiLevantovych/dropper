@@ -127,12 +127,16 @@
             if (el.get(0).rel)
                 rel = el.get(0).rel.replace(methods._reg(), '');
             function _update(data) {
-                $.drop.hideActivity();
+                var drop = methods._pasteDrop(opt, opt.pattern, rel, $.drop.drp.curDefault).attr('pattern', true);
+
                 if (!opt.always && !opt.notify && opt.source)
-                    $.drop.drp.drops[opt.source.replace(methods._reg(), '')] = data;
-                var drop = methods._pasteDrop(opt, opt.pattern, rel, $.drop.drp.curDefault);
-                drop.attr('pattern', true);
+                    $.drop.drp.drops[opt.source.replace(methods._reg(), '')] = drop;
                 drop.find($(opt.placePaste)).html(data);
+                $(document).trigger({
+                    type: 'successHtml.' + $.drop.nS,
+                    el: drop,
+                    datas: data
+                });
                 methods._show.call(el, e, opt, hashChange);
             }
 
@@ -141,59 +145,39 @@
                 methods._show.call(el, e, opt, hashChange);
                 return el;
             }
-            if (elSet.drop && !$.existsN(elSet.drop))
+
+            $.drop.drp.curDefault = opt.defaultClassBtnDrop + (rel ? rel : (opt.source ? opt.source.replace(methods._reg(), '') : (new Date()).getTime()));
+            el.attr('data-drop', '.' + $.drop.drp.curDefault).data('drop', '.' + $.drop.drp.curDefault);
+
+            //zzz
+            $.drop.showActivity();
+            if (opt.source.match(/jpg|gif|png|bmp|jpeg/)) {
+                var img = new Image();
+                $(img).load(function() {
+                    $.drop.hideActivity();
+                    _update($(this));
+                });
+                img.src = opt.source;
+            }
+            else
                 $.ajax({
                     type: opt.type,
-                    data: opt.datas,
                     url: opt.source,
+                    data: opt.datas,
+                    dataType: opt.dataType ? opt.dataType : 'html',
                     beforeSend: function() {
                         if (!opt.moreOne)
                             methods._closeMoreOne();
-                        $.drop.showActivity();
                     },
-                    dataType: opt.notify ? 'json' : opt.dataType,
                     success: function(data) {
                         $.drop.hideActivity();
                         if (opt.notify)
                             methods._pasteNotify.call(el, data, opt, rel, hashChange);
                         else {
-                            if (!opt.always)
-                                $.drop.drp.drops[opt.source.replace(methods._reg(), '')] = data;
-                            methods._pasteDrop(opt, data, rel);
-                            var drop = $(elSet.drop);
-                            $(document).trigger({
-                                type: 'successHtml.' + $.drop.nS,
-                                el: drop,
-                                datas: data
-                            });
-                            methods._show.call(el, e, opt, hashChange);
+                            _update(data);
                         }
                     }
                 });
-            else {
-                $.drop.drp.curDefault = opt.defaultClassBtnDrop + (rel ? rel : (opt.source ? opt.source.replace(methods._reg(), '') : (new Date()).getTime()));
-                el.attr('data-drop', '.' + $.drop.drp.curDefault).data('drop', '.' + $.drop.drp.curDefault);
-                opt.drop = '.' + $.drop.drp.curDefault;
-                //zzz
-                $.drop.showActivity();
-                if (opt.source.match(/jpg|gif|png|bmp|jpeg/)) {
-                    var img = new Image();
-                    $(img).load(function() {
-                        _update($(this));
-                    });
-                    img.src = opt.source;
-                }
-                else
-                    $.ajax({
-                        type: opt.type,
-                        url: opt.source,
-                        data: opt.datas,
-                        dataType: opt.dataType ? opt.dataType : 'html',
-                        success: function(data) {
-                            _update(data);
-                        }
-                    });
-            }
             return el;
         },
         open: function(opt, datas, e, hashChange) {
@@ -483,16 +467,15 @@
             return /[^a-zA-Z0-9]+/ig;
         },
         _pasteDrop: function(opt, drop, rel, aClass) {
-            var sourcePref = opt.source ? opt.source.replace(methods._reg(), '') : '';
-            if (drop instanceof jQuery && drop.attr('pattern'))
-                drop.find(drop.data('drp').placePaste).empty().append($.drop.drp.drops[sourcePref]);
-            var sdrop = opt.drop;
+            var sourcePref = opt.source ? opt.source.replace(methods._reg(), '') : '',
+                    sdrop = opt.drop;
+
             if (!opt.drop)
                 if (rel)
                     opt.drop = '.' + opt.defaultClassBtnDrop + rel;
                 else
                     opt.drop = '.' + opt.defaultClassBtnDrop + sourcePref;
-            
+
             if (opt.place === 'inherit' && opt.placeInherit)
                 drop = $(drop).appendTo($(opt.placeInherit).empty());
             else {
@@ -880,7 +863,7 @@
         animate: false,
         moreOne: false,
         closeClick: true,
-        closeEsc: false,
+        closeEsc: true,
         droppable: false,
         cycle: false,
         limitSize: false,
