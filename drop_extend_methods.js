@@ -348,11 +348,11 @@ $.drop.extendDrop = function() {
                     'confirm': true
                 });
                 if (!$.exists(opt.confirmBtnDrop))
-                    methods._pasteDrop($.extend({}, opt, confirmBtn.data()), opt.patternConfirm);
+                    var drop = methods._pasteDrop($.extend({}, opt, confirmBtn.data()), opt.patternConfirm);
                 else
-                    methods._pasteDrop($.extend({}, opt, confirmBtn.data()), $(opt.confirmBtnDrop));
+                    drop = methods._pasteDrop($.extend({}, opt, confirmBtn.data()), $(opt.confirmBtnDrop));
 
-                methods._show.call(confirmBtn, e, opt, hashChange);
+                methods._show.call(confirmBtn, drop, e, opt, hashChange);
 
                 $(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                     e.stopPropagation();
@@ -372,11 +372,11 @@ $.drop.extendDrop = function() {
                     'promptInputValue': opt.promptInputValue
                 });
                 if (!$.exists(opt.promptBtnDrop))
-                    methods._pasteDrop($.extend({}, opt, promptBtn.data()), opt.patternPrompt);
+                    var drop = methods._pasteDrop($.extend({}, opt, promptBtn.data()), opt.patternPrompt);
                 else
-                    methods._pasteDrop($.extend({}, opt, promptBtn.data()), $(opt.promptBtnDrop));
+                    drop = methods._pasteDrop($.extend({}, opt, promptBtn.data()), $(opt.promptBtnDrop));
 
-                methods._show.call(promptBtn, e, opt, hashChange);
+                methods._show.call(promptBtn, drop, e, opt, hashChange);
 
                 $(opt.promptActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                     e.stopPropagation();
