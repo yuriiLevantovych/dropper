@@ -240,6 +240,7 @@
                     opt.drop = '.' + _classFilter;
                     drop.addClass(_classFilter);
                 }
+
                 function _confirmF() {
                     if (!$.existsN(drop) || $.existsN(drop) && opt.source && !$.drop.drp.drops[sourceC] || opt.notify || opt.always) {
                         if (datas && opt.notify)
@@ -250,30 +251,32 @@
                     else
                         methods._show.call($this, drop, e, opt, hashChange);
                 }
-                if (!$this.hasClass($.drop.dP.activeClass)) {
-                    if (!opt.moreOne && !opt.start)
-                        methods._closeMoreOne();
-                    if (!$this.is(':disabled')) {
-                        if (opt.start && !eval(opt.start).call($this, drop, opt))
-                            return false;
-                        if (opt.notify)//for front validations
-                            methods._pasteNotify.call($this, datas, opt, null, hashChange);
-                        else {
-                            if (opt.prompt || opt.confirm || opt.source && !$.existsN(drop) || opt.source && opt.always) {
-                                if (!opt.confirm && !opt.prompt)
-                                    _confirmF();
-                                else//for cofirm && prompt
-                                    methods._checkMethod(function() {
-                                        methods.confirmPrompt(opt, methods, hashChange, _confirmF, e);
-                                    });
-                            }
-                            else if ($.existsN(drop) || opt.source && $.drop.drp.drops[sourceC]) {
-                                drop = methods._pasteDrop(opt, $.existsN(drop) && !opt.rel ? drop : $.drop.drp.drops[sourceC]);
-                                methods._show.call($this, drop, e, opt, hashChange);
-                            }
-                            else
-                                returnMsg('insufficient data');
+
+                if (!opt.moreOne && !opt.start)
+                    methods._closeMoreOne();
+
+                if (!$this.hasClass($.drop.dP.activeClass) && !drop.hasClass($.drop.dP.activeClass)) {
+                    if ($this.is(':disabled'))
+                        return false;
+                    if (opt.start && !eval(opt.start).call($this, drop, opt))
+                        return false;
+                    if (opt.notify)//for front validations
+                        methods._pasteNotify.call($this, datas, opt, null, hashChange);
+                    else {
+                        if (opt.prompt || opt.confirm || opt.source && !$.existsN(drop) || opt.source && opt.always) {
+                            if (!opt.confirm && !opt.prompt)
+                                _confirmF();
+                            else//for cofirm && prompt
+                                methods._checkMethod(function() {
+                                    methods.confirmPrompt(opt, methods, hashChange, _confirmF, e);
+                                });
                         }
+                        else if ($.existsN(drop) || opt.source && $.drop.drp.drops[sourceC]) {
+                            drop = methods._pasteDrop(opt, $.existsN(drop) && !opt.rel ? drop : $.drop.drp.drops[sourceC]);
+                            methods._show.call($this, drop, e, opt, hashChange);
+                        }
+                        else
+                            returnMsg('insufficient data');
                     }
                 }
                 else
@@ -282,10 +285,7 @@
         },
         close: function(hashChange, f) {
             var sel = this,
-                    drop = sel instanceof jQuery ? sel : $('[data-elrun].' + $.drop.dP.activeClass);
-
-            if (!((drop instanceof jQuery) && $.existsN(drop)))
-                return false;
+                    drop = $.existsN(sel) ? sel : $('[data-elrun].' + $.drop.dP.activeClass);
 
             clearTimeout($.drop.drp.closeDropTime);
 
@@ -293,11 +293,10 @@
                 var drop = $(this),
                         opt = drop.data('drp');
 
-                if (!(opt && drop.is(':visible') && (opt.notify || sel || opt.place !== 'inherit' || opt.inheritClose || opt.overlayOpacity !== 0)))
+                if (!(opt && (opt.notify || sel || opt.place !== 'inherit' || opt.inheritClose || opt.overlayOpacity !== 0)))
                     return false;
 
                 var $thisB = opt.elrun;
-
                 if (!$thisB)
                     return false;
                 var durOff = opt.durationOff;
@@ -663,12 +662,12 @@
             if (opt.closeEsc)
                 doc.on('keyup.' + $.drop.nS, function(e) {
                     if (e.keyCode === 27)
-                        methods.close();
+                        methods.close.call(null);
                 });
             $('html, body').css('height', '100%');
             doc.off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                 if (opt.closeClick && !$.existsN($(e.target).closest('[data-elrun]')))
-                    methods.close();
+                    methods.close.call(null);
             });
             if (opt.context) {
                 var collect = drop.add(dropOver).add(forCenter);
@@ -693,7 +692,7 @@
                     methods[opt.place].call(drop, e);
                 }, opt.place);
 
-            if (forCenter)
+            if (forCenter && opt.place === 'center')
                 forCenter.show();
 
             drop[opt.effectOn](opt.durationOn, function(e) {
@@ -902,7 +901,7 @@
         });
     };
     $.drop.close = function() {
-        methods.close();
+        methods.close.call(null);
     };
 
     doc.ready(function() {
