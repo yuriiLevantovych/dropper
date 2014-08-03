@@ -252,14 +252,13 @@
                         methods._show.call($this, drop, e, opt, hashChange);
                 }
 
-                if (!opt.moreOne && !opt.start)
-                    methods._closeMoreOne();
+                if (!$this.hasClass($.drop.dP.activeClass) || !drop.hasClass($.drop.dP.activeClass)) {
+                    //zzz
+                    if (!opt.moreOne && !opt.start)
+                        methods._closeMoreOne();
+                    if ($this.is(':disabled') || opt.start && !eval(opt.start).call($this, drop, opt))
+                        return false;
 
-                if (!$this.hasClass($.drop.dP.activeClass) && !drop.hasClass($.drop.dP.activeClass)) {
-                    if ($this.is(':disabled'))
-                        return false;
-                    if (opt.start && !eval(opt.start).call($this, drop, opt))
-                        return false;
                     if (opt.notify)//for front validations
                         methods._pasteNotify.call($this, datas, opt, null, hashChange);
                     else {
@@ -291,18 +290,15 @@
 
             drop.each(function() {
                 var drop = $(this),
-                        opt = drop.data('drp');
+                        opt = drop.data('drp'),
+                        $thisB = opt.elrun;
 
-                if (!(opt && (opt.notify || sel || opt.place !== 'inherit' || opt.inheritClose || opt.overlayOpacity !== 0)))
+                if (!(opt && (opt.notify || sel || opt.place !== 'inherit' || opt.inheritClose || opt.overlayOpacity !== 0) && $thisB))
                     return false;
 
-                var $thisB = opt.elrun;
-                if (!$thisB)
-                    return false;
                 var durOff = opt.durationOff;
                 function _hide() {
-                    $thisB.removeClass($.drop.dP.activeClass);
-                    $thisB.each(function() {
+                    $thisB.removeClass($.drop.dP.activeClass).each(function() {
                         if (opt.href) {
                             clearTimeout($.drop.drp.curHashTimeout);
                             $.drop.drp.curHash = hashChange ? opt.href : null;
@@ -539,7 +535,6 @@
 
             //opt = $.extend({}, drop.data('drp'), opt);
 
-            $this.addClass($.drop.dP.activeClass);
             drop.data('drp', opt);
 
             if (opt.rel)
@@ -703,7 +698,10 @@
                 $.drop.drp.curDrop = drop;
                 if ($.existsN(drop.find('[data-drop]')))
                     methods.init.call(drop.find('[data-drop]'));
+                
                 drop.addClass($.drop.dP.activeClass);
+                $this.addClass($.drop.dP.activeClass);
+                
                 if (opt.notify && opt.timeclosenotify)
                     $.drop.drp.closeDropTime = setTimeout(function() {
                         methods.close.call(drop);
