@@ -223,10 +223,10 @@
                 $.extend(opt, $this.data());
                 var drop = $(opt.drop);
                 opt.source = opt.source || $this.attr('href');
+                opt.elrun = $this;
                 if (self.rel && $.drop.drp.galleries[self.rel])
                     opt.rel = self.rel.replace(methods._reg(), '');
-                //zzz
-                opt.elrun = opt.elrun ? opt.elrun.add($this) : $this;
+
                 var sourceC = opt.source ? opt.source.replace(methods._reg(), '') : null;
 
                 if (opt.always && opt.source && $.existsN(drop) && !opt.notify) {
@@ -251,9 +251,7 @@
                     else
                         methods._show.call($this, drop, e, opt, hashChange);
                 }
-
-                if (!$this.hasClass($.drop.dP.activeClass) || !drop.hasClass($.drop.dP.activeClass)) {
-                    //zzz
+                if (!$this.hasClass($.drop.dP.activeClass) && !drop.hasClass($.drop.dP.activeClass)) {
                     if (!opt.moreOne && !opt.start)
                         methods._closeMoreOne();
                     if ($this.is(':disabled') || opt.start && !eval(opt.start).call($this, drop, opt))
@@ -394,8 +392,8 @@
 
             return sel;
         },
-        center: function() {
-            return this.each(function() {
+        center: function(el) {
+            return (el || this).each(function() {
                 var drop = $(this),
                         drp = drop.data('drp');
                 if (drp && !drp.droppableIn) {
@@ -539,7 +537,7 @@
 
             if (opt.rel)
                 methods._checkMethod(function() {
-                    methods.galleries.call($this, drop, opt, methods);
+                    methods._galleries.call($this, drop, opt, methods);
                 });
             var overlays = $('.overlayDrop').css('z-index', 1103),
                     condOverlay = opt.overlayOpacity !== 0,
@@ -725,7 +723,7 @@
                     methods._checkMethod(function() {
                         methods.droppable(drop);
                     });
-                if (opt.rel && opt.keyNavigate && methods.galleries)
+                if (opt.rel && opt.keyNavigate && methods._galleries)
                     doc.off('keydown.' + $.drop.nS + ev).on('keydown.' + $.drop.nS + ev, function(e) {
                         e.preventDefault();
                         var key = e.keyCode;
@@ -742,12 +740,12 @@
             $(dropOver).add(forCenter).css('height', '').css('height', doc.height());
         },
         _checkMethod: function(f, nm) {
-            //try {
+            try {
             f();
-//            } catch (e) {
-//                var method = f.toString().match(/\.\S*\(/);
-//                returnMsg('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
-//            }
+            } catch (e) {
+                var method = f.toString().match(/\.\S*\(/);
+                returnMsg('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
+            }
             return this;
         },
         _positionType: function(drop) {

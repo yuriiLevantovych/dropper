@@ -218,7 +218,7 @@ $.drop.extendDrop = function() {
                 }
             });
         },
-        galleries: function(drop, opt, methods) {
+        _galleries: function(drop, opt, methods) {
             var $this = this,
                     relO = $this.get(0).rel,
                     relA = $.drop.drp.galleries[opt.rel];
