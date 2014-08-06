@@ -48,7 +48,7 @@
                     var source = el.data('source') || $(this).attr('href');
                     if (source) {
                         if (!$.drop.drp.galleries[rel])
-                            $.drop.drp.galleries[rel] = new Array();
+                            $.drop.drp.galleries[rel] = [];
                         $.drop.drp.galleries[rel].push(source);
                     }
                 }
@@ -97,9 +97,6 @@
                 if (/#/.test(opt.href) && !$.drop.drp.hrefs[opt.href])
                     $.drop.drp.hrefs[opt.href] = el;
             });
-            for (var i in $.drop.drp.galleries)
-                if ($.drop.drp.galleries[i].length <= 1)
-                    delete $.drop.drp.galleries[i];
 
             return this;
         },
@@ -153,7 +150,6 @@
                 methods._show.call(el, drop, e, opt, hashChange);
                 return el;
             }
-
             $.drop.showActivity();
             if (opt.source.match(/jpg|gif|png|bmp|jpeg/)) {
                 var img = new Image();
@@ -164,11 +160,10 @@
                 img.src = opt.source;
             }
             else
-                $.ajax({
-                    type: opt.type,
+                $.ajax($.extend({}, opt.ajax, {
                     url: opt.source,
                     data: opt.datas,
-                    dataType: opt.dataType ? opt.dataType : 'html',
+                    dataType: opt.ajax.dataType ? opt.ajax.dataType : (opt.notify ? 'json' : 'html'),
                     beforeSend: function() {
                         if (!opt.moreOne)
                             methods._closeMoreOne();
@@ -180,14 +175,14 @@
                         else
                             _update(data);
                     }
-                });
+                }));
             return el;
         },
         open: function(opt, datas, e, hashChange) {
             var $this = this;
             e = e ? e : window.event;
             opt = $.extend({}, $.drop.dP, opt);
-            if (!$this || !($this instanceof jQuery)) {
+            if (!$this || !$.existsN($this)) {
                 if ($(this).hasClass('isDrop'))
                     $this = this;
                 else {
@@ -220,8 +215,6 @@
                     }
                 }
             }
-            if (!($this instanceof jQuery))
-                return this;
             return $this.each(function() {
                 var $this = $(this),
                         self = $this.get(0);
@@ -852,8 +845,10 @@
         promptInputValue: null,
         next: '.drop-next',
         prev: '.drop-prev',
-        type: 'post',
-        dataType: null,
+        ajax: {
+            type: 'post',
+            dataType: null
+        },
         durationOn: 300,
         durationOff: 40,
         timeclosenotify: 2000,

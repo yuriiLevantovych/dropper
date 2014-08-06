@@ -219,20 +219,18 @@ $.drop.extendDrop = function() {
             });
         },
         galleries: function(drop, opt, methods) {
-            var $this = this,
-                    relO = $this.get(0).rel,
-                    relA = $.drop.drp.galleries[opt.rel];
-
-            if (relO === '' && relO === undefined)
-                return false;
+            var relA = $.drop.drp.galleries[opt.rel];
+            console.log(relA)
 
             if (relA !== undefined) {
                 var relL = relA.length,
                         relP = $.inArray(opt.source ? opt.source : drop.find(opt.placePaste).find('img').attr('src'), relA);
                 drop.find(opt.prev).add(drop.find(opt.next)).hide().attr('disabled', 'disabled');
-                if (relP >= 0 && relP !== relL - 1)
+                if (relP === -1)
+                    return false;
+                if (relP !== relL - 1)
                     drop.find(opt.next).show().removeAttr('disabled');
-                if (relP <= relL - 1 && relP !== 0)
+                if (relP !== 0)
                     drop.find(opt.prev).show().removeAttr('disabled');
                 if (opt.cycle)
                     drop.find(opt.prev).add(drop.find(opt.next)).show().removeAttr('disabled');
@@ -251,7 +249,7 @@ $.drop.extendDrop = function() {
                     var $this = $('[data-source="' + relA[relP] + '"][rel], [href="' + relA[relP] + '"][rel]').filter(':last'),
                             $next = $('[data-source="' + relA[relNext] + '"][rel], [href="' + relA[relNext] + '"][rel]').filter(':last');
                     methods.close.call($($this.data('drop')), undefined, function() {
-                        methods.open.call($next, {}, undefined);
+                        methods.open.call($next, {source: relA[relNext], rel: opt.rel}, undefined);
                     });
                 }
             });
