@@ -899,6 +899,9 @@
     $.drop.close = function() {
         methods.close.call(null);
     };
+    $.drop.open = function() {
+        methods.open.call(null);
+    };
 
     doc.ready(function() {
         var loadingTimer, loadingFrame = 1,

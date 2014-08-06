@@ -112,7 +112,7 @@
         <script>
             $.drop.extendDrop('droppable', 'noinherit', 'heightContent', 'scroll', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPrompt');
             $(document).ready(function() {
-                $('[href]').drop({
+                var api = $('[href]').drop({
                     placeBeforeShow: 'inherit',
                     placeAfterClose: 'inherit',
                     animate: true,
