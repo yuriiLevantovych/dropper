@@ -31,6 +31,11 @@
         init: function(options) {
             var set = $.extend({}, $.drop.dP, options);
 
+            if (!$.existsN(this)) {
+                returnMsg('this object is not a jQuery object');
+                return false;
+            }
+
             this.each(function() {
                 var el = methods.destroy($(this)),
                         opt = $.extend({}, set, el.data());
@@ -392,8 +397,8 @@
 
             return sel;
         },
-        center: function(el) {
-            return (el || this).each(function() {
+        center: function(e) {
+            return this.each(function() {
                 var drop = $(this),
                         drp = drop.data('drp');
                 if (drp && !drp.droppableIn) {
@@ -537,7 +542,7 @@
 
             if (opt.rel)
                 methods._checkMethod(function() {
-                    methods._galleries.call($this, drop, opt, methods);
+                    methods.galleries.call($this, drop, opt, methods);
                 });
             var overlays = $('.overlayDrop').css('z-index', 1103),
                     condOverlay = opt.overlayOpacity !== 0,
@@ -696,10 +701,10 @@
                 $.drop.drp.curDrop = drop;
                 if ($.existsN(drop.find('[data-drop]')))
                     methods.init.call(drop.find('[data-drop]'));
-                
+
                 drop.addClass($.drop.dP.activeClass);
                 $this.addClass($.drop.dP.activeClass);
-                
+
                 if (opt.notify && opt.timeclosenotify)
                     $.drop.drp.closeDropTime = setTimeout(function() {
                         methods.close.call(drop);
@@ -723,7 +728,7 @@
                     methods._checkMethod(function() {
                         methods.droppable(drop);
                     });
-                if (opt.rel && opt.keyNavigate && methods._galleries)
+                if (opt.rel && opt.keyNavigate && methods.galleries)
                     doc.off('keydown.' + $.drop.nS + ev).on('keydown.' + $.drop.nS + ev, function(e) {
                         e.preventDefault();
                         var key = e.keyCode;
@@ -740,13 +745,13 @@
             $(dropOver).add(forCenter).css('height', '').css('height', doc.height());
         },
         _checkMethod: function(f, nm) {
-            try {
+            //try {
             f();
-            } catch (e) {
-                var method = f.toString().match(/\.\S*\(/);
-                returnMsg('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
-            }
-            return this;
+//            } catch (e) {
+//                var method = f.toString().match(/\.\S*\(/);
+//                returnMsg('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
+//            }
+//            return this;
         },
         _positionType: function(drop) {
             if (drop.data('drp') && drop.data('drp').place !== 'inherit')
