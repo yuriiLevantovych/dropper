@@ -39,6 +39,9 @@
             this.each(function() {
                 var el = methods.destroy($(this)),
                         opt = $.extend({}, set, el.data());
+                        
+                el.data('drp', opt);
+                
                 if (opt.notify)
                     methods._notifyTrigger.call(el, opt);
                 var rel = this.rel;
@@ -103,13 +106,13 @@
                         opt = $(el.attr('data-drop')).data('drp');
                 if (!opt)
                     return;
-                el.removeClass('isDrop');
+                el.removeClass('isDrop').removeData('drp');
                 if (opt.trigger)
-                    el.off(opt.trigger + '.' + $.drop.nS).removeData(opt.trigger);
+                    el.off(opt.trigger + '.' + $.drop.nS);
                 if (opt.triggerOn)
-                    el.off(opt.triggerOn + '.' + $.drop.nS).removeData(opt.triggerOn);
+                    el.off(opt.triggerOn + '.' + $.drop.nS);
                 if (opt.triggerOff)
-                    el.off(opt.triggerOff + '.' + $.drop.nS).removeData(opt.triggerOff);
+                    el.off(opt.triggerOff + '.' + $.drop.nS);
                 el.off('contextmenu.' + $.drop.nS).off('mouseup.' + $.drop.nS);
             });
         },
@@ -188,7 +191,7 @@
                     if (opt.datas) {
                         if (!$.exists('[data-drop="' + opt.notifyBtnDrop + '"]')) {
                             $this = $('<div><button data-drop="' + opt.notifyBtnDrop + '" data-notify="true"></button></div>').appendTo($('body')).hide().children();
-                            methods._pasteDrop($.extend(opt, $this.data()), opt.patternNotif);
+                            methods._pasteDrop($.extend(opt, $this.data()), opt.patternNotify);
                         }
                         else
                             $this = $('[data-drop="' + opt.notifyBtnDrop + '"]');
@@ -283,7 +286,6 @@
                         $thisB = opt.elrun;
                 if (!(opt && (opt.notify || sel || opt.place !== 'inherit' || opt.inheritClose || opt.overlayOpacity !== 0) && $thisB))
                     return false;
-                var durOff = opt.durationOff;
                 function _hide() {
                     $thisB.removeClass($.drop.dP.activeClass).each(function() {
                         if (opt.href) {
@@ -306,8 +308,7 @@
                     var ev = opt.drop ? opt.drop.replace(methods._reg(), '') : '';
                     wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
                     doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS);
-                    drop[opt.effectOff](durOff, function() {
-                        console.log(1)
+                    drop[opt.effectOff](opt.durationOff, function() {
                         $('html, body').css({'overflow': '', 'overflow-x': ''});
                         var $this = $(this);
                         if (opt.forCenter)
@@ -322,7 +323,7 @@
                             }
                         });
                         if (opt.dropOver && !f)
-                            opt.dropOver.fadeOut(durOff);
+                            opt.dropOver.fadeOut(opt.durationOff);
                         if (!opt.context)
                             methods._resetStyleDrop.call($(this));
                         $this.removeClass(opt.place);
@@ -343,7 +344,7 @@
                         var dC = $this.find($(opt.dropContent)).data('jsp');
                         if (dC)
                             dC.destroy();
-                        if (f)
+                        if ($.isFunction())
                             f();
                         if (!$.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
                             $('body, html').css('height', '');
@@ -814,7 +815,7 @@
         pattern: '<div class="drop drop-style drop-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default"></div><div class="drop-content-default"><button class="drop-prev" type="button"  style="height:100%;display:none;font-size: 30px;position:absolute;width: 35%;left: 20px;top:0;text-align: left;"><</button><button class="drop-next" type="button" style="height:100%;display:none;font-size: 30px;position:absolute;width: 35%;right: 20px;top:0;text-align: right;">></button><div class="inside-padd placePaste" style="padding: 20px 40px;text-align: center;"></div></div><div class="drop-footer-default"></div></div>',
         notifyBtnDrop: '#drop-notification-default',
         defaultClassBtnDrop: 'drop-default',
-        patternNotif: '<div class="drop drop-style" id="drop-notification-default" style="background-color: #fff;"><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;"></div><div class="drop-content-default"><div class="inside-padd drop-notification-default"></div></div><div class="drop-footer-default"></div></div>',
+        patternNotify: '<div class="drop drop-style" id="drop-notification-default" style="background-color: #fff;"><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;"></div><div class="drop-content-default"><div class="inside-padd drop-notification-default"></div></div><div class="drop-footer-default"></div></div>',
         confirmBtnDrop: '#drop-confirm-default',
         confirmActionBtn: '[data-button-confirm]',
         patternConfirm: '<div class="drop drop-style" id="drop-confirm-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;">Confirm</div><div class="drop-content-default"><div class="inside-padd" style="padding: 20px 40px;text-align: center;"><div class="drop-btn-confirm" style="margin-right: 10px;"><button type="button" data-button-confirm><span class="text-el">confirm</span></button></div><div class="drop-btn-cancel"><button type="button" data-closed><span class="text-el">cancel</span></button></div></div></div><div class="drop-footer-default"></div></div>',
@@ -830,7 +831,7 @@
             dataType: null
         },
         durationOn: 300,
-        durationOff: 40,
+        durationOff: 200,
         timeclosenotify: 2000,
         notify: false,
         confirm: false,

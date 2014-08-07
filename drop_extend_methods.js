@@ -251,7 +251,7 @@ $.drop.extendDrop = function() {
                     var $this = $('[data-source="' + relA[relP] + '"][rel], [href="' + relA[relP] + '"][rel]').filter(':last'),
                             $next = $('[data-source="' + relA[relNext] + '"][rel], [href="' + relA[relNext] + '"][rel]').filter(':last');
                     self.close.call($($this.data('drop')), undefined, function() {
-                        self.open.call($next, {source: relA[relNext], rel: opt.rel}, undefined);
+                        self.open.call($next, $.extend(opt, {source: relA[relNext], rel: opt.rel}), undefined);
                     });
                 }
             });
