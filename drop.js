@@ -154,6 +154,9 @@
                     this.onload = this.onerror = null;
                     methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'this image is not found'}});
                 };
+                $(img).on('dragstart.' + $.drop.nS, function(e) {
+                    e.preventDefault();
+                });
                 img.src = opt.source;
             }
             else
@@ -296,9 +299,7 @@
                     });
                     drop.removeClass($.drop.dP.activeClass);
                     if (methods.placeAfterClose)
-                        methods._checkMethod(function() {
-                            methods.placeAfterClose(drop, $thisB, opt);
-                        });
+                        methods.placeAfterClose(drop, $thisB, opt);
                     if (opt.droppableIn)
                         drop.data('drp').positionDroppableIn = {'left': drop.css('left'), 'top': drop.css('top')}
 
@@ -656,9 +657,7 @@
                 });
             }
             if (methods.placeBeforeShow)
-                methods._checkMethod(function() {
-                    methods.placeBeforeShow(drop, $this, opt.place, opt.placeBeforeShow, e);
-                });
+                methods.placeBeforeShow(drop, $this, opt.place, opt.placeBeforeShow, e);
             if (opt.place !== 'inherit')
                 methods._checkMethod(function() {
                     methods[opt.place].call(drop, e);
