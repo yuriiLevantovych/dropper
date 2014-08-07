@@ -220,21 +220,22 @@ $.drop.extendDrop = function() {
         },
         galleries: function(drop, opt, methods) {
             var relA = $.drop.drp.galleries[opt.rel];
-            console.log(relA)
 
-            if (relA !== undefined) {
-                var relL = relA.length,
-                        relP = $.inArray(opt.source ? opt.source : drop.find(opt.placePaste).find('img').attr('src'), relA);
-                drop.find(opt.prev).add(drop.find(opt.next)).hide().attr('disabled', 'disabled');
-                if (relP === -1)
-                    return false;
-                if (relP !== relL - 1)
-                    drop.find(opt.next).show().removeAttr('disabled');
-                if (relP !== 0)
-                    drop.find(opt.prev).show().removeAttr('disabled');
-                if (opt.cycle)
-                    drop.find(opt.prev).add(drop.find(opt.next)).show().removeAttr('disabled');
-            }
+            if (!relA)
+                return false;
+
+            var relL = relA.length,
+                    relP = $.inArray(opt.source ? opt.source : drop.find(opt.placePaste).find('img').attr('src'), relA);
+            drop.find(opt.prev).add(drop.find(opt.next)).hide().attr('disabled', 'disabled');
+            if (relP === -1)
+                return false;
+            if (relP !== relL - 1)
+                drop.find(opt.next).show().removeAttr('disabled');
+            if (relP !== 0)
+                drop.find(opt.prev).show().removeAttr('disabled');
+            if (opt.cycle)
+                drop.find(opt.prev).add(drop.find(opt.next)).show().removeAttr('disabled');
+
             drop.find(opt.prev).add(drop.find(opt.next)).attr('data-rel', opt.rel).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                 e.stopPropagation();
                 var $thisB = $(this).attr('disabled', 'disabled'),
@@ -253,8 +254,12 @@ $.drop.extendDrop = function() {
                     });
                 }
             });
+            return this;
         },
         placeBeforeShow: function(drop, $this, methods, place, placeBeforeShow, e) {
+            if (!methods._isScrollable($('body').get(0)))
+                $('html, body').css('overflow', 'hidden');
+            $('html, body').css('overflow-x', 'hidden')
             if (place === 'inherit')
                 return false;
             var pmt = placeBeforeShow.toLowerCase().split(' '),
@@ -289,6 +294,7 @@ $.drop.extendDrop = function() {
                     'left': $this.offset().left,
                     'top': $this.offset().top
                 });
+            return this;
         },
         placeAfterClose: function(drop, $this, opt) {
             var
@@ -334,6 +340,7 @@ $.drop.extendDrop = function() {
                     queue: false,
                     duration: opt.durationOff
                 });
+            return this;
         },
         confirmPrompt: function(opt, methods, hashChange, _confirmF, e) {
             if (opt.confirm) {
@@ -393,6 +400,7 @@ $.drop.extendDrop = function() {
                         _confirmF();
                 });
             }
+            return this;
         }
     };
     var newMethods = {};
