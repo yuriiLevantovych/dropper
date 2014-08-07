@@ -255,7 +255,7 @@
                                 _confirmF();
                             else//for cofirm && prompt
                                 methods._checkMethod(function() {
-                                    methods.confirmPrompt(opt, methods, hashChange, _confirmF, e);
+                                    methods.confirmPrompt(opt, hashChange, _confirmF, e);
                                 });
                         }
                         else if ($.existsN(drop) || opt.source && $.drop.drp.drops[sourceC]) {
@@ -306,6 +306,8 @@
                     wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
                     doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS);
                     drop[opt.effectOff](durOff, function() {
+                        console.log(1)
+                        $('html, body').css({'overflow': '', 'overflow-x': ''});
                         var $this = $(this);
                         if (opt.forCenter)
                             opt.forCenter.hide();
@@ -528,9 +530,10 @@
             //opt = $.extend({}, drop.data('drp'), opt);
 
             drop.data('drp', opt);
+
             if (opt.rel)
                 methods._checkMethod(function() {
-                    methods.galleries.call($this, drop, opt, methods);
+                    methods.galleries(drop, opt);
                 });
             var overlays = $('.overlayDrop').css('z-index', 1103),
                     condOverlay = opt.overlayOpacity !== 0,
@@ -654,7 +657,7 @@
             }
             if (methods.placeBeforeShow)
                 methods._checkMethod(function() {
-                    methods.placeBeforeShow(drop, $this, methods, opt.place, opt.placeBeforeShow, e);
+                    methods.placeBeforeShow(drop, $this, opt.place, opt.placeBeforeShow, e);
                 });
             if (opt.place !== 'inherit')
                 methods._checkMethod(function() {
@@ -698,8 +701,9 @@
                     });
                 if (opt.rel && opt.keyNavigate && methods.galleries)
                     doc.off('keydown.' + $.drop.nS + ev).on('keydown.' + $.drop.nS + ev, function(e) {
-                        e.preventDefault();
                         var key = e.keyCode;
+                        if (key === 37 || key === 39)
+                            e.preventDefault();
                         if (key === 37)
                             $(opt.prev).trigger('click.' + $.drop.nS);
                         if (key === 39)
