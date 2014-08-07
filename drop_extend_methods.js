@@ -218,23 +218,25 @@ $.drop.extendDrop = function() {
                 }
             });
         },
-        galleries: function(drop, opt, methods) {
-            var relA = $.drop.drp.galleries[opt.rel];
-            console.log(relA)
+        galleries: function(drop, opt) {
+            var relA = $.drop.drp.galleries[opt.rel],
+                    self = this;
 
-            if (relA !== undefined) {
-                var relL = relA.length,
-                        relP = $.inArray(opt.source ? opt.source : drop.find(opt.placePaste).find('img').attr('src'), relA);
-                drop.find(opt.prev).add(drop.find(opt.next)).hide().attr('disabled', 'disabled');
-                if (relP === -1)
-                    return false;
-                if (relP !== relL - 1)
-                    drop.find(opt.next).show().removeAttr('disabled');
-                if (relP !== 0)
-                    drop.find(opt.prev).show().removeAttr('disabled');
-                if (opt.cycle)
-                    drop.find(opt.prev).add(drop.find(opt.next)).show().removeAttr('disabled');
-            }
+            if (!relA)
+                return false;
+
+            var relL = relA.length,
+                    relP = $.inArray(opt.source ? opt.source : drop.find(opt.placePaste).find('img').attr('src'), relA);
+            drop.find(opt.prev).add(drop.find(opt.next)).hide().attr('disabled', 'disabled');
+            if (relP === -1)
+                return false;
+            if (relP !== relL - 1)
+                drop.find(opt.next).show().removeAttr('disabled');
+            if (relP !== 0)
+                drop.find(opt.prev).show().removeAttr('disabled');
+            if (opt.cycle)
+                drop.find(opt.prev).add(drop.find(opt.next)).show().removeAttr('disabled');
+
             drop.find(opt.prev).add(drop.find(opt.next)).attr('data-rel', opt.rel).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                 e.stopPropagation();
                 var $thisB = $(this).attr('disabled', 'disabled'),
@@ -248,21 +250,27 @@ $.drop.extendDrop = function() {
                 if (relA[relNext]) {
                     var $this = $('[data-source="' + relA[relP] + '"][rel], [href="' + relA[relP] + '"][rel]').filter(':last'),
                             $next = $('[data-source="' + relA[relNext] + '"][rel], [href="' + relA[relNext] + '"][rel]').filter(':last');
-                    methods.close.call($($this.data('drop')), undefined, function() {
-                        methods.open.call($next, {source: relA[relNext], rel: opt.rel}, undefined);
+                    self.close.call($($this.data('drop')), undefined, function() {
+                        self.open.call($next, $.extend(opt, {source: relA[relNext], rel: opt.rel}), undefined);
                     });
                 }
             });
+            return self;
         },
-        placeBeforeShow: function(drop, $this, methods, place, placeBeforeShow, e) {
+        placeBeforeShow: function(drop, $this, place, placeBeforeShow, e) {
+            var self = this;
+            if (!self._isScrollable($('body').get(0)))
+                $('body').css('overflow', 'hidden');
+            $('body').css('overflow-x', 'hidden')
+
             if (place === 'inherit')
                 return false;
             var pmt = placeBeforeShow.toLowerCase().split(' '),
                     t = -drop.actual('outerHeight'),
                     l = -drop.actual('outerWidth');
             if (pmt[0] === 'center' || pmt[1] === 'center') {
-                methods._checkMethod(function() {
-                    methods[place].call(drop, e);
+                self._checkMethod(function() {
+                    self[place].call(drop, e);
                 });
                 t = drop.css('top');
                 l = drop.css('left');
@@ -289,8 +297,12 @@ $.drop.extendDrop = function() {
                     'left': $this.offset().left,
                     'top': $this.offset().top
                 });
+            return this;
         },
         placeAfterClose: function(drop, $this, opt) {
+            if (!this._isScrollable($('body').get(0)))
+                $('body').css('overflow', 'hidden');
+            $('body').css('overflow-x', 'hidden')
             var
                     method = opt.animate ? 'animate' : 'css',
                     pmt = opt.placeAfterClose.toLowerCase().split(' '),
@@ -334,8 +346,10 @@ $.drop.extendDrop = function() {
                     queue: false,
                     duration: opt.durationOff
                 });
+            return this;
         },
-        confirmPrompt: function(opt, methods, hashChange, _confirmF, e) {
+        confirmPrompt: function(opt, hashChange, _confirmF, e) {
+            var self = this;
             if (opt.confirm) {
                 if (!$.exists('[data-drop="' + opt.confirmBtnDrop + '"]'))
                     var confirmBtn = $('<div><button></button></div>').appendTo($('body')).hide().children().attr('data-drop', opt.confirmBtnDrop);
@@ -346,15 +360,15 @@ $.drop.extendDrop = function() {
                     'confirm': true
                 });
                 if (!$.exists(opt.confirmBtnDrop))
-                    var drop = methods._pasteDrop($.extend({}, opt, confirmBtn.data()), opt.patternConfirm);
+                    var drop = self._pasteDrop($.extend({}, opt, confirmBtn.data()), opt.patternConfirm);
                 else
-                    drop = methods._pasteDrop($.extend({}, opt, confirmBtn.data()), $(opt.confirmBtnDrop));
+                    drop = self._pasteDrop($.extend({}, opt, confirmBtn.data()), $(opt.confirmBtnDrop));
 
-                methods._show.call(confirmBtn, drop, e, opt, hashChange);
+                self._show.call(confirmBtn, drop, e, opt, hashChange);
 
                 $(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                     e.stopPropagation();
-                    methods.close.call($(opt.confirmBtnDrop));
+                    self.close.call($(opt.confirmBtnDrop));
                     if (opt.source)
                         _confirmF();
                 });
@@ -370,15 +384,15 @@ $.drop.extendDrop = function() {
                     'promptInputValue': opt.promptInputValue
                 });
                 if (!$.exists(opt.promptBtnDrop))
-                    var drop = methods._pasteDrop($.extend({}, opt, promptBtn.data()), opt.patternPrompt);
+                    var drop = self._pasteDrop($.extend({}, opt, promptBtn.data()), opt.patternPrompt);
                 else
-                    drop = methods._pasteDrop($.extend({}, opt, promptBtn.data()), $(opt.promptBtnDrop));
+                    drop = self._pasteDrop($.extend({}, opt, promptBtn.data()), $(opt.promptBtnDrop));
 
-                methods._show.call(promptBtn, drop, e, opt, hashChange);
+                self._show.call(promptBtn, drop, e, opt, hashChange);
 
                 $(opt.promptActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                     e.stopPropagation();
-                    methods.close.call($(opt.promptBtnDrop));
+                    self.close.call($(opt.promptBtnDrop));
                     function getUrlVars(url) {
                         var hash, myJson = {}, hashes = url.slice(url.indexOf('?') + 1).split('&');
                         for (var i = 0; i < hashes.length; i++) {
@@ -393,6 +407,7 @@ $.drop.extendDrop = function() {
                         _confirmF();
                 });
             }
+            return this;
         }
     };
     var newMethods = {};
