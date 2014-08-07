@@ -64,7 +64,7 @@
                         if (el.hasClass($.drop.dP.activeClass))
                             methods.close.call($(el.attr('data-drop')));
                         if (e.button === 2)
-                            methods.open.call($(this), $.extend(opt, {place: 'noinherit', limitSize: true}), null, e);
+                            methods.open.call($(this), $.extend(opt, {place: 'noinherit', limitSize: true}), e);
                     });
                 }
                 else {
@@ -75,10 +75,10 @@
                         }).on(opt.triggerOn + '.' + $.drop.nS, function(e) {
                             if (opt.condTrigger) {
                                 if (eval('(function(){' + opt.condTrigger + '})()'))
-                                    methods.open.call($(this), opt, null, e);
+                                    methods.open.call($(this), opt, e);
                             }
                             else
-                                methods.open.call($(this), opt, null, e);
+                                methods.open.call($(this), opt, e);
                         }).on(opt.triggerOff + '.' + $.drop.nS, function() {
                             methods.close.call($(el.attr('data-drop')));
                         });
@@ -87,13 +87,13 @@
                             if (el.hasClass($.drop.dP.activeClass))
                                 methods.close.call($(el.attr('data-drop')));
                             else
-                                methods.open.call($(this), opt, null, e);
+                                methods.open.call($(this), opt, e);
                             e.stopPropagation();
                             e.preventDefault();
                         });
                 }
                 if (opt.href && window.location.hash.indexOf(opt.href) !== -1 && !$.drop.drp.hrefs[opt.href])
-                    methods.open.call(el, opt, null, null);
+                    methods.open.call(el, opt, null);
                 if (/#/.test(opt.href) && !$.drop.drp.hrefs[opt.href])
                     $.drop.drp.hrefs[opt.href] = el;
             });
@@ -162,7 +162,6 @@
             else
                 $.ajax($.extend({}, opt.ajax, {
                     url: opt.source,
-                    data: opt.datas,
                     dataType: opt.ajax.dataType ? opt.ajax.dataType : (opt.notify ? 'json' : 'html'),
                     beforeSend: function() {
                         if (!opt.moreOne)
@@ -178,7 +177,7 @@
                 }));
             return el;
         },
-        open: function(opt, datas, e, hashChange) {
+        open: function(opt, e, hashChange) {
             var $this = this;
             e = e ? e : window.event;
             opt = $.extend({}, $.drop.dP, opt);
@@ -186,14 +185,14 @@
                 if ($(this).hasClass('isDrop'))
                     $this = this;
                 else {
-                    if (datas) {
+                    if (opt.datas) {
                         if (!$.exists('[data-drop="' + opt.notifyBtnDrop + '"]')) {
                             $this = $('<div><button data-drop="' + opt.notifyBtnDrop + '" data-notify="true"></button></div>').appendTo($('body')).hide().children();
                             methods._pasteDrop($.extend(opt, $this.data()), opt.patternNotif);
                         }
                         else
                             $this = $('[data-drop="' + opt.notifyBtnDrop + '"]');
-                        $this.data('datas', datas);
+                        $this.data('datas', opt.datas);
                         methods._notifyTrigger.call($this, $.extend(opt, $this.data()));
                     }
                     else if (opt.source) {
@@ -241,8 +240,8 @@
 
                 function _confirmF() {
                     if (!$.existsN(drop) || $.existsN(drop) && opt.source && !$.drop.drp.drops[sourceC] || opt.notify || opt.always) {
-                        if (datas && opt.notify)
-                            methods._pasteNotify.call($this, datas, opt, null, hashChange);
+                        if (opt.datas && opt.notify)
+                            methods._pasteNotify.call($this, opt.datas, opt, null, hashChange);
                         else if (opt.source)
                             methods._get.call($this, opt, e, hashChange);
                     }
@@ -256,7 +255,7 @@
                         return false;
 
                     if (opt.notify)//for front validations
-                        methods._pasteNotify.call($this, datas, opt, null, hashChange);
+                        methods._pasteNotify.call($this, opt.datas, opt, null, hashChange);
                     else {
                         if (opt.prompt || opt.confirm || opt.source && !$.existsN(drop) || opt.source && opt.always) {
                             if (!opt.confirm && !opt.prompt)
@@ -935,7 +934,7 @@
         if (!$.drop.drp.curHash)
             for (var i in $.drop.drp.hrefs) {
                 if (wLH.indexOf(i) === -1 && wLHN.indexOf(i) !== -1)
-                    methods.open.call($.drop.drp.hrefs[i], {}, null, e, true);
+                    methods.open.call($.drop.drp.hrefs[i], {}, e, true);
                 else
                     methods.close.call($($.drop.drp.hrefs[i].data('drop')), true);
             }
