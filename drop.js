@@ -27,7 +27,6 @@
         if (window.console)
             console.log(msg);
     };
-//    zzz
     var methods = {
         init: function(options) {
             var set = $.extend({}, $.drop.dP, options);
