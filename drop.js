@@ -36,11 +36,9 @@
             }
 
             this.each(function() {
-                var el = methods.destroy($(this)),
+                var el = methods.destroy($(this)).data('drp', set),
                         opt = $.extend({}, set, el.data());
-                        
-                el.data('drp', opt);
-                
+
                 if (opt.notify)
                     methods._notifyTrigger.call(el, opt);
                 var rel = this.rel;
@@ -156,9 +154,6 @@
                     this.onload = this.onerror = null;
                     methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'this image is not found'}});
                 };
-                $(img).on('dragstart.' + $.drop.nS, function(e) {
-                    e.preventDefault();
-                });
                 img.src = opt.source;
             }
             else
@@ -251,7 +246,7 @@
                         methods._closeMoreOne();
                     if ($this.is(':disabled') || opt.start && !eval(opt.start).call($this, drop, opt))
                         return false;
-                    if (opt.notify)//for front validations
+                    if (opt.notify && !(opt.prompt || opt.confirm))//for front validations
                         methods._pasteNotify.call($this, opt.datas, opt, null, hashChange);
                     else {
                         if (opt.prompt || opt.confirm || opt.source && !$.existsN(drop) || opt.source && opt.always) {
@@ -273,245 +268,6 @@
                 else
                     methods.close.call($($this.data('drop')));
             });
-        },
-        close: function(hashChange, f) {
-            var sel = this,
-                    drop = $.existsN(sel) ? sel : $('[data-elrun].' + $.drop.dP.activeClass);
-            clearTimeout($.drop.drp.closeDropTime);
-            drop.each(function() {
-                var drop = $(this),
-                        opt = drop.data('drp'),
-                        $thisB = opt.elrun;
-                if (!(opt && (opt.notify || sel || opt.place !== 'inherit' || opt.inheritClose || opt.overlayOpacity !== 0) && $thisB))
-                    return false;
-                function _hide() {
-                    $thisB.removeClass($.drop.dP.activeClass).each(function() {
-                        if (opt.href) {
-                            clearTimeout($.drop.drp.curHashTimeout);
-                            $.drop.drp.curHash = hashChange ? opt.href : null;
-                            $.drop.drp.scrollTop = wnd.scrollTop();
-                            location.hash = location.hash.replace(opt.href, '');
-                            $.drop.drp.curHashTimeout = setTimeout(function() {
-                                $.drop.drp.curHash = null;
-                                $.drop.drp.scrollTop = null;
-                            }, 400);
-                        }
-                    });
-                    drop.removeClass($.drop.dP.activeClass);
-                    if (methods.placeAfterClose)
-                        methods.placeAfterClose(drop, $thisB, opt);
-                    if (opt.droppableIn)
-                        drop.data('drp').positionDroppableIn = {'left': drop.css('left'), 'top': drop.css('top')}
-
-                    var ev = opt.drop ? opt.drop.replace(methods._reg(), '') : '';
-                    wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
-                    doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS);
-                    drop[opt.effectOff](opt.durationOff, function() {
-                        $('html, body').css({'overflow': '', 'overflow-x': ''});
-                        var $this = $(this);
-                        if (opt.forCenter)
-                            opt.forCenter.hide();
-                        var zInd = 0,
-                                drpV = null;
-                        $('[data-elrun]:visible').each(function() {
-                            var $this = $(this);
-                            if (parseInt($this.css('z-index')) > zInd) {
-                                zInd = parseInt($this.css('z-index'));
-                                drpV = $.extend({}, $this.data('drp'));
-                            }
-                        });
-                        if (opt.dropOver && !f)
-                            opt.dropOver.fadeOut(opt.durationOff);
-                        if (!opt.context)
-                            methods._resetStyleDrop.call($(this));
-                        $this.removeClass(opt.place);
-                        if (opt.closed)
-                            opt.closed.call($thisB, $this, opt);
-                        if (opt.elClosed)
-                            eval(opt.elClosed).call($thisB, $this, opt);
-                        if (opt.closedG)
-                            opt.closedG.call($thisB, $this);
-                        $this.add(doc).trigger({
-                            type: 'closed.' + $.drop.nS,
-                            drp: {
-                                refer: $thisB,
-                                drop: $this,
-                                options: opt
-                            }
-                        });
-                        var dC = $this.find($(opt.dropContent)).data('jsp');
-                        if (dC)
-                            dC.destroy();
-                        if ($.isFunction())
-                            f();
-                        if (!$.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
-                            $('body, html').css('height', '');
-                        if (opt.html) {
-                            $(opt.elrun).parent().remove();
-                            $(opt.dropOver).add($(opt.forCenter)).remove();
-                        }
-                    });
-                }
-                drop.add(doc).trigger({
-                    type: 'close.' + $.drop.nS,
-                    drp: {
-                        refer: $thisB,
-                        drop: drop,
-                        options: opt
-                    }
-                });
-                var close = opt.elClose || opt.close || opt.closeG;
-                if (close) {
-                    if (typeof close === 'string')
-                        var res = eval(close).call($thisB, $(this), opt);
-                    else
-                        var res = close.call($thisB, $(this), opt);
-                    if (res === false && res !== true)
-                        returnMsg(res);
-                    else
-                        _hide();
-                }
-                else
-                    _hide();
-            });
-            return sel;
-        },
-        update: function(e) {
-            var drop = this,
-                    opt = drop.data('drp');
-
-            if (opt.limitSize) {
-                methods._checkMethod(function() {
-                    methods.limitSize(drop);
-                });
-                methods._checkMethod(function() {
-                    methods.heightContent(drop);
-                });
-            }
-            if (opt.place !== 'inherit')
-                methods._checkMethod(function() {
-                    methods[opt.place].call(drop, e);
-                }, opt.place);
-
-            methods._setHeightAddons(opt.dropOver, opt.forCenter);
-        },
-        center: function(e) {
-            return this.each(function() {
-                var drop = $(this),
-                        drp = drop.data('drp');
-                if (drp && !drp.droppableIn) {
-                    var method = drp.animate ? 'animate' : 'css',
-                            dropV = drop.is(':visible'),
-                            w = dropV ? drop.outerWidth() : drop.actual('outerWidth'),
-                            h = dropV ? drop.outerHeight() : drop.actual('outerHeight'),
-                            top = Math.floor((wnd.height() - h) / 2) + (drp.centerOnScroll ? wnd.scrollTop() : 0),
-                            left = Math.floor((wnd.width() - w) / 2) + (drp.centerOnScroll ? wnd.scrollLeft() : 0);
-                    drop[method]({
-                        'top': top > 0 ? top : 0,
-                        'left': left > 0 ? left : 0
-                    }, {
-                        duration: drp.durationOn,
-                        queue: false
-                    });
-                }
-                else if (drp.droppableIn && drp.positionDroppableIn)
-                    drop.css({
-                        'top': drp.positionDroppableIn.top,
-                        'left': drp.positionDroppableIn.left
-                    });
-            });
-        },
-        _resetStyleDrop: function() {
-            return this.css({
-                'z-index': '',
-                'top': '',
-                'left': '',
-                'bottom': '',
-                'right': '',
-                'position': ''
-            });
-        },
-        _closeMoreOne: function() {
-            if ($.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
-                methods.close.call($('[data-elrun].center:visible, [data-elrun].noinherit:visible'));
-            return this;
-        },
-        _notifyTrigger: function(opt) {
-            return this.off('successJson.' + $.drop.nS).on('successJson.' + $.drop.nS, function(e) {
-                e = e.drp;
-                if (!e || !e.datas) {
-                    $(e.drop).find(opt.notifyPlace).empty().append(opt.message.info('Object notify is empty'));
-                    return false;
-                }
-                if (e.datas.answer === "success")
-                    $(e.drop).find(opt.notifyPlace).empty().append(opt.message.success(e.datas.data));
-                else if (e.datas.answer === "error")
-                    $(e.drop).find(opt.notifyPlace).empty().append(opt.message.error(e.datas.data));
-                else
-                    $(e.drop).find(opt.notifyPlace).empty().append(opt.message.info(e.datas.data));
-            });
-        },
-        _pasteNotify: function(datas, opt, rel, hashChange) {
-            var el = this;
-            datas = datas || el.data('datas');
-            var drop = methods._pasteDrop(opt, opt.drop, rel);
-            el.trigger({
-                type: 'successJson.' + $.drop.nS,
-                drp: {
-                    refer: el,
-                    drop: drop,
-                    options: opt,
-                    datas: datas
-                }
-            });
-            methods._show.call(el, drop, null, opt, hashChange);
-            return this;
-        },
-        _reg: function() {
-            return /[^a-zA-Z0-9]+/ig;
-        },
-        _pasteDrop: function(opt, drop, rel, aClass) {
-            var sourcePref = opt.source ? opt.source.replace(methods._reg(), '') : '',
-                    sdrop = opt.drop;
-            if (!opt.drop)
-                if (rel && $.drop.drp.galleries[opt.rel].length > 1)
-                    opt.drop = '.' + opt.defaultClassBtnDrop + rel;
-                else
-                    opt.drop = '.' + opt.defaultClassBtnDrop + sourcePref;
-            if (opt.place === 'inherit' && opt.placeInherit)
-                drop = $(drop).appendTo($(opt.placeInherit).empty());
-            else {
-                function _for_center(rel) {
-                    $('body').append('<div class="forCenter" data-rel="' + rel + '" style="left: 0;top: 0;width: 100%;display:none;height: 100%;position: absolute;height: 100%;"></div>');
-                }
-                if (opt.place === 'noinherit')
-                    drop = $(drop).appendTo($('body'));
-                else {
-                    var sel = '[data-rel="' + opt.drop + '"].forCenter';
-                    if (!$.exists(sel))
-                        _for_center(opt.drop);
-                    drop = $(drop).appendTo($(sel).empty()).data('drp', $(sel).find('[data-elrun]').data('drp') || {});
-                }
-            }
-            drop = $(drop).addClass(aClass).attr('data-rel', rel).attr('data-elrun', opt.drop);
-            if (sdrop)
-                drop = drop.filter(sdrop);
-            return drop;
-        },
-        _pasteContent: function($this, drop, opt) {
-            function _pasteContent(content, place) {
-                if (!content)
-                    return false;
-                place = drop.find(place);
-                if (typeof content === 'string' || typeof content === 'number' || typeof content === 'object')
-                    place.empty().append(content);
-                else if (typeof content === 'function')
-                    content(place, $this, drop);
-            }
-            _pasteContent(opt.contentHeader, opt.dropHeader);
-            _pasteContent(opt.contentContent, opt.dropContent);
-            _pasteContent(opt.contentFooter, opt.dropFooter);
-            return this;
         },
         _show: function(drop, e, opt, hashChange) {
             var $this = this;
@@ -551,6 +307,7 @@
             }
 
             $('.forCenter').css('z-index', 1104);
+            
             var forCenter = null,
                     objForC = $('[data-rel="' + opt.drop + '"].forCenter');
             if ($.existsN(objForC))
@@ -578,6 +335,7 @@
             });
             drop.addClass(opt.place);
             methods._positionType(drop);
+
             if (opt.href) {
                 clearTimeout($.drop.drp.curHashTimeout);
                 $.drop.drp.curHash = !hashChange ? opt.href : null;
@@ -708,6 +466,254 @@
                             $(opt.next).trigger('click.' + $.drop.nS);
                     });
             });
+            return this;
+        },
+        close: function(hashChange, f) {
+            var sel = this,
+                    drop = $.existsN(sel) ? sel : $('[data-elrun].' + $.drop.dP.activeClass);
+            clearTimeout($.drop.drp.closeDropTime);
+            drop.each(function() {
+                var drop = $(this),
+                        opt = drop.data('drp'),
+                        $thisB = opt.elrun;
+                if (!(opt && (opt.notify || sel || opt.place !== 'inherit' || opt.inheritClose || opt.overlayOpacity !== 0) && $thisB))
+                    return false;
+                function _hide() {
+                    var ev = opt.drop ? opt.drop.replace(methods._reg(), '') : '';
+                    wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
+                    doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS);
+
+                    $thisB.removeClass($.drop.dP.activeClass).each(function() {
+                        if (opt.href) {
+                            clearTimeout($.drop.drp.curHashTimeout);
+                            $.drop.drp.curHash = hashChange ? opt.href : null;
+                            $.drop.drp.scrollTop = wnd.scrollTop();
+                            location.hash = location.hash.replace(opt.href, '');
+                            $.drop.drp.curHashTimeout = setTimeout(function() {
+                                $.drop.drp.curHash = null;
+                                $.drop.drp.scrollTop = null;
+                            }, 400);
+                        }
+                    });
+                    drop.removeClass($.drop.dP.activeClass);
+                    if (methods.placeAfterClose)
+                        methods.placeAfterClose(drop, $thisB, opt);
+                    if (opt.droppableIn)
+                        drop.data('drp').positionDroppableIn = {'left': drop.css('left'), 'top': drop.css('top')}
+
+                    drop[opt.effectOff](opt.durationOff, function() {
+                        $('html, body').css({'overflow': '', 'overflow-x': ''});
+                        var $this = $(this);
+                        if (opt.forCenter)
+                            opt.forCenter.hide();
+                        var zInd = 0,
+                                drpV = null;
+                        $('[data-elrun]:visible').each(function() {
+                            var $this = $(this);
+                            if (parseInt($this.css('z-index')) > zInd) {
+                                zInd = parseInt($this.css('z-index'));
+                                drpV = $.extend({}, $this.data('drp'));
+                            }
+                        });
+                        if (opt.dropOver)
+                            opt.dropOver.fadeOut(opt.durationOff);
+                        if (!opt.context)
+                            methods._resetStyleDrop.call($(this));
+                        $this.removeClass(opt.place);
+                        if (opt.closed)
+                            opt.closed.call($thisB, $this, opt);
+                        if (opt.elClosed)
+                            eval(opt.elClosed).call($thisB, $this, opt);
+                        if (opt.closedG)
+                            opt.closedG.call($thisB, $this);
+                        $this.add(doc).trigger({
+                            type: 'closed.' + $.drop.nS,
+                            drp: {
+                                refer: $thisB,
+                                drop: $this,
+                                options: opt
+                            }
+                        });
+                        var dC = $this.find($(opt.dropContent)).data('jsp');
+                        if (dC)
+                            dC.destroy();
+
+                        if ($.isFunction(f))
+                            f();
+                        if (!$.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
+                            $('body, html').css('height', '');
+                        if (opt.html) {
+                            $(opt.elrun).parent().remove();
+                            $(opt.dropOver).add($(opt.forCenter)).remove();
+                        }
+                    });
+                }
+                drop.add(doc).trigger({
+                    type: 'close.' + $.drop.nS,
+                    drp: {
+                        refer: $thisB,
+                        drop: drop,
+                        options: opt
+                    }
+                });
+                var close = opt.elClose || opt.close || opt.closeG;
+                if (close) {
+                    if (typeof close === 'string')
+                        var res = eval(close).call($thisB, $(this), opt);
+                    else
+                        var res = close.call($thisB, $(this), opt);
+                    if (res === false && res !== true)
+                        returnMsg(res);
+                    else
+                        _hide();
+                }
+                else
+                    _hide();
+            });
+            return sel;
+        },
+        update: function(e) {
+            var drop = this,
+                    opt = drop.data('drp');
+
+            if (opt.limitSize) {
+                methods._checkMethod(function() {
+                    methods.limitSize(drop);
+                });
+                methods._checkMethod(function() {
+                    methods.heightContent(drop);
+                });
+            }
+            if (opt.place !== 'inherit')
+                methods._checkMethod(function() {
+                    methods[opt.place].call(drop, e);
+                }, opt.place);
+
+            methods._setHeightAddons(opt.dropOver, opt.forCenter);
+        },
+        center: function(e) {
+            return this.each(function() {
+                var drop = $(this),
+                        drp = drop.data('drp');
+                if (drp && !drp.droppableIn) {
+                    var method = drp.animate ? 'animate' : 'css',
+                            dropV = drop.is(':visible'),
+                            w = dropV ? drop.outerWidth() : drop.actual('outerWidth'),
+                            h = dropV ? drop.outerHeight() : drop.actual('outerHeight'),
+                            top = Math.floor((wnd.height() - h) / 2) + (drp.centerOnScroll ? wnd.scrollTop() : 0),
+                            left = Math.floor((wnd.width() - w) / 2) + (drp.centerOnScroll ? wnd.scrollLeft() : 0);
+                    drop[method]({
+                        'top': top > 0 ? top : 0,
+                        'left': left > 0 ? left : 0
+                    }, {
+                        duration: drp.durationOn,
+                        queue: false
+                    });
+                }
+                else if (drp.droppableIn && drp.positionDroppableIn)
+                    drop.css({
+                        'top': drp.positionDroppableIn.top,
+                        'left': drp.positionDroppableIn.left
+                    });
+            });
+        },
+        _resetStyleDrop: function() {
+            return this.css({
+                'z-index': '',
+                'top': '',
+                'left': '',
+                'bottom': '',
+                'right': '',
+                'position': ''
+            });
+        },
+        _closeMoreOne: function() {
+            if ($.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
+                methods.close.call($('[data-elrun].center:visible, [data-elrun].noinherit:visible'));
+            return this;
+        },
+        _notifyTrigger: function(opt) {
+            return this.off('successJson.' + $.drop.nS).on('successJson.' + $.drop.nS, function(e) {
+                e = e.drp;
+
+                if (!e || !e.datas) {
+                    $(e.drop).find(opt.notifyPlace).empty().append(opt.message.info('Object notify is empty'));
+                    return false;
+                }
+                if (e.datas.answer === "success")
+                    $(e.drop).find(opt.notifyPlace).empty().append(opt.message.success(e.datas.data));
+                else if (e.datas.answer === "error")
+                    $(e.drop).find(opt.notifyPlace).empty().append(opt.message.error(e.datas.data));
+                else
+                    $(e.drop).find(opt.notifyPlace).empty().append(opt.message.info(e.datas.data));
+            });
+        },
+        _pasteNotify: function(datas, opt, rel, hashChange) {
+            var el = this;
+            datas = datas || el.data('datas');
+            if (opt.drop)
+                var drop = methods._pasteDrop(opt, opt.drop, rel);
+            else {
+                el.attr('data-drop', opt.notifyBtnDrop).data('drop', opt.notifyBtnDrop);
+                $.extend(opt, el.data());
+                drop = methods._pasteDrop(opt, opt.patternNotify, rel);
+            }
+            el.trigger({
+                type: 'successJson.' + $.drop.nS,
+                drp: {
+                    refer: el,
+                    drop: drop,
+                    options: opt,
+                    datas: datas
+                }
+            });
+            methods._show.call(el, drop, null, opt, hashChange);
+            return this;
+        },
+        _reg: function() {
+            return /[^a-zA-Z0-9]+/ig;
+        },
+        _pasteDrop: function(opt, drop, rel, aClass) {
+            var sourcePref = opt.source ? opt.source.replace(methods._reg(), '') : '',
+                    sdrop = opt.drop;
+            if (!opt.drop)
+                if (rel && $.drop.drp.galleries[opt.rel].length > 1)
+                    opt.drop = '.' + opt.defaultClassBtnDrop + rel;
+                else
+                    opt.drop = '.' + opt.defaultClassBtnDrop + sourcePref;
+            if (opt.place === 'inherit' && opt.placeInherit)
+                drop = $(drop).appendTo($(opt.placeInherit).empty());
+            else {
+                function _for_center(rel) {
+                    $('body').append('<div class="forCenter" data-rel="' + rel + '" style="left: 0;top: 0;width: 100%;display:none;height: 100%;position: absolute;height: 100%;"></div>');
+                }
+                if (opt.place === 'noinherit')
+                    drop = $(drop).appendTo($('body'));
+                else {
+                    var sel = '[data-rel="' + opt.drop + '"].forCenter';
+                    $(sel).remove();
+                    _for_center(opt.drop);
+                    drop = $(drop).appendTo($(sel).empty()).data('drp', $(sel).find('[data-elrun]').data('drp') || {});
+                }
+            }
+            drop = $(drop).addClass(aClass).attr('data-rel', rel).attr('data-elrun', opt.drop);
+            if (sdrop)
+                drop = drop.filter(sdrop);
+            return drop;
+        },
+        _pasteContent: function($this, drop, opt) {
+            function _pasteContent(content, place) {
+                if (!content)
+                    return false;
+                place = drop.find(place);
+                if (typeof content === 'string' || typeof content === 'number' || typeof content === 'object')
+                    place.empty().append(content);
+                else if (typeof content === 'function')
+                    content(place, $this, drop);
+            }
+            _pasteContent(opt.contentHeader, opt.dropHeader);
+            _pasteContent(opt.contentContent, opt.dropContent);
+            _pasteContent(opt.contentFooter, opt.dropFooter);
             return this;
         },
         _setHeightAddons: function(dropOver, forCenter) {

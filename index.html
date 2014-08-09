@@ -59,7 +59,7 @@
                     1234<br/>
                 </div>    
             </div>
-            <a data-drop data-source="1.php" rel="group1">click</a>
+            <a data-drop data-source data-datas='{"answer": "success", "data": "asdf"}' data-notify='true' data-prompt="true">click</a>
             <div class="drop drop-simple2" style="width: 150px">
                 <button type="button" data-closed>*</button>
                 <div class="drop-content-default">
@@ -100,13 +100,13 @@
                 </div>    
             </div>
         </div>
-        <a href="http://fc08.deviantart.net/fs70/f/2010/324/a/2/avatar_upd_big_size_by_merychess-d30zufu.jpg" rel="group" onClick="return false;">
+        <a href="http://fc08.deviantart.net/fs70/f/2010/324/a/2/avatar_upd_big_size_by_merychess-d30zufu.jpg" rel="group" onClick="return false;" data-href="#a" data-prompt="true">
             <img src="1.jpg" width="50"/>
         </a>
-        <a href="4.jpg" rel="group">
+        <a href="4.jpg" rel="group" data-href="#b">
             <img src="3.jpg" width="50"/>
         </a>
-        <a href="6.jpg" rel="group">
+        <a href="6.jpg" rel="group" data-href="#c">
             <img src="5.jpg" width="50"/>
         </a>
         <script>

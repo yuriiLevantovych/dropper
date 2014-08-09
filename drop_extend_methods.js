@@ -5,6 +5,9 @@ $.drop.extendDrop = function() {
         droppable: function(drop) {
             return (drop || this).each(function() {
                 var drop = $(this);
+                drop.find('img').off('dragstart.' + $.drop.nS).on('dragstart.' + $.drop.nS, function(e) {
+                    e.preventDefault();
+                });
                 drop.off('mousedown.' + $.drop.nS).on('mousedown.' + $.drop.nS, function(e) {
                     if (!$(e.target).is(':input')) {
                         doc.on('mouseup.' + $.drop.nS, function(e) {
@@ -250,8 +253,8 @@ $.drop.extendDrop = function() {
                 if (relA[relNext]) {
                     var $this = $('[data-source="' + relA[relP] + '"][rel], [href="' + relA[relP] + '"][rel]').filter(':last'),
                             $next = $('[data-source="' + relA[relNext] + '"][rel], [href="' + relA[relNext] + '"][rel]').filter(':last');
-                    self.close.call($($this.data('drop')), undefined, function() {
-                        self.open.call($next, $.extend(opt, {source: relA[relNext], rel: opt.rel}), undefined);
+                    self.close.call($($this.data('drop')), true, function() {
+                        self.open.call($next, $.extend($next.data('drp'), {source: relA[relNext], drop: null}));
                     });
                 }
             });
@@ -261,7 +264,7 @@ $.drop.extendDrop = function() {
             var self = this;
             if (!self._isScrollable($('body').get(0)))
                 $('body').css('overflow', 'hidden');
-            $('body').css('overflow-x', 'hidden')
+            $('body').css('overflow-x', 'hidden');
 
             if (place === 'inherit')
                 return false;
@@ -352,13 +355,14 @@ $.drop.extendDrop = function() {
             var self = this;
             if (opt.confirm) {
                 if (!$.exists('[data-drop="' + opt.confirmBtnDrop + '"]'))
-                    var confirmBtn = $('<div><button></button></div>').appendTo($('body')).hide().children().attr('data-drop', opt.confirmBtnDrop);
+                    var confirmBtn = $('<div><button data-drop="' + opt.confirmBtnDrop + '"></button></div>').appendTo($('body')).hide().children();
                 else
                     confirmBtn = $('[data-drop="' + opt.confirmBtnDrop + '"]');
                 confirmBtn.data({
                     'drop': opt.confirmBtnDrop,
                     'confirm': true
                 });
+                $.extend(opt, confirmBtn.data());
                 if (!$.exists(opt.confirmBtnDrop))
                     var drop = self._pasteDrop($.extend({}, opt, confirmBtn.data()), opt.patternConfirm);
                 else
@@ -368,14 +372,13 @@ $.drop.extendDrop = function() {
 
                 $(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                     e.stopPropagation();
-                    self.close.call($(opt.confirmBtnDrop));
-                    if (opt.source)
-                        _confirmF();
+                    opt.drop = null;
+                    self.close.call($(opt.confirmBtnDrop), null, _confirmF);
                 });
             }
             if (opt.prompt) {
                 if (!$.exists('[data-drop="' + opt.promptBtnDrop + '"]'))
-                    var promptBtn = $('<div><button></button></div>').appendTo($('body')).hide().children().attr('data-drop', opt.promptBtnDrop);
+                    var promptBtn = $('<div><button data-drop="' + opt.promptBtnDrop + '"></button></div>').appendTo($('body')).hide().children();
                 else
                     promptBtn = $('[data-drop="' + opt.promptBtnDrop + '"]');
                 promptBtn.data({
@@ -383,6 +386,7 @@ $.drop.extendDrop = function() {
                     'prompt': true,
                     'promptInputValue': opt.promptInputValue
                 });
+                $.extend(opt, promptBtn.data());
                 if (!$.exists(opt.promptBtnDrop))
                     var drop = self._pasteDrop($.extend({}, opt, promptBtn.data()), opt.patternPrompt);
                 else
@@ -392,7 +396,6 @@ $.drop.extendDrop = function() {
 
                 $(opt.promptActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                     e.stopPropagation();
-                    self.close.call($(opt.promptBtnDrop));
                     function getUrlVars(url) {
                         var hash, myJson = {}, hashes = url.slice(url.indexOf('?') + 1).split('&');
                         for (var i = 0; i < hashes.length; i++) {
@@ -403,8 +406,8 @@ $.drop.extendDrop = function() {
                     }
 
                     opt.dataPrompt = getUrlVars($(this).closest('form').serialize());
-                    if (opt.source)
-                        _confirmF();
+                    opt.drop = null;
+                    self.close.call($(opt.promptBtnDrop), null, _confirmF);
                 });
             }
             return this;
