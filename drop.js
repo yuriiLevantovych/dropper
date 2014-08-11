@@ -39,17 +39,16 @@
                 var el = methods.destroy.call($(this)).data('drp', set),
                         opt = $.extend({}, set, el.data());
                 el.data('drp').genOpt = opt;
-
                 if (opt.notify)
                     methods._notifyTrigger.call(el, opt);
                 var rel = this.rel;
                 if (rel) {
-                    rel = rel.replace(methods._reg(), '');
+                    rel = rel.replace($.drop.drp.reg, '');
                     var source = el.data('source') || $(this).attr('href');
                     if (source) {
                         if (!$.drop.drp.galleries[rel])
                             $.drop.drp.galleries[rel] = [];
-                        if ($.drop.drp.galleries[rel].indexOf(source) === -1)
+                        if ($.drop.drp.galleries[rel].indexOf(source) === -1 && source.match($.drop.drp.regImg))
                             $.drop.drp.galleries[rel].push(source);
                     }
                 }
@@ -125,7 +124,7 @@
                 $.drop.hideLoading();
                 var drop = methods._pasteDrop(opt, opt.pattern, opt.rel, $.drop.drp.curDefault);
                 if (opt.source && !opt.always && !opt.notify)
-                    $.drop.drp.drops[opt.source.replace(methods._reg(), '')] = drop;
+                    $.drop.drp.drops[opt.source.replace($.drop.drp.reg, '')] = drop;
                 drop.find($(opt.placePaste)).html(data);
                 doc.trigger({
                     type: 'successHtml.' + $.drop.nS,
@@ -139,15 +138,15 @@
                 methods._show.call(el, drop, e, opt, hashChange);
             }
 
-            $.drop.drp.curDefault = opt.defaultClassBtnDrop + (opt.rel && $.drop.drp.galleries[opt.rel].length > 1 ? opt.rel : (opt.source ? opt.source.replace(methods._reg(), '') : (new Date()).getTime()));
+            $.drop.drp.curDefault = opt.defaultClassBtnDrop + (opt.rel && $.drop.drp.galleries[opt.rel].length > 1 ? opt.rel : (opt.source ? opt.source.replace($.drop.drp.reg, '') : +new Date()));
             el.attr('data-drop', '.' + $.drop.drp.curDefault).data('drop', '.' + $.drop.drp.curDefault);
-            if ($.drop.drp.drops[opt.source.replace(methods._reg(), '')]) {
-                var drop = methods._pasteDrop(opt, $.drop.drp.drops[opt.source.replace(methods._reg(), '')], opt.rel);
+            if ($.drop.drp.drops[opt.source.replace($.drop.drp.reg, '')]) {
+                var drop = methods._pasteDrop(opt, $.drop.drp.drops[opt.source.replace($.drop.drp.reg, '')], opt.rel);
                 methods._show.call(el, drop, e, opt, hashChange);
                 return el;
             }
             $.drop.showLoading();
-            if (opt.source.match(/(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i)) {
+            if (opt.source.match($.drop.drp.regImg)) {
                 var img = $.drop.drp.imgPreload = new Image();
                 img.onload = function() {
                     this.onload = this.onerror = null;
@@ -181,6 +180,7 @@
             var $this = this;
             e = e ? e : window.event;
             opt = $.extend({}, $.drop.dP, opt);
+
             if (!$this || !$.existsN($this)) {
                 if ($(this).hasClass('isDrop'))
                     $this = this;
@@ -188,7 +188,7 @@
                     if (opt.datas) {
                         if (!$.exists('[data-drop="' + opt.notifyBtnDrop + '"]')) {
                             $this = $('<div><button data-drop="' + opt.notifyBtnDrop + '" data-notify="true"></button></div>').appendTo($('body')).hide().children();
-                            methods._pasteDrop($.extend(opt, $this.data()), opt.patternNotify);
+                            methods._pasteDrop($.extend(opt, $this.data()), opt.patternNotify, opt.rel);
                         }
                         else
                             $this = $('[data-drop="' + opt.notifyBtnDrop + '"]');
@@ -196,20 +196,25 @@
                         methods._notifyTrigger.call($this, $.extend(opt, $this.data()));
                     }
                     else if (opt.source) {
-                        var sourcePref = opt.source.replace(methods._reg(), '');
+                        var sourcePref = opt.source.replace($.drop.drp.reg, '');
                         if (!$.exists('.refer' + opt.defaultClassBtnDrop + sourcePref))
                             $this = $('<div><button class="refer' + (opt.defaultClassBtnDrop + sourcePref) + '"></button></div>').appendTo($('body')).hide().children();
                         else
                             $this = $('.refer' + opt.defaultClassBtnDrop + sourcePref);
                     }
                     else {
-                        $.drop.drp.curDefault = opt.defaultClassBtnDrop + (new Date()).getTime();
+                        $.drop.drp.curDefault = opt.defaultClassBtnDrop + (+new Date());
+                        drop = opt.drop;
                         if (!$.exists('[data-drop=".' + $.drop.drp.curDefault + '"]'))
                             $this = $('<div><button data-drop=".' + $.drop.drp.curDefault + '"></button></div>').appendTo($('body')).hide().children();
                         else
                             $this = $('[data-drop=".' + $.drop.drp.curDefault + '"] ');
-                        var drop = methods._pasteDrop($.extend(opt, $this.data()), opt.pattern, null, $.drop.drp.curDefault);
-                        drop.find($(opt.placePaste)).html(opt.html);
+                        if (opt.html) {
+                            var drop = methods._pasteDrop($.extend(opt, $this.data()), opt.pattern, opt.rel, $.drop.drp.curDefault);
+                            drop.find($(opt.placePaste)).html(opt.html);
+                        }
+                        else if ($.existsN(opt.drop))
+                            drop = methods._pasteDrop($.extend(opt, $this.data()), drop, opt.rel, $.drop.drp.curDefault);
                     }
                 }
             }
@@ -220,16 +225,18 @@
                 var drop = $(opt.drop);
                 opt.source = opt.source || $this.attr('href');
                 opt.elrun = $this;
-                if (self.rel && $.drop.drp.galleries[self.rel])
-                    opt.rel = self.rel.replace(methods._reg(), '');
-                var sourceC = opt.source ? opt.source.replace(methods._reg(), '') : null;
+                opt.rel = self.rel || opt.rel;
+
+                if (opt.rel && $.drop.drp.galleries[opt.rel])
+                    opt.rel = opt.rel.replace($.drop.drp.reg, '');
+                var sourceC = opt.source ? opt.source.replace($.drop.drp.reg, '') : null;
                 if (opt.always && opt.source && $.existsN(drop) && !opt.notify) {
                     drop.remove();
                     delete $.drop.drp.drops[sourceC];
                 }
                 if (opt.dropFilter && !opt.drop) {
                     drop = methods._filterSource($this, opt.dropFilter);
-                    var _classFilter = opt.defaultClassBtnDrop + (new Date()).getTime();
+                    var _classFilter = opt.defaultClassBtnDrop + (+new Date());
                     $this.attr('data-drop', '.' + _classFilter).data('drop', '.' + _classFilter);
                     opt.drop = '.' + _classFilter;
                     drop.addClass(_classFilter);
@@ -243,7 +250,6 @@
                             methods._get.call($this, opt, e, hashChange);
                     }
                     else {
-                        //zzz
                         drop = methods._pasteDrop(opt, $.existsN(drop) && !opt.rel ? drop : $.drop.drp.drops[sourceC], opt.rel);
                         methods._show.call($this, drop, e, opt, hashChange);
                     }
@@ -293,7 +299,6 @@
             //opt = $.extend({}, drop.data('drp'), opt);
 
             drop.data('drp', opt);
-
             if (opt.rel)
                 methods._checkMethod(function() {
                     methods.galleries(drop, opt);
@@ -301,7 +306,6 @@
             var overlays = $('.overlayDrop').css('z-index', 1103),
                     condOverlay = opt.overlayOpacity !== 0,
                     dropOver = null;
-
             if (condOverlay) {
                 if (!$.exists('[data-rel="' + opt.drop + '"].overlayDrop'))
                     $('body').append('<div class="overlayDrop" data-rel="' + opt.drop + '" style="display:none;position:absolute;width:100%;left:0;top:0;"></div>');
@@ -315,7 +319,6 @@
             }
 
             $('.forCenter').css('z-index', 1104);
-
             var forCenter = null,
                     objForC = $('[data-rel="' + opt.drop + '"].forCenter');
             if ($.existsN(objForC))
@@ -344,7 +347,6 @@
             });
             drop.addClass(opt.place);
             methods._positionType(drop);
-
             if (opt.href) {
                 clearTimeout($.drop.drp.curHashTimeout);
                 $.drop.drp.curHash = !hashChange ? opt.href : null;
@@ -365,7 +367,7 @@
                 drop.click(focusConfirm);
             }
 
-            var ev = opt.drop ? opt.drop.replace(methods._reg(), '') : '';
+            var ev = opt.drop ? opt.drop.replace($.drop.drp.reg, '') : '';
             wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function(e) {
                 methods.update.call(drop, e);
             });
@@ -484,15 +486,17 @@
             clearTimeout($.drop.drp.closeDropTime);
             drop.each(function() {
                 var drop = $(this),
-                        opt = drop.data('drp'),
-                        $thisB = opt.elrun;
-                if (!(opt && (opt.notify || sel || opt.place !== 'inherit' || opt.inheritClose || opt.overlayOpacity !== 0) && $thisB))
+                        opt = drop.data('drp');
+                if (!opt)
+                    return false;
+                var $thisB = opt.elrun;
+                if (!(opt.notify || sel || opt.place !== 'inherit' || opt.inheritClose || opt.overlayOpacity !== 0) && $thisB)
                     return false;
                 function _hide() {
-                    var ev = opt.drop ? opt.drop.replace(methods._reg(), '') : '';
+                    var ev = opt.drop ? opt.drop.replace($.drop.drp.reg, '') : '';
                     wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
                     doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS);
-
+                    drop.find(opt.prev).add(drop.find(opt.next)).off('click.' + $.drop.nS);
                     $thisB.removeClass($.drop.dP.activeClass).each(function() {
                         if (opt.href) {
                             clearTimeout($.drop.drp.curHashTimeout);
@@ -548,7 +552,6 @@
                         var dC = $this.find($(opt.dropContent)).data('jsp');
                         if (dC)
                             dC.destroy();
-
                         if ($.isFunction(f))
                             f();
                         if (!$.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
@@ -584,10 +587,9 @@
             });
             return sel;
         },
-        update: function(e) {
+        update: function(e, opt) {
             var drop = this,
-                    opt = drop.data('drp');
-
+                    opt = $.extend({}, opt, drop.data('drp'));
             if (opt.limitSize) {
                 methods._checkMethod(function() {
                     methods.limitSize(drop);
@@ -600,7 +602,6 @@
                 methods._checkMethod(function() {
                     methods[opt.place].call(drop, e);
                 }, opt.place);
-
             methods._setHeightAddons(opt.dropOver, opt.forCenter);
         },
         center: function(e) {
@@ -647,7 +648,6 @@
         _notifyTrigger: function(opt) {
             return this.off('successJson.' + $.drop.nS).on('successJson.' + $.drop.nS, function(e) {
                 e = e.drp;
-
                 if (!e || !e.datas) {
                     $(e.drop).find(opt.notifyPlace).empty().append(opt.message.info('Object notify is empty'));
                     return false;
@@ -682,17 +682,16 @@
             methods._show.call(el, drop, null, opt, hashChange);
             return this;
         },
-        _reg: function() {
-            return /[^a-zA-Z0-9]+/ig;
-        },
         _pasteDrop: function(opt, drop, rel, aClass) {
-            var sourcePref = opt.source ? opt.source.replace(methods._reg(), '') : '',
+            var sourcePref = opt.source ? opt.source.replace($.drop.drp.reg, '') : '',
                     sdrop = opt.drop;
             if (!opt.drop)
                 if (rel && $.drop.drp.galleries[opt.rel].length > 1)
                     opt.drop = '.' + opt.defaultClassBtnDrop + rel;
-                else
+                else if (sourcePref)
                     opt.drop = '.' + opt.defaultClassBtnDrop + sourcePref;
+                else
+                    opt.drop = '.' + aClass;
             if (opt.place === 'inherit' && opt.placeInherit)
                 drop = $(drop).appendTo($(opt.placeInherit).empty());
             else {
@@ -775,12 +774,29 @@
         }
     };
     $.drop = function(m, opt) {
-        if (methods[m] && !/_/.test(m))
-            return methods[m].call(null, opt);
-        if (typeof m === 'string')
+        if (!opt)
+            opt = {};
+        if (m.constructor === jQuery)
+            return methods.open.call(null, $.extend(opt, {'drop': m}));
+        else if ($.type(m) === 'array' || m.match($.drop.drp.regImg)) {
+            if ($.type(m) === 'array') {
+                opt.rel = opt.rel ? opt.rel : 'rel' + (+new Date());
+                if (!$.drop.drp.galleries[opt.rel])
+                    $.drop.drp.galleries[opt.rel] = [];
+                m.map(function(n) {
+                    if ($.drop.drp.galleries[opt.rel].indexOf(n) === -1 && n.match($.drop.drp.regImg))
+                        $.drop.drp.galleries[opt.rel].push(n);
+                });
+                return methods.open.call(null, $.extend(opt, {source: $.drop.drp.galleries[opt.rel][0]}));
+            }
+            else if (m.match($.drop.drp.regImg))
+                return methods.open.call(null, $.extend(opt, {source: m}));
+        }
+        else if ($.type(m) === 'string')
             return methods.open.call(null, $.extend(opt, {'html': m}));
     };
     $.drop.nS = 'drop';
+    $.drop.version = '1.0';
     $.drop.dP = {
         activeClass: 'drop-active',
         drop: null,
@@ -828,17 +844,17 @@
         afterG: $.noop,
         closeG: $.noop,
         closedG: $.noop,
-        pattern: '<div class="drop drop-style drop-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default"></div><div class="drop-content-default"><button class="drop-prev" type="button"  style="height:100%;display:none;font-size: 30px;position:absolute;width: 35%;left: 20px;top:0;text-align: left;"><</button><button class="drop-next" type="button" style="height:100%;display:none;font-size: 30px;position:absolute;width: 35%;right: 20px;top:0;text-align: right;">></button><div class="inside-padd placePaste" style="padding: 20px 40px;text-align: center;"></div></div><div class="drop-footer-default"></div></div>',
+        pattern: '<div class="drop drop-default"><button type="button" class="icon-times-drop" data-closed></button><div class="drop-header-default"></div><div class="drop-content-default"><button class="drop-prev" type="button" style="display: none;"><</button><button class="drop-next" type="button" style="display: none;">></button><div class="inside-padd placePaste"></div></div><div class="drop-footer-default"></div></div>',
         notifyBtnDrop: '#drop-notification-default',
         defaultClassBtnDrop: 'drop-default',
-        patternNotify: '<div class="drop drop-style" id="drop-notification-default" style="background-color: #fff;"><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;"></div><div class="drop-content-default"><div class="inside-padd drop-notification-default"></div></div><div class="drop-footer-default"></div></div>',
+        patternNotify: '<div class="drop" id="drop-notification-default"><div class="drop-header-default"></div><div class="drop-content-default"><div class="inside-padd drop-notification-default"></div></div><div class="drop-footer-default"></div></div>',
         confirmBtnDrop: '#drop-confirm-default',
         confirmActionBtn: '[data-button-confirm]',
-        patternConfirm: '<div class="drop drop-style" id="drop-confirm-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;">Confirm</div><div class="drop-content-default"><div class="inside-padd" style="padding: 20px 40px;text-align: center;"><div class="drop-btn-confirm" style="margin-right: 10px;"><button type="button" data-button-confirm><span class="text-el">confirm</span></button></div><div class="drop-btn-cancel"><button type="button" data-closed><span class="text-el">cancel</span></button></div></div></div><div class="drop-footer-default"></div></div>',
+        patternConfirm: '<div class="drop" id="drop-confirm-default"><button type="button" class="icon-times-drop" data-closed></button><div class="drop-header-default">Confirm</div><div class="drop-content-default"><div class="inside-padd"><div class="drop-group-btns"><button type="button" class="drop-btn-confirm" data-button-confirm><span class="text-el">confirm</span></button><button type="button" class="drop-btn-cancel" data-closed><span class="text-el">cancel</span></button></div></div></div><div class="drop-footer-default"></div></div>',
         promptBtnDrop: '#drop-prompt-default',
         promptActionBtn: '[data-button-prompt]',
         promptInput: '[name="promptInput"]',
-        patternPrompt: '<div class="drop drop-style" id="drop-prompt-default" style="background-color: #fff;"><button type="button" class="icon-times-drop" data-closed style="position: absolute;right: 5px;top: 5px;background-color: red;width: 10px;height: 10px;"></button><div class="drop-header-default" style="padding: 10px 20px;border-bottom: 1px solid #ccc;">Prompt</div><div class="drop-content-default"><form class="inside-padd" style="padding: 20px 40px;text-align: center;"><input type="text" name="promptInput"/><div class="drop-btn-prompt" style="margin-right: 10px;"><button data-button-prompt type="submit"><span class="text-el">ok</span></button></div><div class="drop-btn-cancel"><button type="button" data-closed><span class="text-el">cancel</span></button></div></form></div><div class="drop-footer-default"></div></div>',
+        patternPrompt: '<div class="drop" id="drop-prompt-default"><button type="button" class="icon-times-drop" data-closed></button><div class="drop-header-default">Prompt</div><div class="drop-content-default"><form class="inside-padd"><input type="text" name="promptInput"/><div class="drop-group-btns"><button data-button-prompt type="submit" class="drop-btn-prompt"><span class="text-el">ok</span></button><button type="button" data-closed class="drop-btn-cancel"><span class="text-el">cancel</span></button></div></form></div><div class="drop-footer-default"></div></div>',
         promptInputValue: null,
         next: '.drop-next',
         prev: '.drop-prev',
@@ -857,21 +873,25 @@
         moreOne: false,
         closeClick: true,
         closeEsc: true,
-        cycle: false,
+        cycle: true,
         limitSize: true,
-        droppable: true,
+        droppable: false,
         droppableLimit: false,
         inheritClose: false,
         keyNavigate: true,
         context: false,
         minHeightContent: 100,
-        centerOnScroll: false
+        centerOnScroll: false,
+        autoPlay: true,
+        autoPlaySpeed: 2000
     };
     $.drop.drp = {
+        regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
+        reg: /[^a-zA-Z0-9]+/ig,
+        autoPlayInterval: {},
         hrefs: {},
         drops: {},
         galleries: {},
-        scrollemulatetimeout: null,
         curHash: null,
         curDrop: null,
         curHashTimeout: null,
@@ -898,10 +918,6 @@
     $.drop.close = function() {
         return methods.close.call(null, 'artificial close element');
     };
-//    zzz
-    $.drop.open = function() {
-        methods.open.call(null);
-    };
     $.drop.cancel = function() {
         if ($.drop.drp.curAjax)
             $.drop.drp.curAjax.abort();
@@ -913,17 +929,47 @@
         $.drop.hideLoading();
         return this;
     };
-    $.drop.update = function() {
+    $.drop.update = function(opt) {
         return $('[data-elrun].' + $.drop.dP.activeClass).each(function() {
-            methods.update.call(drop);
+            methods.update.call($(this), opt);
         });
     };
-
-//    play 
-//    next
-//    prev
-//    jumpto
-//    update center, height
+    $.drop.next = function(opt) {
+        return $('[data-elrun][data-rel].' + $.drop.dP.activeClass).each(function() {
+            var $this = $(this),
+                    drp = $this.data('drp');
+            methods._checkMethod(function() {
+                methods.galleries($this, $.extend(opt, drp), 'n');
+            });
+        });
+    };
+    $.drop.prev = function(opt) {
+        return $('[data-elrun][data-rel].' + $.drop.dP.activeClass).each(function() {
+            var $this = $(this),
+                    drp = $this.data('drp');
+            methods._checkMethod(function() {
+                methods.galleries($this, $.extend(opt, drp), 'p');
+            });
+        });
+    };
+    $.drop.jumpto = function(i, opt) {
+        return $('[data-elrun][data-rel].' + $.drop.dP.activeClass).each(function() {
+            var $this = $(this),
+                    drp = $this.data('drp');
+            methods._checkMethod(function() {
+                methods.galleries($this, $.extend(opt, drp), false, i);
+            });
+        });
+    };
+    $.drop.play = function(opt) {
+        return $('[data-elrun][data-rel].' + $.drop.dP.activeClass).each(function() {
+            var $this = $(this),
+                    drp = $this.data('drp');
+            methods._checkMethod(function() {
+                methods.galleries($this, $.extend(opt, drp));
+            });
+        });
+    };
 
     doc.ready(function() {
         var loadingTimer, loadingFrame = 1,

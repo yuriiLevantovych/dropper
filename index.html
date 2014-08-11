@@ -7,8 +7,8 @@
         <script src="drop.js"></script>
         <script src="drop_extend_methods.js"></script>
         <style>
-            body{margin: 0;}
-            [data-closed]{position: absolute;right: 0;top: 0;}
+            *{margin: 0;padding: 0;}
+            .drop > [data-closed]{position: absolute;right: 0;top: 0;}
             #drop-loading {
                 position: fixed;
                 top: 50%;
@@ -101,7 +101,7 @@
             </div>
         </div>
         <a href="http://fc08.deviantart.net/fs70/f/2010/324/a/2/avatar_upd_big_size_by_merychess-d30zufu.jpg" rel="group" onClick="return false;" data-href="#a" data-prompt="true">
-            <img src="1.jpg" width="50"/>
+            <img src="3.jpg" width="50"/>
         </a>
         <a href="4.jpg" rel="group" data-href="#b">
             <img src="3.jpg" width="50"/>
@@ -109,8 +109,9 @@
         <a href="6.jpg" rel="group" data-href="#c">
             <img src="5.jpg" width="50"/>
         </a>
+        <div class="drop asdf">asdf</div>
         <script>
-            $.drop.extendDrop('droppable', 'noinherit', 'heightContent', 'scroll', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPrompt');
+            $.drop.extendDrop('droppable', 'noinherit', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPrompt');
             $(document).ready(function() {
                 var api = $('[href]').drop({
                     placeBeforeShow: 'right top',
