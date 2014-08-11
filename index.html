@@ -59,7 +59,7 @@
                     1234<br/>
                 </div>    
             </div>
-            <a data-drop data-source data-datas='{"answer": "success", "data": "asdf"}' data-notify='true' data-prompt="true">click</a>
+            <a data-drop data-source  data-prompt="true">click</a>
             <div class="drop drop-simple2" style="width: 150px">
                 <button type="button" data-closed>*</button>
                 <div class="drop-content-default">
@@ -117,12 +117,17 @@
                     placeAfterClose: 'inherit',
                     animate: true,
                     start: function(drop, opt) {
-                        console.log(opt)
+                        console.log(opt);
                         return true;
                     },
                     closed: function() {
-                        console.log(this)
+                        console.log(arguments);
                         return false;
+                    }
+                });
+                $('[data-prompt]').drop({
+                    closed: function(drop, opt){
+                        console.log(this);
                     }
                 });
             });

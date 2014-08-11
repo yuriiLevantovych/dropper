@@ -253,7 +253,7 @@ $.drop.extendDrop = function() {
                 if (relA[relNext]) {
                     var $this = $('[data-source="' + relA[relP] + '"][rel], [href="' + relA[relP] + '"][rel]').filter(':last'),
                             $next = $('[data-source="' + relA[relNext] + '"][rel], [href="' + relA[relNext] + '"][rel]').filter(':last');
-                    self.close.call($($this.data('drop')), true, function() {
+                    self.close.call($($this.data('drop')), true, e, function() {
                         self.open.call($next, $.extend($next.data('drp'), {source: relA[relNext], drop: null}));
                     });
                 }
@@ -305,7 +305,7 @@ $.drop.extendDrop = function() {
         placeAfterClose: function(drop, $this, opt) {
             if (!this._isScrollable($('body').get(0)))
                 $('body').css('overflow', 'hidden');
-            $('body').css('overflow-x', 'hidden')
+            $('body').css('overflow-x', 'hidden');
             var
                     method = opt.animate ? 'animate' : 'css',
                     pmt = opt.placeAfterClose.toLowerCase().split(' '),
@@ -373,7 +373,7 @@ $.drop.extendDrop = function() {
                 $(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                     e.stopPropagation();
                     opt.drop = null;
-                    self.close.call($(opt.confirmBtnDrop), null, _confirmF);
+                    self.close.call($(opt.confirmBtnDrop), null, e, _confirmF);
                 });
             }
             if (opt.prompt) {
@@ -407,7 +407,7 @@ $.drop.extendDrop = function() {
 
                     opt.dataPrompt = getUrlVars($(this).closest('form').serialize());
                     opt.drop = null;
-                    self.close.call($(opt.promptBtnDrop), null, _confirmF);
+                    self.close.call($(opt.promptBtnDrop), null, e, _confirmF);
                 });
             }
             return this;

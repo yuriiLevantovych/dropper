@@ -36,8 +36,9 @@
             }
 
             this.each(function() {
-                var el = methods.destroy($(this)).data('drp', set),
+                var el = methods.destroy.call($(this)).data('drp', set),
                         opt = $.extend({}, set, el.data());
+                el.data('drp').genOpt = opt;
 
                 if (opt.notify)
                     methods._notifyTrigger.call(el, opt);
@@ -48,7 +49,8 @@
                     if (source) {
                         if (!$.drop.drp.galleries[rel])
                             $.drop.drp.galleries[rel] = [];
-                        $.drop.drp.galleries[rel].push(source);
+                        if ($.drop.drp.galleries[rel].indexOf(source) === -1)
+                            $.drop.drp.galleries[rel].push(source);
                     }
                 }
 
@@ -60,7 +62,7 @@
                     el.on('mouseup.' + $.drop.nS, function(e) {
                         e.preventDefault();
                         if (el.hasClass($.drop.dP.activeClass))
-                            methods.close.call($(el.attr('data-drop')));
+                            methods.close.call($(el.attr('data-drop')), e);
                         if (e.button === 2)
                             methods.open.call($(this), $.extend(opt, {place: 'noinherit', limitSize: true}), e);
                     });
@@ -77,13 +79,13 @@
                             }
                             else
                                 methods.open.call($(this), opt, e);
-                        }).on(opt.triggerOff + '.' + $.drop.nS, function() {
-                            methods.close.call($(el.attr('data-drop')));
+                        }).on(opt.triggerOff + '.' + $.drop.nS, function(e) {
+                            methods.close.call($(el.attr('data-drop')), e);
                         });
                     else
                         el.on(opt.trigger + '.' + $.drop.nS, function(e) {
                             if (el.hasClass($.drop.dP.activeClass))
-                                methods.close.call($(el.attr('data-drop')));
+                                methods.close.call($(el.attr('data-drop')), e);
                             else
                                 methods.open.call($(this), opt, e);
                             e.stopPropagation();
@@ -100,10 +102,12 @@
         destroy: function(el) {
             return (el || this).each(function() {
                 var el = $(this),
-                        opt = $(el.attr('data-drop')).data('drp');
+                        opt = $(el).data('drp');
+                el.removeClass('isDrop').removeData('drp');
+                if (opt)
+                    opt = opt.genOpt;
                 if (!opt)
                     return;
-                el.removeClass('isDrop').removeData('drp');
                 if (opt.trigger)
                     el.off(opt.trigger + '.' + $.drop.nS);
                 if (opt.triggerOn)
@@ -119,7 +123,7 @@
             $.extend(opt, elSet);
             function _update(data) {
                 $.drop.hideLoading();
-                var drop = methods._pasteDrop(opt, opt.pattern, opt.rel, $.drop.drp.curDefault).attr('pattern', true);
+                var drop = methods._pasteDrop(opt, opt.pattern, opt.rel, $.drop.drp.curDefault);
                 if (opt.source && !opt.always && !opt.notify)
                     $.drop.drp.drops[opt.source.replace(methods._reg(), '')] = drop;
                 drop.find($(opt.placePaste)).html(data);
@@ -238,13 +242,16 @@
                         else if (opt.source)
                             methods._get.call($this, opt, e, hashChange);
                     }
-                    else
+                    else {
+                        //zzz
+                        drop = methods._pasteDrop(opt, $.existsN(drop) && !opt.rel ? drop : $.drop.drp.drops[sourceC], opt.rel);
                         methods._show.call($this, drop, e, opt, hashChange);
+                    }
                 }
                 if (!$this.hasClass($.drop.dP.activeClass) && !drop.hasClass($.drop.dP.activeClass)) {
                     if (!opt.moreOne && !opt.start)
                         methods._closeMoreOne();
-                    if ($this.is(':disabled') || opt.start && !eval(opt.start).call($this, drop, opt))
+                    if ($this.is(':disabled') || opt.start && !eval(opt.start).call($this, drop, opt, e))
                         return false;
                     if (opt.notify && !(opt.prompt || opt.confirm))//for front validations
                         methods._pasteNotify.call($this, opt.datas, opt, null, hashChange);
@@ -258,7 +265,7 @@
                                 });
                         }
                         else if ($.existsN(drop) || opt.source && $.drop.drp.drops[sourceC]) {
-                            drop = methods._pasteDrop(opt, $.existsN(drop) && !opt.rel ? drop : $.drop.drp.drops[sourceC]);
+                            drop = methods._pasteDrop(opt, $.existsN(drop) && !opt.rel ? drop : $.drop.drp.drops[sourceC], opt.rel);
                             methods._show.call($this, drop, e, opt, hashChange);
                         }
                         else
@@ -266,7 +273,7 @@
                     }
                 }
                 else
-                    methods.close.call($($this.data('drop')));
+                    methods.close.call($($this.data('drop')), 'element already open');
             });
         },
         _show: function(drop, e, opt, hashChange) {
@@ -321,14 +328,15 @@
             drop.css('z-index', overlays.length + 1104);
             methods._pasteContent($this, drop, opt);
             if (opt.elBefore)
-                eval(opt.elBefore).call($this, drop, opt);
+                eval(opt.elBefore).call($this, drop, opt, e);
             if (opt.before)
-                opt.before.call($this, drop, opt);
+                opt.before.call($this, drop, opt, e);
             if (opt.beforeG)
-                opt.beforeG.call($this, drop);
+                opt.beforeG.call($this, drop, opt, e);
             drop.add(doc).trigger({
                 type: 'before.' + $.drop.nS,
                 drp: {
+                    event: e,
                     refer: $this,
                     drop: drop,
                     options: opt
@@ -372,7 +380,7 @@
             if (opt.closeClick)
                 $(forCenter).add(dropOver).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
                     if ($(e.target).is('.overlayDrop') || $(e.target).is('.forCenter'))
-                        methods.close.call($($(e.target).attr('data-rel')));
+                        methods.close.call($($(e.target).attr('data-rel')), e);
                 });
             if (opt.prompt) {
                 var input = drop.find(opt.promptInput).val(opt.promptInputValue);
@@ -387,18 +395,18 @@
             }
             drop.attr('data-elrun', opt.drop).off('click.' + $.drop.nS, opt.exit).on('click.' + $.drop.nS, opt.exit, function(e) {
                 e.stopPropagation();
-                methods.close.call($(this).closest('[data-elrun]'));
+                methods.close.call($(this).closest('[data-elrun]'), e);
             });
             doc.off('keyup.' + $.drop.nS);
             if (opt.closeEsc)
                 doc.on('keyup.' + $.drop.nS, function(e) {
                     if (e.keyCode === 27)
-                        methods.close.call(null);
+                        methods.close.call(null, e);
                 });
             $('html, body').css('height', '100%');
             doc.off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                 if (opt.closeClick && !$.existsN($(e.target).closest('[data-elrun]')))
-                    methods.close.call(null);
+                    methods.close.call(null, e);
             });
             if (opt.context) {
                 var collect = drop.add(dropOver).add(forCenter);
@@ -435,18 +443,19 @@
                 $this.addClass($.drop.dP.activeClass);
                 if (opt.notify && opt.timeclosenotify)
                     $.drop.drp.closeDropTime = setTimeout(function() {
-                        methods.close.call(drop);
+                        methods.close.call(drop, 'close notify setTimeout');
                     }, opt.timeclosenotify);
                 var cB = opt.elAfter;
                 if (cB)
-                    eval(cB).call($this, drop, opt);
+                    eval(cB).call($this, drop, opt, e);
                 if (opt.after)
-                    opt.after.call($this, drop, opt);
+                    opt.after.call($this, drop, opt, e);
                 if (opt.afterG)
-                    opt.afterG.call($this, drop, opt);
+                    opt.afterG.call($this, drop, opt, e);
                 drop.add(doc).trigger({
                     type: 'after.' + $.drop.nS,
                     drp: {
+                        event: e,
                         refer: $this,
                         drop: drop,
                         options: opt
@@ -469,7 +478,7 @@
             });
             return this;
         },
-        close: function(hashChange, f) {
+        close: function(hashChange, e, f) {
             var sel = this,
                     drop = $.existsN(sel) ? sel : $('[data-elrun].' + $.drop.dP.activeClass);
             clearTimeout($.drop.drp.closeDropTime);
@@ -522,14 +531,15 @@
                             methods._resetStyleDrop.call($(this));
                         $this.removeClass(opt.place);
                         if (opt.closed)
-                            opt.closed.call($thisB, $this, opt);
+                            opt.closed.call($thisB, $this, opt, e);
                         if (opt.elClosed)
-                            eval(opt.elClosed).call($thisB, $this, opt);
+                            eval(opt.elClosed).call($thisB, $this, opt, e);
                         if (opt.closedG)
-                            opt.closedG.call($thisB, $this);
+                            opt.closedG.call($thisB, $this, opt, e);
                         $this.add(doc).trigger({
                             type: 'closed.' + $.drop.nS,
                             drp: {
+                                event: e,
                                 refer: $thisB,
                                 drop: $this,
                                 options: opt
@@ -552,6 +562,7 @@
                 drop.add(doc).trigger({
                     type: 'close.' + $.drop.nS,
                     drp: {
+                        event: e,
                         refer: $thisB,
                         drop: drop,
                         options: opt
@@ -560,9 +571,9 @@
                 var close = opt.elClose || opt.close || opt.closeG;
                 if (close) {
                     if (typeof close === 'string')
-                        var res = eval(close).call($thisB, $(this), opt);
+                        var res = eval(close).call($thisB, $(this), opt, e);
                     else
-                        var res = close.call($thisB, $(this), opt);
+                        var res = close.call($thisB, $(this), opt, e);
                     if (res === false && res !== true)
                         returnMsg(res);
                     else
@@ -630,7 +641,7 @@
         },
         _closeMoreOne: function() {
             if ($.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
-                methods.close.call($('[data-elrun].center:visible, [data-elrun].noinherit:visible'));
+                methods.close.call($('[data-elrun].center:visible, [data-elrun].noinherit:visible'), 'close more one element');
             return this;
         },
         _notifyTrigger: function(opt) {
@@ -885,7 +896,7 @@
         });
     };
     $.drop.close = function() {
-        return methods.close.call(null);
+        return methods.close.call(null, 'artificial close element');
     };
 //    zzz
     $.drop.open = function() {
@@ -948,7 +959,7 @@
                 if (wLH.indexOf(i) === -1 && wLHN.indexOf(i) !== -1)
                     methods.open.call($.drop.drp.hrefs[i], {}, e, true);
                 else
-                    methods.close.call($($.drop.drp.hrefs[i].data('drop')), true);
+                    methods.close.call($($.drop.drp.hrefs[i].data('drop')), e);
             }
         wLH = wLHN;
     });
