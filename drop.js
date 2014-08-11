@@ -294,6 +294,7 @@
             var overlays = $('.overlayDrop').css('z-index', 1103),
                     condOverlay = opt.overlayOpacity !== 0,
                     dropOver = null;
+
             if (condOverlay) {
                 if (!$.exists('[data-rel="' + opt.drop + '"].overlayDrop'))
                     $('body').append('<div class="overlayDrop" data-rel="' + opt.drop + '" style="display:none;position:absolute;width:100%;left:0;top:0;"></div>');
@@ -307,7 +308,7 @@
             }
 
             $('.forCenter').css('z-index', 1104);
-            
+
             var forCenter = null,
                     objForC = $('[data-rel="' + opt.drop + '"].forCenter');
             if ($.existsN(objForC))
