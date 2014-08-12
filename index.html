@@ -114,29 +114,29 @@
             $.drop.extendDrop('droppable', 'noinherit', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPrompt');
             $(document).ready(function() {
                 var api = $('[href]').drop({
-                    placeBeforeShow: 'right top',
-                    placeAfterClose: 'inherit',
+                    placeBeforeShow: 'center top',
+                    placeAfterClose: 'center top',
                     animate: true,
                     start: function(drop, opt) {
-                        console.log(opt);
+                        //console.log(opt);
                         return true;
                     },
                     closed: function() {
-                        console.log(arguments);
+                        //console.log(arguments);
                         return false;
                     }
                 });
-                $('[data-prompt]').drop({
-                    closed: function(drop, opt){
-                        console.log(this);
-                    }
-                });
+//                $('[data-prompt]').drop({
+//                    closed: function(drop, opt) {
+//                        // console.log(this);
+//                    }
+//                });
             });
         </script>
         <div class="drop drop-style" id="notification">
             <div class="drop-content-notification">
                 <div class="inside-padd drop-notification-default">
-іа
+                    іа
                 </div>
             </div>
         </div>

@@ -43,12 +43,12 @@
                     });
                 });
             },
-            noinherit: function(e) {
+            noinherit: function(e, start) {
                 return this.each(function() {
                     var drop = $(this),
                             drp = drop.data('drp');
                     if (drp && !drp.droppableIn) {
-                        var method = drp.animate ? 'animate' : 'css',
+                        var method = drp.animate && !start ? 'animate' : 'css',
                                 placement = drp.placement,
                                 $this = drp.elrun,
                                 t = 0,
@@ -132,13 +132,13 @@
                                     api = false,
                                     elCH = el.css({'overflow': ''}).outerHeight();
 
-                            try {
-                                api = el.jScrollPane(scrollPane).data('jsp');
+                            if ($.fn.jScrollPane) {
+                                api = el.jScrollPane(drp.jScrollPane).data('jsp');
                                 if ($.existsN(el.find('.jspPane')))
                                     elCH = el.find('.jspPane').outerHeight();
-                            } catch (err) {
-                                el.css('overflow', 'auto');
                             }
+                            else
+                                el.css('overflow', 'auto');
 
                             var dropH = drop.outerHeight(),
                                     dropHm = drop.height(),
@@ -224,6 +224,10 @@
                     });
                 });
             },
+            _cIGalleries: function(rel) {
+                clearInterval($.drop.drp.autoPlayInterval[rel]);
+                delete $.drop.drp.autoPlayInterval[rel];
+            },
             galleries: function(drop, opt, btn, i) {
                 var relA = $.drop.drp.galleries[opt.rel],
                         self = this;
@@ -253,9 +257,11 @@
                         return false;
                     }
                     var $next = $('[data-source="' + relA[i] + '"][rel], [href="' + relA[i] + '"][rel]').filter(':last');
-                    self.close.call(drop, true, e, function() {
+                    
+                    self.close.call(drop, e, function() {
+                        self._cIGalleries(opt.rel);
                         self.open.call($next, $.extend($next.data('drp'), {source: relA[i], drop: null, rel: opt.rel}));
-                    });
+                    }, true);
                 }
                 function _getnext(i) {
                     relP += i;
@@ -267,14 +273,10 @@
                     }
                     return relP;
                 }
-                function _clearInterval(rel) {
-                    clearInterval($.drop.drp.autoPlayInterval[rel]);
-                    delete $.drop.drp.autoPlayInterval[rel];
-                }
 
                 prev.add(next).attr('data-rel', opt.rel).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                     e.stopPropagation();
-                    _clearInterval(opt.rel);
+                    self._cIGalleries(opt.rel);
                     var $this = $(this).attr('disabled', 'disabled');
 
                     _goto(_getnext($this.is(opt.prev) ? -1 : 1), e);
@@ -283,17 +285,20 @@
                 if (i !== undefined && i !== null && relP !== i && relA[i])
                     _goto(i, null);
                 if (btn)
-                    _goto(_getnext(btn === 'n' ? 1 : -1), null);
+                    _goto(_getnext(btn === 1 ? 1 : -1), null);
 
                 if (opt.autoPlay) {
                     if ($.drop.drp.autoPlayInterval[opt.rel])
-                        _clearInterval(opt.rel);
+                        self._cIGalleries(opt.rel);
                     else
                         $.drop.drp.autoPlayInterval[opt.rel] = setInterval(function() {
-                            _clearInterval(opt.rel);
+                            self._cIGalleries(opt.rel);
                             _goto(_getnext(1));
                         }, opt.autoPlaySpeed);
                 }
+                drop.off('close.' + $.drop.nS).on('close.' + $.drop.nS, function() {
+                    self._cIGalleries($(this).data('drp').rel);
+                });
 
                 return self;
             },
@@ -310,7 +315,7 @@
                         l = -drop.actual('outerWidth');
                 if (pmt[0] === 'center' || pmt[1] === 'center') {
                     self._checkMethod(function() {
-                        self[place].call(drop, e);
+                        self[place].call(drop, e, true);
                     });
                     t = drop.css('top');
                     l = drop.css('left');
@@ -410,7 +415,7 @@
                     $(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                         e.stopPropagation();
                         opt.drop = null;
-                        self.close.call($(opt.confirmBtnDrop), null, e, _confirmF);
+                        self.close.call($(opt.confirmBtnDrop), e, _confirmF, null);
                     });
                 }
                 if (opt.prompt) {
@@ -444,13 +449,14 @@
 
                         opt.dataPrompt = getUrlVars($(this).closest('form').serialize());
                         opt.drop = null;
-                        self.close.call($(opt.promptBtnDrop), null, e, _confirmF);
+                        self.close.call($(opt.promptBtnDrop), e, _confirmF, null);
                     });
                 }
                 return this;
             },
             require: {
-                limitSize: ['_heightContent']
+                limitSize: ['_heightContent'],
+                galleries: ['_cIGalleries']
             }
         };
         var newMethods = {};
@@ -462,7 +468,6 @@
                         newMethods[n] = addmethods[n];
                     });
             }
-        this.setMethods(newMethods);
-        return this;
+        return this.setMethods(newMethods);
     };
 })(jQuery, $(window), $(document));

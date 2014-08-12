@@ -35,10 +35,11 @@
                 return false;
             }
 
-            this.each(function() {
-                var el = methods.destroy.call($(this)).data('drp', set),
+            return this.each(function() {
+                var el = methods.destroy.call($(this)),
                         opt = $.extend({}, set, el.data());
-                el.data('drp').genOpt = opt;
+                el.data('drp', $.extend({}, set, {genOpt: $.extend({}, opt)}));
+
                 if (opt.notify)
                     methods._notifyTrigger.call(el, opt);
                 var rel = this.rel;
@@ -91,12 +92,14 @@
                             e.preventDefault();
                         });
                 }
-                if (opt.href && window.location.hash.indexOf(opt.href) !== -1 && !$.drop.drp.hrefs[opt.href])
-                    methods.open.call(el, opt, null);
                 if (/#/.test(opt.href) && !$.drop.drp.hrefs[opt.href])
                     $.drop.drp.hrefs[opt.href] = el;
+            }).each(function() {
+                var opt = $.extend({}, $(this).data('drp').genOpt);
+
+                if (window.location.hash.indexOf(opt.href) !== -1)
+                    methods.open.call($(this), opt, null);
             });
-            return this;
         },
         destroy: function(el) {
             return (el || this).each(function() {
@@ -347,9 +350,10 @@
             });
             drop.addClass(opt.place);
             methods._positionType(drop);
+            
             if (opt.href) {
                 clearTimeout($.drop.drp.curHashTimeout);
-                $.drop.drp.curHash = !hashChange ? opt.href : null;
+                $.drop.drp.curHash = hashChange ? null : opt.href;
                 $.drop.drp.scrollTop = wnd.scrollTop();
                 var wlh = window.location.hash;
                 if (opt.href.indexOf('#') !== -1 && (new RegExp(opt.href + '#|' + opt.href + '$').exec(wlh) === null))
@@ -477,7 +481,7 @@
             });
             return this;
         },
-        close: function(hashChange, e, f) {
+        close: function(e, f, hashChange) {
             var sel = this,
                     drop = $.existsN(sel) ? sel : $('[data-elrun].' + $.drop.dP.activeClass);
             clearTimeout($.drop.drp.closeDropTime);
@@ -517,15 +521,7 @@
                         var $this = $(this);
                         if (opt.forCenter)
                             opt.forCenter.hide();
-                        var zInd = 0,
-                                drpV = null;
-                        $('[data-elrun]:visible').each(function() {
-                            var $this = $(this);
-                            if (parseInt($this.css('z-index')) > zInd) {
-                                zInd = parseInt($this.css('z-index'));
-                                drpV = $.extend({}, $this.data('drp'));
-                            }
-                        });
+
                         if (opt.dropOver)
                             opt.dropOver.fadeOut(opt.durationOff);
                         if (!opt.context)
@@ -585,8 +581,8 @@
             return sel;
         },
         update: function(e, opt) {
-            var drop = this,
-                    opt = $.extend({}, opt, drop.data('drp'));
+            var drop = this;
+            opt = $.extend({}, opt, drop.data('drp'));
             if (opt.limitSize)
                 methods._checkMethod(function() {
                     methods.limitSize(drop);
@@ -597,12 +593,12 @@
                 }, opt.place);
             methods._setHeightAddons(opt.dropOver, opt.forCenter);
         },
-        center: function(e) {
+        center: function(e, start) {
             return this.each(function() {
                 var drop = $(this),
                         drp = drop.data('drp');
                 if (drp && !drp.droppableIn) {
-                    var method = drp.animate ? 'animate' : 'css',
+                    var method = drp.animate && !start ? 'animate' : 'css',
                             dropV = drop.is(':visible'),
                             w = dropV ? drop.outerWidth() : drop.actual('outerWidth'),
                             h = dropV ? drop.outerHeight() : drop.actual('outerHeight'),
@@ -846,23 +842,27 @@
         afterG: $.noop,
         closeG: $.noop,
         closedG: $.noop,
-        pattern: '<div class="drop drop-default"><button type="button" class="icon-times-drop" data-closed></button><div class="drop-header-default"></div><div class="drop-content-default"><button class="drop-prev" type="button" style="display: none;"><</button><button class="drop-next" type="button" style="display: none;">></button><div class="inside-padd placePaste"></div></div><div class="drop-footer-default"></div></div>',
+        pattern: '<div class="drop drop-default"><button type="button" class="icon-times-drop" data-closed></button><button class="drop-prev" type="button" style="display: none;"><</button><button class="drop-next" type="button" style="display: none;">></button><div class="drop-header-default"></div><div class="drop-content-default"><div class="inside-padd placePaste"></div></div><div class="drop-footer-default"></div></div>',
         notifyBtnDrop: '#drop-notification-default',
         defaultClassBtnDrop: 'drop-default',
-        patternNotify: '<div class="drop" id="drop-notification-default"><div class="drop-header-default"></div><div class="drop-content-default"><div class="inside-padd drop-notification-default"></div></div><div class="drop-footer-default"></div></div>',
+        patternNotify: '<div class="drop" id="drop-notification-default"><button type="button" class="icon-times-drop" data-closed></button><button class="drop-prev" type="button" style="display: none;"><</button><button class="drop-next" type="button" style="display: none;">></button><div class="drop-header-default"></div><div class="drop-content-default"><div class="inside-padd drop-notification-default"></div></div><div class="drop-footer-default"></div></div>',
         confirmBtnDrop: '#drop-confirm-default',
         confirmActionBtn: '[data-button-confirm]',
-        patternConfirm: '<div class="drop" id="drop-confirm-default"><button type="button" class="icon-times-drop" data-closed></button><div class="drop-header-default">Confirm</div><div class="drop-content-default"><div class="inside-padd"><div class="drop-group-btns"><button type="button" class="drop-btn-confirm" data-button-confirm><span class="text-el">confirm</span></button><button type="button" class="drop-btn-cancel" data-closed><span class="text-el">cancel</span></button></div></div></div><div class="drop-footer-default"></div></div>',
+        patternConfirm: '<div class="drop" id="drop-confirm-default"><button type="button" class="icon-times-drop" data-closed></button><button class="drop-prev" type="button" style="display: none;"><</button><button class="drop-next" type="button" style="display: none;">></button><div class="drop-header-default">Confirm</div><div class="drop-content-default"><div class="inside-padd"><div class="drop-group-btns"><button type="button" class="drop-btn-confirm" data-button-confirm><span class="text-el">confirm</span></button><button type="button" class="drop-btn-cancel" data-closed><span class="text-el">cancel</span></button></div></div></div><div class="drop-footer-default"></div></div>',
         promptBtnDrop: '#drop-prompt-default',
         promptActionBtn: '[data-button-prompt]',
         promptInput: '[name="promptInput"]',
-        patternPrompt: '<div class="drop" id="drop-prompt-default"><button type="button" class="icon-times-drop" data-closed></button><div class="drop-header-default">Prompt</div><div class="drop-content-default"><form class="inside-padd"><input type="text" name="promptInput"/><div class="drop-group-btns"><button data-button-prompt type="submit" class="drop-btn-prompt"><span class="text-el">ok</span></button><button type="button" data-closed class="drop-btn-cancel"><span class="text-el">cancel</span></button></div></form></div><div class="drop-footer-default"></div></div>',
+        patternPrompt: '<div class="drop" id="drop-prompt-default"><button type="button" class="icon-times-drop" data-closed></button><button class="drop-prev" type="button" style="display: none;"><</button><button class="drop-next" type="button" style="display: none;">></button><div class="drop-header-default">Prompt</div><div class="drop-content-default"><form class="inside-padd"><input type="text" name="promptInput"/><div class="drop-group-btns"><button data-button-prompt type="submit" class="drop-btn-prompt"><span class="text-el">ok</span></button><button type="button" data-closed class="drop-btn-cancel"><span class="text-el">cancel</span></button></div></form></div><div class="drop-footer-default"></div></div>',
         promptInputValue: null,
         next: '.drop-next',
         prev: '.drop-prev',
         ajax: {
             type: 'post',
             dataType: null
+        },
+        jScrollPane: {
+            animateScroll: true,
+            showArrows: true
         },
         durationOn: 300,
         durationOff: 200,
@@ -872,7 +872,7 @@
         prompt: false,
         always: false,
         animate: false,
-        moreOne: false,
+        moreOne: true,
         closeClick: true,
         closeEsc: true,
         cycle: true,
@@ -884,8 +884,9 @@
         context: false,
         minHeightContent: 100,
         centerOnScroll: false,
-        autoPlay: false,
-        autoPlaySpeed: 2000
+        autoPlay: true,
+        autoPlaySpeed: 2000,
+        theme: ''
     };
     $.drop.drp = {
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
@@ -937,10 +938,10 @@
         });
     };
     $.drop.next = function(opt) {
-        return methods._galleriesDecorator(opt, 'n');
+        return methods._galleriesDecorator(opt, 1);
     };
     $.drop.prev = function(opt) {
-        return methods._galleriesDecorator(opt, 'p');
+        return methods._galleriesDecorator(opt, -1);
     };
     $.drop.jumpto = function(i, opt) {
         return methods._galleriesDecorator(opt, null, i);
@@ -973,17 +974,19 @@
         };
     });
     var wLH = window.location.hash;
+
     wnd.off('hashchange.' + $.drop.nS).on('hashchange.' + $.drop.nS, function(e) {
         e.preventDefault();
         if ($.drop.drp.scrollTop)
             $('html, body').scrollTop($.drop.drp.scrollTop);
         var wLHN = window.location.hash;
+        console.log($.drop.drp.curHash)
         if (!$.drop.drp.curHash)
             for (var i in $.drop.drp.hrefs) {
                 if (wLH.indexOf(i) === -1 && wLHN.indexOf(i) !== -1)
                     methods.open.call($.drop.drp.hrefs[i], {}, e, true);
                 else
-                    methods.close.call($($.drop.drp.hrefs[i].data('drop')), e);
+                    methods.close.call($($.drop.drp.hrefs[i].data('drop')), e, false, true);
             }
         wLH = wLHN;
     });
