@@ -244,14 +244,14 @@
                     next.add(prev).show().removeAttr('disabled');
 
                 function _goto(i, e) {
-                    if (!relA[i]){
+                    if (!relA[i]) {
                         relP -= 1;
                         return false;
                     }
                     var $next = $('[data-source="' + relA[i] + '"][rel], [href="' + relA[i] + '"][rel]').filter(':last');
-                    self.close.call(drop, true, e, function() {
-                        self.open.call($next, $.extend($next.data('drp'), {source: relA[i], drop: null, rel: opt.rel}));
-                    });
+                        self.close.call(drop, true, e, function() {
+                            self.open.call($next, $.extend($next.data('drp'), {source: relA[i], drop: null, rel: opt.rel}));
+                        });
                 }
                 function _getnext(i) {
                     relP += i;
@@ -280,7 +280,7 @@
                     _goto(i, null);
                 if (btn)
                     _goto(_getnext(btn === 'n' ? 1 : -1), null);
-                
+
                 if (opt.autoPlay) {
                     if ($.drop.drp.autoPlayInterval[opt.rel])
                         _clearInterval(opt.rel);
