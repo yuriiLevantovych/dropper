@@ -416,14 +416,11 @@
                     e.preventDefault();
                 });
             }
-            if (opt.limitSize) {
+            if (opt.limitSize)
                 methods._checkMethod(function() {
                     methods.limitSize(drop);
                 });
-                methods._checkMethod(function() {
-                    methods.heightContent(drop);
-                });
-            }
+
             if (methods.placeBeforeShow)
                 methods.placeBeforeShow(drop, $this, opt.place, opt.placeBeforeShow, e);
             if (opt.place !== 'inherit')
@@ -590,14 +587,10 @@
         update: function(e, opt) {
             var drop = this,
                     opt = $.extend({}, opt, drop.data('drp'));
-            if (opt.limitSize) {
+            if (opt.limitSize)
                 methods._checkMethod(function() {
                     methods.limitSize(drop);
                 });
-                methods._checkMethod(function() {
-                    methods.heightContent(drop);
-                });
-            }
             if (opt.place !== 'inherit')
                 methods._checkMethod(function() {
                     methods[opt.place].call(drop, e);
@@ -759,6 +752,15 @@
         },
         _isScrollable: function(el) {
             return (el && !(el.style.overflow && el.style.overflow === 'hidden') && ((el.clientWidth && el.scrollWidth > el.clientWidth) || (el.clientHeight && el.scrollHeight > el.clientHeight)));
+        },
+        _galleriesDecorator: function(opt, btn, i) {
+            return $('[data-elrun][data-rel].' + $.drop.dP.activeClass).each(function() {
+                var $this = $(this),
+                        drp = $this.data('drp');
+                methods._checkMethod(function() {
+                    methods.galleries($this, $.extend(opt, drp), btn, i);
+                });
+            });
         }
     };
     $.fn.drop = function(method) {
@@ -882,7 +884,7 @@
         context: false,
         minHeightContent: 100,
         centerOnScroll: false,
-        autoPlay: true,
+        autoPlay: false,
         autoPlaySpeed: 2000
     };
     $.drop.drp = {
@@ -935,40 +937,16 @@
         });
     };
     $.drop.next = function(opt) {
-        return $('[data-elrun][data-rel].' + $.drop.dP.activeClass).each(function() {
-            var $this = $(this),
-                    drp = $this.data('drp');
-            methods._checkMethod(function() {
-                methods.galleries($this, $.extend(opt, drp), 'n');
-            });
-        });
+        return methods._galleriesDecorator(opt, 'n');
     };
     $.drop.prev = function(opt) {
-        return $('[data-elrun][data-rel].' + $.drop.dP.activeClass).each(function() {
-            var $this = $(this),
-                    drp = $this.data('drp');
-            methods._checkMethod(function() {
-                methods.galleries($this, $.extend(opt, drp), 'p');
-            });
-        });
+        return methods._galleriesDecorator(opt, 'p');
     };
     $.drop.jumpto = function(i, opt) {
-        return $('[data-elrun][data-rel].' + $.drop.dP.activeClass).each(function() {
-            var $this = $(this),
-                    drp = $this.data('drp');
-            methods._checkMethod(function() {
-                methods.galleries($this, $.extend(opt, drp), false, i);
-            });
-        });
+        return methods._galleriesDecorator(opt, null, i);
     };
     $.drop.play = function(opt) {
-        return $('[data-elrun][data-rel].' + $.drop.dP.activeClass).each(function() {
-            var $this = $(this),
-                    drp = $this.data('drp');
-            methods._checkMethod(function() {
-                methods.galleries($this, $.extend(opt, drp));
-            });
-        });
+        return methods._galleriesDecorator(opt, null, null);
     };
 
     doc.ready(function() {

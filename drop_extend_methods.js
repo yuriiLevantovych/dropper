@@ -104,7 +104,7 @@
                     }
                 });
             },
-            heightContent: function(drop) {
+            _heightContent: function(drop) {
                 return (drop || this).each(function() {
                     function _setHeight(h) {
                         return this.css('height', h > drp.minHeightContent ? h : drp.minHeightContent);
@@ -182,7 +182,8 @@
                 });
             },
             limitSize: function(drop) {
-                return (drop || this).each(function() {
+                var self = this;
+                return drop.each(function() {
                     var drop = $(this),
                             drp = drop.data('drp');
                     if (drp.limitSize && drp.place === 'center') {
@@ -218,6 +219,9 @@
                                 drp.forCenter.hide();
                         }
                     }
+                    self._checkMethod(function() {
+                        self._heightContent(drop);
+                    });
                 });
             },
             galleries: function(drop, opt, btn, i) {
@@ -249,9 +253,9 @@
                         return false;
                     }
                     var $next = $('[data-source="' + relA[i] + '"][rel], [href="' + relA[i] + '"][rel]').filter(':last');
-                        self.close.call(drop, true, e, function() {
-                            self.open.call($next, $.extend($next.data('drp'), {source: relA[i], drop: null, rel: opt.rel}));
-                        });
+                    self.close.call(drop, true, e, function() {
+                        self.open.call($next, $.extend($next.data('drp'), {source: relA[i], drop: null, rel: opt.rel}));
+                    });
                 }
                 function _getnext(i) {
                     relP += i;
@@ -276,7 +280,7 @@
                     _goto(_getnext($this.is(opt.prev) ? -1 : 1), e);
                 });
 
-                if (i !== undefined && relP !== i && relA[i])
+                if (i !== undefined && i !== null && relP !== i && relA[i])
                     _goto(i, null);
                 if (btn)
                     _goto(_getnext(btn === 'n' ? 1 : -1), null);
@@ -446,7 +450,7 @@
                 return this;
             },
             require: {
-                limitSize: ['heightContent']
+                limitSize: ['_heightContent']
             }
         };
         var newMethods = {};
