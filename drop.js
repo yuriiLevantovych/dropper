@@ -350,18 +350,16 @@
             });
             drop.addClass(opt.place);
             methods._positionType(drop);
-            
+
             if (opt.href) {
                 clearTimeout($.drop.drp.curHashTimeout);
+                methods._clearTimeoutHash();
                 $.drop.drp.curHash = hashChange ? null : opt.href;
                 $.drop.drp.scrollTop = wnd.scrollTop();
                 var wlh = window.location.hash;
                 if (opt.href.indexOf('#') !== -1 && (new RegExp(opt.href + '#|' + opt.href + '$').exec(wlh) === null))
                     window.location.hash = wlh + opt.href;
-                $.drop.drp.curHashTimeout = setTimeout(function() {
-                    $.drop.drp.curHash = null;
-                    $.drop.drp.scrollTop = null;
-                }, 400);
+                $.drop.drp.curHashTimeout = setTimeout(methods._clearTimeoutHash, 400);
             }
             if (opt.confirm) {
                 function focusConfirm() {
@@ -501,13 +499,11 @@
                     $thisB.removeClass($.drop.dP.activeClass).each(function() {
                         if (opt.href) {
                             clearTimeout($.drop.drp.curHashTimeout);
+                            methods._clearTimeoutHash();
                             $.drop.drp.curHash = hashChange ? opt.href : null;
                             $.drop.drp.scrollTop = wnd.scrollTop();
                             location.hash = location.hash.replace(opt.href, '');
-                            $.drop.drp.curHashTimeout = setTimeout(function() {
-                                $.drop.drp.curHash = null;
-                                $.drop.drp.scrollTop = null;
-                            }, 400);
+                            $.drop.drp.curHashTimeout = setTimeout(methods._clearTimeoutHash, 400);
                         }
                     });
                     drop.removeClass($.drop.dP.activeClass);
@@ -757,6 +753,10 @@
                     methods.galleries($this, $.extend(opt, drp), btn, i);
                 });
             });
+        },
+        _clearTimeoutHash: function() {
+            $.drop.drp.curHash = null;
+            $.drop.drp.scrollTop = null;
         }
     };
     $.fn.drop = function(method) {
