@@ -309,6 +309,13 @@
             var overlays = $('.overlayDrop').css('z-index', 1103),
                     condOverlay = opt.overlayOpacity !== 0,
                     dropOver = null;
+            if (!$.drop.drp.theme[opt.theme])
+                returnMsg('theme' + ' "' + opt.theme + '" ' + 'not available');
+            else
+                $('<style>', {
+                    'data-rel': opt.drop,
+                    text: $.drop.drp.theme[opt.theme].replace(/\}[^$]/gm, '} ' + opt.drop + ' ').replace(/,/gm, ', ' + opt.drop + ' ').replace(/^/, opt.drop + ' ').replace(/\s\s+/g, ' ')
+                }).appendTo($('body'));
             if (condOverlay) {
                 if (!$.exists('[data-rel="' + opt.drop + '"].overlayDrop'))
                     $('body').append('<div class="overlayDrop" data-rel="' + opt.drop + '" style="display:none;position:absolute;width:100%;left:0;top:0;"></div>');
@@ -355,15 +362,15 @@
 
             if (opt.href && !hashChange) {
                 $.drop.drp.scrollTop = wnd.scrollTop();
-                var wlh = window.location.hash;
+                $.drop.drp.wLH = window.location.hash;
                 wnd.off('hashchange').on('hashchange.' + $.drop.nS + ev, function(e) {
-                    console.log(2)
+                    console.log('show');
                     e.stopImmediatePropagation();
                     wnd.off('hashchange.' + $.drop.nS + ev);
                 });
-                methods._setEventHash();
-                if (opt.href.indexOf('#') !== -1 && (new RegExp(opt.href + '#|' + opt.href + '$').exec(wlh) === null))
-                    window.location.hash = wlh + opt.href;
+                if (opt.href.indexOf('#') !== -1 && (new RegExp(opt.href + '#|' + opt.href + '$').exec($.drop.drp.wLH) === null))
+                    window.location.hash = $.drop.drp.wLH + opt.href;
+                setTimeout(methods._setEventHash, 0);
             }
             if (opt.confirm) {
                 function focusConfirm() {
@@ -502,13 +509,13 @@
                     $thisB.removeClass($.drop.dP.activeClass).each(function() {
                         if (opt.href && !hashChange) {
                             $.drop.drp.scrollTop = wnd.scrollTop();
-                            console.log(3)
+                            console.log('hide');
                             wnd.off('hashchange').on('hashchange.' + $.drop.nS + ev, function(e) {
                                 e.stopImmediatePropagation();
                                 wnd.off('hashchange.' + $.drop.nS + ev);
                             });
-                            methods._setEventHash();
-                            location.hash = location.hash.replace(opt.href, '');
+                            window.location.hash = location.hash.replace(opt.href, '');
+                            setTimeout(methods._setEventHash, 0);
                         }
                     });
                     drop.removeClass($.drop.dP.activeClass);
@@ -518,6 +525,7 @@
                         drop.data('drp').positionDroppableIn = {'left': drop.css('left'), 'top': drop.css('top')}
 
                     drop[opt.effectOff](opt.durationOff, function() {
+                        $('style' + '[data-rel="' + opt.drop + '"]').remove();
                         $('html, body').css({'overflow': '', 'overflow-x': ''});
                         var $this = $(this);
                         if (opt.forCenter)
@@ -721,13 +729,13 @@
             $(dropOver).add(forCenter).css('height', '').css('height', doc.height());
         },
         _checkMethod: function(f, nm) {
-            //try {
-            f();
-//            } catch (e) {
-//                var method = f.toString().match(/\.\S*\(/);
-//                returnMsg('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
-//            }
-//            return this;
+            try {
+                f();
+            } catch (e) {
+                var method = f.toString().match(/\.\S*\(/);
+                returnMsg('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
+            }
+            return this;
         },
         _positionType: function(drop) {
             if (drop.data('drp') && drop.data('drp').place !== 'inherit')
@@ -760,21 +768,21 @@
             });
         },
         _setEventHash: function() {
-            var wLH = window.location.hash;
+            $.drop.drp.wLH = window.location.hash;
 
-            wnd.off('hashchange.' + $.drop.nS).on('hashchange.' + $.drop.nS, function(e) {
-                console.log(1)
+            wnd.off('hashchange').on('hashchange.' + $.drop.nS, function(e) {
+                console.log('native');
                 e.preventDefault();
                 if ($.drop.drp.scrollTop)
                     $('html, body').scrollTop($.drop.drp.scrollTop);
-                var wLHN = window.location.hash;
+                $.drop.drp.wLHN = window.location.hash;
                 for (var i in $.drop.drp.hrefs) {
-                    if (wLH.indexOf(i) === -1 && wLHN.indexOf(i) !== -1)
+                    if ($.drop.drp.wLH.indexOf(i) === -1 && $.drop.drp.wLHN.indexOf(i) !== -1)
                         methods.open.call($.drop.drp.hrefs[i], {}, e, true);
                     else
                         methods.close.call($($.drop.drp.hrefs[i].data('drop')), e, null, true);
                 }
-                wLH = wLHN;
+                $.drop.drp.wLH = $.drop.drp.wLHN;
             });
         }
     };
@@ -895,7 +903,7 @@
         closeClick: true,
         closeEsc: true,
         cycle: true,
-        limitSize: true,
+        limitSize: false,
         droppable: false,
         droppableLimit: false,
         inheritClose: false,
@@ -903,17 +911,26 @@
         context: false,
         minHeightContent: 100,
         centerOnScroll: false,
-        autoPlay: true,
+        autoPlay: false,
         autoPlaySpeed: 2000,
-        theme: ''
+        theme: 'default'
     };
     $.drop.drp = {
+        theme: {
+            default:
+                    '.drop-header-default{border: 2px solid red;}\n\
+                .drop-prev, .drop-next{position: absolute;top: 0;width: 35%;height: 100%;background: none;border: 0;cursor: pointer;}\n\
+                .drop-next{right: 0;}\n\
+                .drop-prev{left: 0;}'
+        },
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
         reg: /[^a-zA-Z0-9]+/ig,
         autoPlayInterval: {},
         hrefs: {},
         drops: {},
         galleries: {},
+        wLH: null,
+        wLHN: null,
         curHash: null,
         curDrop: null,
         curHashTimeout: null,
@@ -921,6 +938,10 @@
     };
     $.drop.setParameters = function(options) {
         $.extend($.drop.dP, options);
+        return this;
+    };
+    $.drop.setThemes = function(options) {
+        $.extend($.drop.drp.theme, options);
         return this;
     };
     $.drop.setMethods = function(ms) {

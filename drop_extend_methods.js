@@ -1,5 +1,5 @@
 (function($, wnd, doc) {
-    $.drop.extendDrop = function() {
+    $.drop.extendMethods = function() {
         var addmethods = {
             droppable: function(drop) {
                 return (drop || this).each(function() {
