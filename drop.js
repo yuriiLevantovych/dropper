@@ -351,15 +351,19 @@
             drop.addClass(opt.place);
             methods._positionType(drop);
 
-            if (opt.href) {
-                clearTimeout($.drop.drp.curHashTimeout);
-                methods._clearTimeoutHash();
-                $.drop.drp.curHash = hashChange ? null : opt.href;
+            var ev = opt.drop ? opt.drop.replace($.drop.drp.reg, '') : '';
+
+            if (opt.href && !hashChange) {
                 $.drop.drp.scrollTop = wnd.scrollTop();
                 var wlh = window.location.hash;
+                wnd.off('hashchange').on('hashchange.' + $.drop.nS + ev, function(e) {
+                    console.log(2)
+                    e.stopImmediatePropagation();
+                    wnd.off('hashchange.' + $.drop.nS + ev);
+                });
+                methods._setEventHash();
                 if (opt.href.indexOf('#') !== -1 && (new RegExp(opt.href + '#|' + opt.href + '$').exec(wlh) === null))
                     window.location.hash = wlh + opt.href;
-                $.drop.drp.curHashTimeout = setTimeout(methods._clearTimeoutHash, 400);
             }
             if (opt.confirm) {
                 function focusConfirm() {
@@ -369,7 +373,6 @@
                 drop.click(focusConfirm);
             }
 
-            var ev = opt.drop ? opt.drop.replace($.drop.drp.reg, '') : '';
             wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function(e) {
                 methods.update.call(drop, e);
             });
@@ -497,13 +500,15 @@
                     doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS);
                     drop.find(opt.prev).add(drop.find(opt.next)).off('click.' + $.drop.nS);
                     $thisB.removeClass($.drop.dP.activeClass).each(function() {
-                        if (opt.href) {
-                            clearTimeout($.drop.drp.curHashTimeout);
-                            methods._clearTimeoutHash();
-                            $.drop.drp.curHash = hashChange ? opt.href : null;
+                        if (opt.href && !hashChange) {
                             $.drop.drp.scrollTop = wnd.scrollTop();
+                            console.log(3)
+                            wnd.off('hashchange').on('hashchange.' + $.drop.nS + ev, function(e) {
+                                e.stopImmediatePropagation();
+                                wnd.off('hashchange.' + $.drop.nS + ev);
+                            });
+                            methods._setEventHash();
                             location.hash = location.hash.replace(opt.href, '');
-                            $.drop.drp.curHashTimeout = setTimeout(methods._clearTimeoutHash, 400);
                         }
                     });
                     drop.removeClass($.drop.dP.activeClass);
@@ -754,9 +759,23 @@
                 });
             });
         },
-        _clearTimeoutHash: function() {
-            $.drop.drp.curHash = null;
-            $.drop.drp.scrollTop = null;
+        _setEventHash: function() {
+            var wLH = window.location.hash;
+
+            wnd.off('hashchange.' + $.drop.nS).on('hashchange.' + $.drop.nS, function(e) {
+                console.log(1)
+                e.preventDefault();
+                if ($.drop.drp.scrollTop)
+                    $('html, body').scrollTop($.drop.drp.scrollTop);
+                var wLHN = window.location.hash;
+                for (var i in $.drop.drp.hrefs) {
+                    if (wLH.indexOf(i) === -1 && wLHN.indexOf(i) !== -1)
+                        methods.open.call($.drop.drp.hrefs[i], {}, e, true);
+                    else
+                        methods.close.call($($.drop.drp.hrefs[i].data('drop')), e, null, true);
+                }
+                wLH = wLHN;
+            });
         }
     };
     $.fn.drop = function(method) {
@@ -973,23 +992,7 @@
             return this;
         };
     });
-    var wLH = window.location.hash;
 
-    wnd.off('hashchange.' + $.drop.nS).on('hashchange.' + $.drop.nS, function(e) {
-        e.preventDefault();
-        if ($.drop.drp.scrollTop)
-            $('html, body').scrollTop($.drop.drp.scrollTop);
-        var wLHN = window.location.hash;
-        console.log($.drop.drp.curHash)
-        if (!$.drop.drp.curHash)
-            for (var i in $.drop.drp.hrefs) {
-                if (wLH.indexOf(i) === -1 && wLHN.indexOf(i) !== -1)
-                    methods.open.call($.drop.drp.hrefs[i], {}, e, true);
-                else
-                    methods.close.call($($.drop.drp.hrefs[i].data('drop')), e, false, true);
-            }
-        wLH = wLHN;
-    });
     doc.ready(function() {
         $('[data-drop]').drop();
     });

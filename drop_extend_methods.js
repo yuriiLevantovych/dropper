@@ -261,7 +261,7 @@
                     self.close.call(drop, e, function() {
                         self._cIGalleries(opt.rel);
                         self.open.call($next, $.extend($next.data('drp'), {source: relA[i], drop: null, rel: opt.rel}));
-                    }, true);
+                    });
                 }
                 function _getnext(i) {
                     relP += i;
@@ -464,7 +464,7 @@
             if (arguments[i] in addmethods) {
                 newMethods[arguments[i]] = addmethods[arguments[i]];
                 if (addmethods.require[arguments[i]])
-                    addmethods.require[arguments[i]].map(function(n, i) {
+                    addmethods.require[arguments[i]].map(function(n) {
                         newMethods[n] = addmethods[n];
                     });
             }
