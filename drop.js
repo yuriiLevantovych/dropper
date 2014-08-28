@@ -42,17 +42,26 @@
 
                 if (opt.notify)
                     methods._notifyTrigger.call(el, opt);
-                var rel = this.rel;
+                var rel = this.rel,
+                        hash = el.data('href');
                 if (rel) {
                     rel = rel.replace($.drop.drp.reg, '');
-                    var source = el.data('source') || $(this).attr('href');
+                    var source = el.data('source') || el.attr('href');
+
                     if (source) {
                         if (!$.drop.drp.galleries[rel])
                             $.drop.drp.galleries[rel] = [];
+                        if (!$.drop.drp.galleryHashs[rel] && hash)
+                            $.drop.drp.galleryHashs[rel] = [];
+
                         if ($.drop.drp.galleries[rel].indexOf(source) === -1 && source.match($.drop.drp.regImg))
                             $.drop.drp.galleries[rel].push(source);
+                        if (hash)
+                            $.drop.drp.galleryHashs[rel].push(hash);
                     }
                 }
+                else if (hash && $.inArray(hash, $.drop.drp.galleryHashs._butRel) === -1)
+                    $.drop.drp.galleryHashs._butRel.push(hash);
 
                 el.addClass('isDrop');
                 if (opt.context) {
@@ -61,10 +70,8 @@
                     });
                     el.on('mouseup.' + $.drop.nS, function(e) {
                         e.preventDefault();
-                        if (el.hasClass($.drop.dP.activeClass))
-                            methods.close.call($(el.attr('data-drop')), e);
                         if (e.button === 2)
-                            methods.open.call($(this), $.extend(opt, {place: 'noinherit', limitSize: true}), e);
+                            methods.open.call($(this), opt, e);
                     });
                 }
                 else {
@@ -73,30 +80,21 @@
                             e.stopPropagation();
                             e.preventDefault();
                         }).on(opt.triggerOn + '.' + $.drop.nS, function(e) {
-                            if (opt.condTrigger) {
-                                if (eval('(function(){' + opt.condTrigger + '})()'))
-                                    methods.open.call($(this), opt, e);
-                            }
-                            else
-                                methods.open.call($(this), opt, e);
+                            methods.open.call($(this), opt, e);
                         }).on(opt.triggerOff + '.' + $.drop.nS, function(e) {
                             methods.close.call($(el.attr('data-drop')), e);
                         });
                     else
                         el.on(opt.trigger + '.' + $.drop.nS, function(e) {
-                            if (el.hasClass($.drop.dP.activeClass))
-                                methods.close.call($(el.attr('data-drop')), e);
-                            else
-                                methods.open.call($(this), opt, e);
+                            methods.open.call($(this), opt, e);
                             e.stopPropagation();
                             e.preventDefault();
                         });
                 }
-                if (/#/.test(opt.href) && !$.drop.drp.hrefs[opt.href])
-                    $.drop.drp.hrefs[opt.href] = el;
+                if (/#/.test(opt.href) && !$.drop.drp.hashs[opt.href])
+                    $.drop.drp.hashs[opt.href] = el;
             }).each(function() {
                 var opt = $.extend({}, $(this).data('drp').genOpt);
-
                 if (window.location.hash.indexOf(opt.href) !== -1)
                     methods.open.call($(this), opt, null);
             });
@@ -166,10 +164,6 @@
                 $.drop.drp.curAjax = $.ajax($.extend({}, opt.ajax, {
                     url: opt.source,
                     dataType: opt.ajax.dataType ? opt.ajax.dataType : (opt.notify ? 'json' : 'html'),
-                    beforeSend: function() {
-                        if (!opt.moreOne)
-                            methods._closeMoreOne();
-                    },
                     success: function(data) {
                         if (opt.notify)
                             methods._pasteNotify.call(el, data, opt, opt.rel, hashChange);
@@ -183,7 +177,8 @@
             var $this = this;
             e = e ? e : window.event;
             opt = $.extend({}, $.drop.dP, opt);
-
+            if (opt.context)
+                $.extend(opt, {place: 'noinherit', limitSize: true});
             if (!$this || !$.existsN($this)) {
                 if ($(this).hasClass('isDrop'))
                     $this = this;
@@ -237,6 +232,7 @@
                     drop.remove();
                     delete $.drop.drp.drops[sourceC];
                 }
+
                 if (opt.dropFilter && !opt.drop) {
                     drop = methods._filterSource($this, opt.dropFilter);
                     var _classFilter = opt.defaultClassBtnDrop + (+new Date());
@@ -257,9 +253,11 @@
                         methods._show.call($this, drop, e, opt, hashChange);
                     }
                 }
-                if (!$this.hasClass($.drop.dP.activeClass) && !drop.hasClass($.drop.dP.activeClass)) {
-                    if (!opt.moreOne && !opt.start)
-                        methods._closeMoreOne();
+                if (opt.closeActiveClick && $this.hasClass($.drop.dP.activeClass) && drop.hasClass($.drop.dP.activeClass) && drop.length === 1) {
+                    methods.close.call($($this.data('drop')), 'element already open');
+                    return false;
+                }
+                function _show() {
                     if ($this.is(':disabled') || opt.start && !eval(opt.start).call($this, drop, opt, e))
                         return false;
                     if (opt.notify && !(opt.prompt || opt.confirm))//for front validations
@@ -268,7 +266,7 @@
                         if (opt.prompt || opt.confirm || opt.source && !$.existsN(drop) || opt.source && opt.always) {
                             if (!opt.confirm && !opt.prompt)
                                 _confirmF();
-                            else//for cofirm && prompt
+                            else
                                 methods._checkMethod(function() {
                                     methods.confirmPrompt(opt, hashChange, _confirmF, e);
                                 });
@@ -281,8 +279,10 @@
                             returnMsg('insufficient data');
                     }
                 }
+                if (!opt.moreOne && $.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
+                    methods.close.call($('[data-elrun].center:visible, [data-elrun].noinherit:visible'), 'close more one element', _show);
                 else
-                    methods.close.call($($this.data('drop')), 'element already open');
+                    _show();
             });
         },
         _show: function(drop, e, opt, hashChange) {
@@ -309,13 +309,6 @@
             var overlays = $('.overlayDrop').css('z-index', 1103),
                     condOverlay = opt.overlayOpacity !== 0,
                     dropOver = null;
-            if (!$.drop.drp.theme[opt.theme])
-                returnMsg('theme' + ' "' + opt.theme + '" ' + 'not available');
-            else
-                $('<style>', {
-                    'data-rel': opt.drop,
-                    text: $.drop.drp.theme[opt.theme].replace(/\}[^$]/gm, '} ' + opt.drop + ' ').replace(/,/gm, ', ' + opt.drop + ' ').replace(/^/, opt.drop + ' ').replace(/\s\s+/g, ' ')
-                }).appendTo($('body'));
             if (condOverlay) {
                 if (!$.exists('[data-rel="' + opt.drop + '"].overlayDrop'))
                     $('body').append('<div class="overlayDrop" data-rel="' + opt.drop + '" style="display:none;position:absolute;width:100%;left:0;top:0;"></div>');
@@ -362,14 +355,20 @@
 
             if (opt.href && !hashChange) {
                 $.drop.drp.scrollTop = wnd.scrollTop();
-                $.drop.drp.wLH = window.location.hash;
-                wnd.off('hashchange').on('hashchange.' + $.drop.nS + ev, function(e) {
-                    console.log('show');
-                    e.stopImmediatePropagation();
-                    wnd.off('hashchange.' + $.drop.nS + ev);
-                });
-                if (opt.href.indexOf('#') !== -1 && (new RegExp(opt.href + '#|' + opt.href + '$').exec($.drop.drp.wLH) === null))
-                    window.location.hash = $.drop.drp.wLH + opt.href;
+                var wLH = window.location.hash;
+
+                wnd.off('hashchange.' + $.drop.nS);
+                var k = false;
+                if (opt.rel && !opt.moreOne) {
+                    $.drop.drp.galleryHashs[opt.rel].map(function(n, i) {
+                        if (wLH && wLH.indexOf(n) !== -1)
+                            k = n;
+                    });
+                }
+                if (k)
+                    window.location.hash = wLH.replace(k, opt.href);
+                else if (opt.href.indexOf('#') !== -1 && (new RegExp(opt.href + '#|' + opt.href + '$').exec(wLH) === null))
+                    window.location.hash = wLH + opt.href;
                 setTimeout(methods._setEventHash, 0);
             }
             if (opt.confirm) {
@@ -441,6 +440,14 @@
                 }, opt.place);
             if (forCenter && opt.place === 'center')
                 forCenter.show();
+            $('style' + '[data-rel="' + opt.drop + '"]').remove();
+            if (!$.drop.drp.theme[opt.theme])
+                returnMsg('theme' + ' "' + opt.theme + '" ' + 'not available');
+            else
+                $('<style>', {
+                    'data-rel': opt.drop,
+                    text: $.drop.drp.theme[opt.theme].replace(/\}[^$]/g, '} ' + opt.drop + ' ').replace(/,/g, ', ' + opt.drop + ' ').replace(/^/, opt.drop + ' ').replace(/\s\s+/g, ' ')
+                }).appendTo($('body'));
             drop[opt.effectOn](opt.durationOn, function(e) {
                 $('html, body').css({'overflow': '', 'overflow-x': ''});
                 methods._setHeightAddons(dropOver, forCenter);
@@ -506,23 +513,17 @@
                     wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
                     doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS);
                     drop.find(opt.prev).add(drop.find(opt.next)).off('click.' + $.drop.nS);
-                    $thisB.removeClass($.drop.dP.activeClass).each(function() {
-                        if (opt.href && !hashChange) {
-                            $.drop.drp.scrollTop = wnd.scrollTop();
-                            console.log('hide');
-                            wnd.off('hashchange').on('hashchange.' + $.drop.nS + ev, function(e) {
-                                e.stopImmediatePropagation();
-                                wnd.off('hashchange.' + $.drop.nS + ev);
-                            });
-                            window.location.hash = location.hash.replace(opt.href, '');
-                            setTimeout(methods._setEventHash, 0);
-                        }
-                    });
+                    $thisB.removeClass($.drop.dP.activeClass);
+                    if (opt.href && !hashChange) {
+                        $.drop.drp.scrollTop = wnd.scrollTop();
+                        console.log('hide');
+                        wnd.off('hashchange.' + $.drop.nS);
+                        window.location.hash = window.location.hash.replace(opt.href, '');
+                        setTimeout(methods._setEventHash, 0);
+                    }
                     drop.removeClass($.drop.dP.activeClass);
                     if (methods.placeAfterClose)
                         methods.placeAfterClose(drop, $thisB, opt);
-                    if (opt.droppableIn)
-                        drop.data('drp').positionDroppableIn = {'left': drop.css('left'), 'top': drop.css('top')}
 
                     drop[opt.effectOff](opt.durationOff, function() {
                         $('style' + '[data-rel="' + opt.drop + '"]').remove();
@@ -554,14 +555,14 @@
                         var dC = $this.find($(opt.dropContent)).data('jsp');
                         if (dC)
                             dC.destroy();
-                        if ($.isFunction(f))
-                            f();
                         if (!$.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
                             $('body, html').css('height', '');
                         if (opt.html) {
                             $(opt.elrun).parent().remove();
                             $(opt.dropOver).add($(opt.forCenter)).remove();
                         }
+                        if ($.isFunction(f))
+                            f();
                     });
                 }
                 drop.add(doc).trigger({
@@ -637,11 +638,6 @@
                 'right': '',
                 'position': ''
             });
-        },
-        _closeMoreOne: function() {
-            if ($.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
-                methods.close.call($('[data-elrun].center:visible, [data-elrun].noinherit:visible'), 'close more one element');
-            return this;
         },
         _notifyTrigger: function(opt) {
             return this.off('successJson.' + $.drop.nS).on('successJson.' + $.drop.nS, function(e) {
@@ -769,18 +765,17 @@
         },
         _setEventHash: function() {
             $.drop.drp.wLH = window.location.hash;
-
-            wnd.off('hashchange').on('hashchange.' + $.drop.nS, function(e) {
+            wnd.off('hashchange.' + $.drop.nS).on('hashchange.' + $.drop.nS, function(e) {
                 console.log('native');
                 e.preventDefault();
                 if ($.drop.drp.scrollTop)
                     $('html, body').scrollTop($.drop.drp.scrollTop);
                 $.drop.drp.wLHN = window.location.hash;
-                for (var i in $.drop.drp.hrefs) {
+                for (var i in $.drop.drp.hashs) {
                     if ($.drop.drp.wLH.indexOf(i) === -1 && $.drop.drp.wLHN.indexOf(i) !== -1)
-                        methods.open.call($.drop.drp.hrefs[i], {}, e, true);
+                        methods.open.call($.drop.drp.hashs[i], $.drop.drp.hashs[i].data('drp').genOpt, e, true);
                     else
-                        methods.close.call($($.drop.drp.hrefs[i].data('drop')), e, null, true);
+                        methods.close.call($($.drop.drp.hashs[i].data('drop')), e, null, true);
                 }
                 $.drop.drp.wLH = $.drop.drp.wLHN;
             });
@@ -839,7 +834,6 @@
         contentContent: null,
         start: null,
         placeInherit: null,
-        condTrigger: null,
         dropFilter: null,
         message: {
             success: function(text) {
@@ -857,7 +851,7 @@
         triggerOff: null,
         exit: '[data-closed]',
         effectOn: 'fadeIn',
-        effectOff: 'fadeOut',
+        effectOff: 'hide',
         place: 'center',
         placement: 'top left',
         overlayColor: '#000',
@@ -899,12 +893,12 @@
         prompt: false,
         always: false,
         animate: false,
-        moreOne: true,
+        moreOne: false,
         closeClick: true,
         closeEsc: true,
         cycle: true,
         limitSize: false,
-        droppable: false,
+        droppable: true,
         droppableLimit: false,
         inheritClose: false,
         keyNavigate: true,
@@ -913,7 +907,8 @@
         centerOnScroll: false,
         autoPlay: false,
         autoPlaySpeed: 2000,
-        theme: 'default'
+        theme: 'default',
+        closeActiveClick: false
     };
     $.drop.drp = {
         theme: {
@@ -921,19 +916,21 @@
                     '.drop-header-default{border: 2px solid red;}\n\
                 .drop-prev, .drop-next{position: absolute;top: 0;width: 35%;height: 100%;background: none;border: 0;cursor: pointer;}\n\
                 .drop-next{right: 0;}\n\
-                .drop-prev{left: 0;}'
+                .drop-prev{left: 0;}\n\
+                .icon-times-drop{position: absolute;z-index:1;right:0;top: 0;cursor: pointer;width: 15px;height: 15px;}'
         },
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
         reg: /[^a-zA-Z0-9]+/ig,
         autoPlayInterval: {},
-        hrefs: {},
+        hashs: {},
         drops: {},
         galleries: {},
+        galleryHashs: {
+            _butRel: []
+        },
         wLH: null,
         wLHN: null,
-        curHash: null,
         curDrop: null,
-        curHashTimeout: null,
         scrollTop: null
     };
     $.drop.setParameters = function(options) {

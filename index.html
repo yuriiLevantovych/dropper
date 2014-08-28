@@ -36,7 +36,7 @@
     <body>
         <div>
             <h3>Simple drop inline</h3>
-            <button type="button" data-drop data-context="true" data-overlay-opacity="0" data-place-before-show="inherit" data-animate="true" data-source="1.php"  style="width: 200px;height: 150px;float: right;">click</button>
+            <button type="button" data-drop data-context="true" data-href="#dd" data-overlay-opacity="0" data-place-before-show="inherit" data-animate="true" data-source="1.php" style="width: 200px;height: 150px;float: right;">click</button>
             <div class="drop drop-simple" style="width: 150px">
                 <button type="button" data-closed>*</button>
                 <div class="drop-content-default">
@@ -100,24 +100,27 @@
                 </div>    
             </div>
         </div>
-        <a href="http://fc08.deviantart.net/fs70/f/2010/324/a/2/avatar_upd_big_size_by_merychess-d30zufu.jpg" rel="group" onClick="return false;" data-href="#a" data-prompt="true">
+        <a href="http://fc08.deviantart.net/fs70/f/2010/324/a/2/avatar_upd_big_size_by_merychess-d30zufu.jpg" rel="group" onClick="return false;" data-href="#a" data-confirm="true">
             <img src="3.jpg" width="50"/>
         </a>
-        <a href="4.jpg" rel="group" data-href="#b">
+        <a href="4.jpg" rel="group" data-href="#b" data-place="center">
             <img src="3.jpg" width="50"/>
         </a>
         <a href="6.jpg" rel="group" data-href="#c">
             <img src="5.jpg" width="50"/>
         </a>
         <div class="drop asdf">asdf</div>
+        <div class="placeInherit" style="width: 500px;height: 500px;position: relative;"></div>
         <script>
-            //$.drop.extendMethods('droppable', 'noinherit', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPrompt');
-//            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
+            $.drop.extendMethod('droppable', 'noinherit', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPrompt');
+//            $.drop.setTheme({green: '.drop-header-default{border: 2px solid green;}'});
 //            $('[href]').data('theme', 'green')
             $(document).ready(function() {
                 var api = $('[href]').drop({
-                    placeBeforeShow: 'center top',
-                    placeAfterClose: 'center top',
+                    place: 'noinherit',
+                    placeInherit: '.placeInherit',
+                    overlayOpacity: 0,
+                    
                     animate: true,
                     start: function(drop, opt) {
                         //console.log(opt);

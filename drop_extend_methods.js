@@ -1,9 +1,13 @@
 (function($, wnd, doc) {
-    $.drop.extendMethods = function() {
+    $.drop.extendMethod = function() {
         var addmethods = {
             droppable: function(drop) {
                 return (drop || this).each(function() {
                     var drop = $(this);
+                    drop.off('close.' + $.drop.nS).on('close.' + $.drop.nS, function() {
+                        if (drop.data('drp').droppableIn)
+                            drop.data('drp').positionDroppableIn = {'left': drop.css('left'), 'top': drop.css('top')}
+                    });
                     drop.find('img').off('dragstart.' + $.drop.nS).on('dragstart.' + $.drop.nS, function(e) {
                         e.preventDefault();
                     });
@@ -257,11 +261,9 @@
                         return false;
                     }
                     var $next = $('[data-source="' + relA[i] + '"][rel], [href="' + relA[i] + '"][rel]').filter(':last');
-                    
-                    self.close.call(drop, e, function() {
-                        self._cIGalleries(opt.rel);
-                        self.open.call($next, $.extend($next.data('drp'), {source: relA[i], drop: null, rel: opt.rel}));
-                    });
+
+                    self._cIGalleries(opt.rel);
+                    self.open.call($next, $.extend($next.data('drp'), {source: relA[i], drop: null, rel: opt.rel}));
                 }
                 function _getnext(i) {
                     relP += i;
