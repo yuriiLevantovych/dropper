@@ -500,6 +500,7 @@
             var sel = this,
                     drop = $.existsN(sel) ? sel : $('[data-elrun].' + $.drop.dP.activeClass);
             clearTimeout($.drop.drp.closeDropTime);
+            //console.log(this)
             drop.each(function() {
                 var drop = $(this),
                         opt = drop.data('drp');
@@ -766,16 +767,25 @@
         _setEventHash: function() {
             $.drop.drp.wLH = window.location.hash;
             wnd.off('hashchange.' + $.drop.nS).on('hashchange.' + $.drop.nS, function(e) {
-                console.log('native');
+                var k = {};
                 e.preventDefault();
                 if ($.drop.drp.scrollTop)
                     $('html, body').scrollTop($.drop.drp.scrollTop);
                 $.drop.drp.wLHN = window.location.hash;
                 for (var i in $.drop.drp.hashs) {
-                    if ($.drop.drp.wLH.indexOf(i) === -1 && $.drop.drp.wLHN.indexOf(i) !== -1)
+                    var drop = $($.drop.drp.hashs[i].data('drop')),
+                            opt = drop.data('drp');
+                    if ($.drop.drp.wLH.indexOf(i) === -1 && $.drop.drp.wLHN.indexOf(i) !== -1) {
                         methods.open.call($.drop.drp.hashs[i], $.drop.drp.hashs[i].data('drp').genOpt, e, true);
-                    else
-                        methods.close.call($($.drop.drp.hashs[i].data('drop')), e, null, true);
+                        if (opt && opt.rel)
+                            k[opt.rel] = true;
+                    }
+                    else {
+                        console.log(k)
+                        if (opt && opt.rel && k[opt.rel])
+                            continue;
+                        methods.close.call(drop, e, null, true);
+                    }
                 }
                 $.drop.drp.wLH = $.drop.drp.wLHN;
             });
@@ -893,7 +903,7 @@
         prompt: false,
         always: false,
         animate: false,
-        moreOne: false,
+        moreOne: true,
         closeClick: true,
         closeEsc: true,
         cycle: true,
@@ -1009,9 +1019,6 @@
             loading.hide();
             return this;
         };
-    });
-
-    doc.ready(function() {
         $('[data-drop]').drop();
     });
 })(jQuery, $(window), $(document));
