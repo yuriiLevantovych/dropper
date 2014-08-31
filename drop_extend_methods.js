@@ -47,7 +47,7 @@
                     });
                 });
             },
-            noinherit: function(e, start) {
+            global: function(e, start) {
                 return this.each(function() {
                     var drop = $(this),
                             drp = drop.data('drp');
@@ -61,43 +61,46 @@
                                 $thisH = $this.height(),
                                 dropW = +drop.actual('width'),
                                 dropH = +drop.actual('height'),
+                                offTop = $this.offset().top,
+                                offLeft = $this.offset().left,
                                 $thisT = 0,
                                 $thisL = 0;
 
-                        if (drp.context && e !== undefined)
-                            drp.placement = placement = {'left': parseInt(e.pageX), 'top': parseInt(e.pageY)};
+                        if (!drop.is(':visible'))
+                            drop.css({top: 'auto', bottom: 'auto', left: 'auto', right: 'auto'});
+
+                        if (drp.context)
+                            if (e.pageX)
+                                drp.placement = placement = {'left': parseInt(e.pageX), 'top': parseInt(e.pageY)};
+                            else
+                                drp.placement = placement = {'left': offLeft, 'top': offTop};
 
                         if (typeof placement === 'object') {
-                            if (placement.left + dropW > wnd.width())
-                                placement.left -= dropW;
-                            if (placement.top + dropH > wnd.height()) {
-                                placement.top -= dropH;
-                            }
+                            console.log(method)
                             drop[method](placement, {
                                 duration: drp.durationOn,
                                 queue: false
                             });
                         }
                         else {
-                            var $thisPMT = placement.toLowerCase().split(' ');
-                            if ($thisPMT[0] === 'bottom' || $thisPMT[1] === 'bottom')
+                            var pmt = placement.toLowerCase().split(' ');
+                            if (pmt[1] === 'top')
                                 t = -drop.actual('outerHeight');
-                            if ($thisPMT[0] === 'top' || $thisPMT[1] === 'top')
+                            if (pmt[1] === 'bottom')
                                 t = $thisH;
-                            if ($thisPMT[0] === 'left' || $thisPMT[1] === 'left')
+                            if (pmt[0] === 'left')
                                 l = 0;
-                            if ($thisPMT[0] === 'right' || $thisPMT[1] === 'right')
+                            if (pmt[0] === 'right')
                                 l = -dropW - $thisW;
-                            if ($thisPMT[0] === 'center')
+                            if (pmt[0] === 'center')
                                 l = -dropW / 2 + $thisW / 2;
-                            if ($thisPMT[1] === 'center')
+                            if (pmt[1] === 'center')
                                 t = -dropH / 2 + $thisH / 2;
-                            $thisT = $this.offset().top + t;
-                            $thisL = $this.offset().left + l;
+                            $thisT = offTop + t;
+                            $thisL = offLeft + l;
                             if ($thisL < 0)
                                 $thisL = 0;
                             drop[method]({
-                                'bottom': 'auto',
                                 'top': $thisT,
                                 'left': $thisL
                             }, {
@@ -148,7 +151,7 @@
                                     dropHm = drop.height(),
                                     footerHeader = drop.find($(drp.dropHeader)).outerHeight() + drop.find($(drp.dropFooter)).outerHeight();
 
-                            if (drp.place === 'noinherit') {
+                            if (drp.place === 'global') {
                                 var mayHeight = 0,
                                         placement = drp.placement;
                                 if (typeof placement === 'object') {
@@ -322,9 +325,9 @@
                     t = drop.css('top');
                     l = drop.css('left');
                 }
-                if (pmt[0] === 'bottom' || pmt[1] === 'bottom')
+                if (pmt[1] === 'bottom')
                     t = wnd.height();
-                if (pmt[0] === 'right' || pmt[1] === 'right')
+                if (pmt[0] === 'right')
                     l = wnd.width();
                 if (pmt[0] === 'center' || pmt[1] === 'center') {
                     if (pmt[0] === 'left')
@@ -355,9 +358,9 @@
                         pmt = opt.placeAfterClose.toLowerCase().split(' '),
                         t = -drop.actual('outerHeight'),
                         l = -drop.actual('outerWidth');
-                if (pmt[0] === 'bottom' || pmt[1] === 'bottom')
+                if (pmt[1] === 'bottom')
                     t = wnd.height();
-                if (pmt[0] === 'right' || pmt[1] === 'right')
+                if (pmt[0] === 'right')
                     l = wnd.width();
                 if (pmt[0] === 'center' || pmt[1] === 'center') {
                     if (pmt[0] === 'left') {
@@ -395,7 +398,7 @@
                     });
                 return this;
             },
-            confirmPrompt: function(opt, hashChange, _confirmF, e) {
+            confirmPrompt: function(opt, hashChange, _confirmF, e, el) {
                 var self = this;
                 if (opt.confirm) {
                     if (!$.exists('[data-drop="' + opt.confirmBtnDrop + '"]'))
@@ -454,6 +457,7 @@
                         self.close.call($(opt.promptBtnDrop), e, _confirmF, null);
                     });
                 }
+                el.data('dropConfirmPrompt', drop);
                 return this;
             },
             require: {

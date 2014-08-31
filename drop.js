@@ -121,9 +121,9 @@
             var el = this,
                     elSet = el.data();
             $.extend(opt, elSet);
-            function _update(data) {
+            function _update(data, cLS) {
                 $.drop.hideLoading();
-                var drop = methods._pasteDrop(opt, opt.pattern, opt.rel, $.drop.drp.curDefault);
+                var drop = methods._pasteDrop(opt, opt.pattern, opt.rel, cLS);
                 if (opt.source && !opt.always && !opt.notify)
                     $.drop.drp.drops[opt.source.replace($.drop.drp.reg, '')] = drop;
                 drop.find($(opt.placePaste)).html(data);
@@ -139,8 +139,9 @@
                 methods._show.call(el, drop, e, opt, hashChange);
             }
 
-            $.drop.drp.curDefault = opt.defaultClassBtnDrop + (opt.rel && $.drop.drp.galleries[opt.rel].length > 1 ? opt.rel : (opt.source ? opt.source.replace($.drop.drp.reg, '') : +new Date()));
-            el.attr('data-drop', '.' + $.drop.drp.curDefault).data('drop', '.' + $.drop.drp.curDefault);
+            var cLS = opt.defaultClassBtnDrop + (opt.rel && $.drop.drp.galleries[opt.rel].length > 1 ? opt.rel + (+new Date()) : (opt.source ? opt.source.replace($.drop.drp.reg, '') : +new Date()));
+            opt.drop = '.' + cLS;
+            el.attr('data-drop', '.' + cLS).data('drop', '.' + cLS);
             if ($.drop.drp.drops[opt.source.replace($.drop.drp.reg, '')]) {
                 var drop = methods._pasteDrop(opt, $.drop.drp.drops[opt.source.replace($.drop.drp.reg, '')], opt.rel);
                 methods._show.call(el, drop, e, opt, hashChange);
@@ -151,7 +152,7 @@
                 var img = $.drop.drp.imgPreload = new Image();
                 img.onload = function() {
                     this.onload = this.onerror = null;
-                    _update($(this));
+                    _update($(this), cLS);
                 };
                 img.onerror = function() {
                     $.drop.hideLoading();
@@ -168,7 +169,7 @@
                         if (opt.notify)
                             methods._pasteNotify.call(el, data, opt, opt.rel, hashChange);
                         else
-                            _update(data);
+                            _update(data, cLS);
                     }
                 }));
             return el;
@@ -178,7 +179,7 @@
             e = e ? e : window.event;
             opt = $.extend({}, $.drop.dP, opt);
             if (opt.context)
-                $.extend(opt, {place: 'noinherit', limitSize: true});
+                $.extend(opt, {place: 'global', limitSize: true});
             if (!$this || !$.existsN($this)) {
                 if ($(this).hasClass('isDrop'))
                     $this = this;
@@ -201,18 +202,18 @@
                             $this = $('.refer' + opt.defaultClassBtnDrop + sourcePref);
                     }
                     else {
-                        $.drop.drp.curDefault = opt.defaultClassBtnDrop + (+new Date());
+                        var cLS = opt.defaultClassBtnDrop + (+new Date());
                         drop = opt.drop;
-                        if (!$.exists('[data-drop=".' + $.drop.drp.curDefault + '"]'))
-                            $this = $('<div><button data-drop=".' + $.drop.drp.curDefault + '"></button></div>').appendTo($('body')).hide().children();
+                        if (!$.exists('[data-drop=".' + cLS + '"]'))
+                            $this = $('<div><button data-drop=".' + cLS + '"></button></div>').appendTo($('body')).hide().children();
                         else
-                            $this = $('[data-drop=".' + $.drop.drp.curDefault + '"] ');
+                            $this = $('[data-drop=".' + cLS + '"] ');
                         if (opt.html) {
-                            var drop = methods._pasteDrop($.extend(opt, $this.data()), opt.pattern, opt.rel, $.drop.drp.curDefault);
+                            var drop = methods._pasteDrop($.extend(opt, $this.data()), opt.pattern, opt.rel, cLS);
                             drop.find($(opt.placePaste)).html(opt.html);
                         }
                         else if ($.existsN(opt.drop))
-                            drop = methods._pasteDrop($.extend(opt, $this.data()), drop, opt.rel, $.drop.drp.curDefault);
+                            drop = methods._pasteDrop($.extend(opt, $this.data()), drop, opt.rel, cLS);
                     }
                 }
             }
@@ -268,7 +269,7 @@
                                 _confirmF();
                             else
                                 methods._checkMethod(function() {
-                                    methods.confirmPrompt(opt, hashChange, _confirmF, e);
+                                    methods.confirmPrompt(opt, hashChange, _confirmF, e, $this);
                                 });
                         }
                         else if ($.existsN(drop) || opt.source && $.drop.drp.drops[sourceC]) {
@@ -279,8 +280,8 @@
                             returnMsg('insufficient data');
                     }
                 }
-                if (!opt.moreOne && $.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
-                    methods.close.call($('[data-elrun].center:visible, [data-elrun].noinherit:visible'), 'close more one element', _show);
+                if (!opt.moreOne && $.exists('[data-elrun].center:visible, [data-elrun].global:visible'))
+                    methods.close.call($('[data-elrun].center:visible, [data-elrun].global:visible'), 'close more one element', _show);
                 else
                     _show();
             });
@@ -500,11 +501,12 @@
             var sel = this,
                     drop = $.existsN(sel) ? sel : $('[data-elrun].' + $.drop.dP.activeClass);
             clearTimeout($.drop.drp.closeDropTime);
-            //console.log(this)
             drop.each(function() {
                 var drop = $(this),
                         opt = drop.data('drp');
                 if (!opt)
+                    return false;
+                if (hashChange && opt.href && window.location.hash.indexOf(opt.href) !== -1)
                     return false;
                 var $thisB = opt.elrun;
                 if (!(opt.notify || sel || opt.place !== 'inherit' || opt.inheritClose || opt.overlayOpacity !== 0) && $thisB)
@@ -517,7 +519,6 @@
                     $thisB.removeClass($.drop.dP.activeClass);
                     if (opt.href && !hashChange) {
                         $.drop.drp.scrollTop = wnd.scrollTop();
-                        console.log('hide');
                         wnd.off('hashchange.' + $.drop.nS);
                         window.location.hash = window.location.hash.replace(opt.href, '');
                         setTimeout(methods._setEventHash, 0);
@@ -556,7 +557,7 @@
                         var dC = $this.find($(opt.dropContent)).data('jsp');
                         if (dC)
                             dC.destroy();
-                        if (!$.exists('[data-elrun].center:visible, [data-elrun].noinherit:visible'))
+                        if (!$.exists('[data-elrun].center:visible, [data-elrun].global:visible'))
                             $('body, html').css('height', '');
                         if (opt.html) {
                             $(opt.elrun).parent().remove();
@@ -678,22 +679,13 @@
             return this;
         },
         _pasteDrop: function(opt, drop, rel, aClass) {
-            var sourcePref = opt.source ? opt.source.replace($.drop.drp.reg, '') : '',
-                    sdrop = opt.drop;
-            if (!opt.drop)
-                if (rel && $.drop.drp.galleries[opt.rel].length > 1)
-                    opt.drop = '.' + opt.defaultClassBtnDrop + rel;
-                else if (sourcePref)
-                    opt.drop = '.' + opt.defaultClassBtnDrop + sourcePref;
-                else
-                    opt.drop = '.' + aClass;
             if (opt.place === 'inherit' && opt.placeInherit)
                 drop = $(drop).appendTo($(opt.placeInherit).empty());
             else {
                 function _for_center(rel) {
                     $('body').append('<div class="forCenter" data-rel="' + rel + '" style="left: 0;top: 0;width: 100%;display:none;height: 100%;position: absolute;height: 100%;"></div>');
                 }
-                if (opt.place === 'noinherit')
+                if (opt.place === 'global')
                     drop = $(drop).appendTo($('body'));
                 else {
                     var sel = '[data-rel="' + opt.drop + '"].forCenter';
@@ -702,9 +694,7 @@
                     drop = $(drop).appendTo($(sel).empty()).data('drp', $(sel).find('[data-elrun]').data('drp') || {});
                 }
             }
-            drop = $(drop).addClass(aClass).attr('data-rel', rel).attr('data-elrun', opt.drop);
-            if (sdrop)
-                drop = drop.filter(sdrop);
+            drop = $(drop).addClass(aClass).attr('data-rel', rel).attr('data-elrun', opt.drop).filter(opt.drop);
             return drop;
         },
         _pasteContent: function($this, drop, opt) {
@@ -767,25 +757,15 @@
         _setEventHash: function() {
             $.drop.drp.wLH = window.location.hash;
             wnd.off('hashchange.' + $.drop.nS).on('hashchange.' + $.drop.nS, function(e) {
-                var k = {};
                 e.preventDefault();
                 if ($.drop.drp.scrollTop)
                     $('html, body').scrollTop($.drop.drp.scrollTop);
                 $.drop.drp.wLHN = window.location.hash;
                 for (var i in $.drop.drp.hashs) {
-                    var drop = $($.drop.drp.hashs[i].data('drop')),
-                            opt = drop.data('drp');
-                    if ($.drop.drp.wLH.indexOf(i) === -1 && $.drop.drp.wLHN.indexOf(i) !== -1) {
+                    if ($.drop.drp.wLH.indexOf(i) === -1 && $.drop.drp.wLHN.indexOf(i) !== -1)
                         methods.open.call($.drop.drp.hashs[i], $.drop.drp.hashs[i].data('drp').genOpt, e, true);
-                        if (opt && opt.rel)
-                            k[opt.rel] = true;
-                    }
-                    else {
-                        console.log(k)
-                        if (opt && opt.rel && k[opt.rel])
-                            continue;
-                        methods.close.call(drop, e, null, true);
-                    }
+                    else
+                        methods.close.call($($.drop.drp.hashs[i].data('drop')).add($.drop.drp.hashs[i].data('dropConfirmPrompt')), e, null, true);
                 }
                 $.drop.drp.wLH = $.drop.drp.wLHN;
             });
@@ -842,7 +822,6 @@
         contentHeader: null,
         contentFooter: null,
         contentContent: null,
-        start: null,
         placeInherit: null,
         dropFilter: null,
         message: {
@@ -863,12 +842,13 @@
         effectOn: 'fadeIn',
         effectOff: 'hide',
         place: 'center',
-        placement: 'top left',
+        placement: 'left bottom',
         overlayColor: '#000',
         overlayOpacity: .6,
         position: 'absolute',
         placeBeforeShow: 'center center',
         placeAfterClose: 'center center',
+        start: null,
         beforeG: $.noop,
         afterG: $.noop,
         closeG: $.noop,
@@ -903,7 +883,7 @@
         prompt: false,
         always: false,
         animate: false,
-        moreOne: true,
+        moreOne: false,
         closeClick: true,
         closeEsc: true,
         cycle: true,
