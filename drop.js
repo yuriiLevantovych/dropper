@@ -148,20 +148,20 @@
                 return el;
             }
             $.drop.showLoading();
-            if (opt.source.match($.drop.drp.regImg)) {
+            var _getImage = function() {
                 var img = $.drop.drp.imgPreload = new Image();
                 img.onload = function() {
                     this.onload = this.onerror = null;
                     _update($(this), cLS);
                 };
                 img.onerror = function() {
-                    $.drop.hideLoading();
                     this.onload = this.onerror = null;
-                    methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'this image is not found'}});
+                    $.drop.hideLoading();
+                    methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'image is not found'}});
                 };
                 img.src = opt.source;
             }
-            else
+            var _getAjax = function() {
                 $.drop.drp.curAjax = $.ajax($.extend({}, opt.ajax, {
                     url: opt.source,
                     dataType: opt.ajax.dataType ? opt.ajax.dataType : (opt.notify ? 'json' : 'html'),
@@ -170,8 +170,27 @@
                             methods._pasteNotify.call(el, data, opt, opt.rel, hashChange);
                         else
                             _update(data, cLS);
+                    },
+                    error: function() {
+                        $.drop.hideLoading();
+                        methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'file is not found'}});
                     }
                 }));
+            }
+            if (opt.type === 'auto') {
+                if (opt.source.match($.drop.drp.regImg))
+                    _getImage();
+                else
+                    _getAjax();
+            }
+            else
+                switch (opt.type) {
+                    case 'image':
+                        _getImage();
+                        break;
+                    default:
+                        _getAjax();
+                }
             return el;
         },
         open: function(opt, e, hashChange) {
@@ -659,13 +678,11 @@
         _pasteNotify: function(datas, opt, rel, hashChange) {
             var el = this;
             datas = datas || el.data('datas');
-            if (opt.drop)
-                var drop = methods._pasteDrop(opt, opt.drop, rel);
-            else {
-                el.attr('data-drop', opt.notifyBtnDrop).data('drop', opt.notifyBtnDrop);
-                $.extend(opt, el.data());
-                drop = methods._pasteDrop(opt, opt.patternNotify, rel);
-            }
+
+            el.attr('data-drop', opt.notifyBtnDrop).data('drop', opt.notifyBtnDrop);
+            $.extend(opt, el.data());
+            var drop = methods._pasteDrop(opt, opt.patternNotify, rel);
+
             el.trigger({
                 type: 'successJson.' + $.drop.nS,
                 drp: {
@@ -788,7 +805,7 @@
             opt = {};
         if (m.constructor === jQuery)
             return methods.open.call(null, $.extend(opt, {'drop': m}));
-        else if ($.type(m) === 'array' || m.match($.drop.drp.regImg)) {
+        else if ($.type(m) === 'array' || $.type(m) === 'string' && m.match($.drop.drp.regImg)) {
             if ($.type(m) === 'array') {
                 opt.rel = opt.rel ? opt.rel : 'rel' + (+new Date());
                 if (!$.drop.drp.galleries[opt.rel])
@@ -799,11 +816,13 @@
                 });
                 return methods.open.call(null, $.extend(opt, {source: $.drop.drp.galleries[opt.rel][0]}));
             }
-            else if (m.match($.drop.drp.regImg))
+            else if ($.type(m) === 'string' && m.match($.drop.drp.regImg))
                 return methods.open.call(null, $.extend(opt, {source: m}));
         }
         else if ($.type(m) === 'string')
             return methods.open.call(null, $.extend(opt, {'html': m}));
+        else if ($.type(m) === 'object')
+            return methods.open.call(null, m);
     };
     $.drop.nS = 'drop';
     $.drop.version = '1.0';
@@ -898,7 +917,8 @@
         autoPlay: false,
         autoPlaySpeed: 2000,
         theme: 'default',
-        closeActiveClick: false
+        closeActiveClick: false,
+        type: 'auto'
     };
     $.drop.drp = {
         theme: {

@@ -76,7 +76,6 @@
                                 drp.placement = placement = {'left': offLeft, 'top': offTop};
 
                         if (typeof placement === 'object') {
-                            console.log(method)
                             drop[method](placement, {
                                 duration: drp.durationOn,
                                 queue: false

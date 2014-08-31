@@ -116,9 +116,8 @@
 //            $.drop.setTheme({green: '.drop-header-default{border: 2px solid green;}'});
 //            $('[href]').data('theme', 'green')
             $(document).ready(function() {
-                var api = $('[href]').drop({
+                $('[href]').drop({
                     overlayOpacity: 0,
-                    
                     animate: true,
                     start: function(drop, opt) {
                         //console.log(opt);
@@ -136,12 +135,5 @@
 //                });
             });
         </script>
-        <div class="drop drop-style" id="notification">
-            <div class="drop-content-notification">
-                <div class="inside-padd drop-notification-default">
-                    іа
-                </div>
-            </div>
-        </div>
     </body>
 </html>
