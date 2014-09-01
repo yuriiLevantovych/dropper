@@ -76,6 +76,11 @@
                                 drp.placement = placement = {'left': offLeft, 'top': offTop};
 
                         if (typeof placement === 'object') {
+                            if (placement.left + dropW > wnd.width())
+                                placement.left -= dropW;
+                            if (placement.top + dropH > wnd.height()) {
+                                placement.top -= dropH;
+                            }
                             drop[method](placement, {
                                 duration: drp.durationOn,
                                 queue: false
@@ -408,17 +413,16 @@
                         'drop': opt.confirmBtnDrop,
                         'confirm': true
                     });
-                    $.extend(opt, confirmBtn.data());
+                    var optC = $.extend({}, opt, confirmBtn.data());
                     if (!$.exists(opt.confirmBtnDrop))
-                        var drop = self._pasteDrop($.extend({}, opt, confirmBtn.data()), opt.patternConfirm);
+                        var drop = self._pasteDrop(optC, opt.patternConfirm);
                     else
-                        drop = self._pasteDrop($.extend({}, opt, confirmBtn.data()), $(opt.confirmBtnDrop));
+                        drop = self._pasteDrop(optC, $(opt.confirmBtnDrop));
 
-                    self._show.call(confirmBtn, drop, e, opt, hashChange);
+                    self._show.call(confirmBtn, drop, e, optC, hashChange);
 
                     $(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                         e.stopPropagation();
-                        opt.drop = null;
                         self.close.call($(opt.confirmBtnDrop), e, _confirmF, null);
                     });
                 }
@@ -432,13 +436,13 @@
                         'prompt': true,
                         'promptInputValue': opt.promptInputValue
                     });
-                    $.extend(opt, promptBtn.data());
+                    var optP = $.extend({}, opt, promptBtn.data());
                     if (!$.exists(opt.promptBtnDrop))
-                        var drop = self._pasteDrop($.extend({}, opt, promptBtn.data()), opt.patternPrompt);
+                        var drop = self._pasteDrop(optP, opt.patternPrompt);
                     else
-                        drop = self._pasteDrop($.extend({}, opt, promptBtn.data()), $(opt.promptBtnDrop));
+                        drop = self._pasteDrop(optP, $(opt.promptBtnDrop));
 
-                    self._show.call(promptBtn, drop, e, opt, hashChange);
+                    self._show.call(promptBtn, drop, e, optP, hashChange);
 
                     $(opt.promptActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                         e.stopPropagation();
@@ -452,7 +456,6 @@
                         }
 
                         opt.dataPrompt = getUrlVars($(this).closest('form').serialize());
-                        opt.drop = null;
                         self.close.call($(opt.promptBtnDrop), e, _confirmF, null);
                     });
                 }

@@ -122,7 +122,6 @@
                     elSet = el.data();
             $.extend(opt, elSet);
             function _update(data, cLS) {
-                $.drop.hideLoading();
                 var drop = methods._pasteDrop(opt, opt.pattern, opt.rel, cLS);
                 if (opt.source && !opt.always && !opt.notify)
                     $.drop.drp.drops[opt.source.replace($.drop.drp.reg, '')] = drop;
@@ -138,10 +137,9 @@
                 });
                 methods._show.call(el, drop, e, opt, hashChange);
             }
-
-            var cLS = opt.defaultClassBtnDrop + (opt.rel && $.drop.drp.galleries[opt.rel].length > 1 ? opt.rel + (+new Date()) : (opt.source ? opt.source.replace($.drop.drp.reg, '') : +new Date()));
-            opt.drop = '.' + cLS;
-            el.attr('data-drop', '.' + cLS).data('drop', '.' + cLS);
+            var cls = opt.defaultClassBtnDrop + (opt.rel && $.drop.drp.galleries[opt.rel].length > 1 ? opt.rel + (+new Date()) : (opt.source ? opt.source.replace($.drop.drp.reg, '') : +new Date()));
+            opt.drop = opt.drop ? opt.drop : '.' + cls;
+            el.attr('data-drop', opt.drop).data('drop', opt.drop);
             if ($.drop.drp.drops[opt.source.replace($.drop.drp.reg, '')]) {
                 var drop = methods._pasteDrop(opt, $.drop.drp.drops[opt.source.replace($.drop.drp.reg, '')], opt.rel);
                 methods._show.call(el, drop, e, opt, hashChange);
@@ -151,8 +149,9 @@
             var _getImage = function() {
                 var img = $.drop.drp.imgPreload = new Image();
                 img.onload = function() {
+                    $.drop.hideLoading();
                     this.onload = this.onerror = null;
-                    _update($(this), cLS);
+                    _update($(this), cls);
                 };
                 img.onerror = function() {
                     this.onload = this.onerror = null;
@@ -166,10 +165,13 @@
                     url: opt.source,
                     dataType: opt.ajax.dataType ? opt.ajax.dataType : (opt.notify ? 'json' : 'html'),
                     success: function(data) {
-                        if (opt.notify)
-                            methods._pasteNotify.call(el, data, opt, hashChange);
+                        $.drop.hideLoading();
+                        if (opt.notify) {
+                            methods._notifyTrigger.call(el, opt);
+                            methods._pasteNotify.call(el, data, opt, hashChange, e);
+                        }
                         else
-                            _update(data, cLS);
+                            _update(data, cls);
                     },
                     error: function() {
                         $.drop.hideLoading();
@@ -267,7 +269,7 @@
                 function _confirmF() {
                     if (!$.existsN(drop) || $.existsN(drop) && opt.source && !$.drop.drp.drops[sourceC] || opt.notify || opt.always) {
                         if (opt.datas && opt.notify)
-                            methods._pasteNotify.call($this, opt.datas, opt, hashChange);
+                            methods._pasteNotify.call($this, opt.datas, opt, hashChange, e);
                         else if (opt.source)
                             methods._get.call($this, opt, e, hashChange);
                     }
@@ -284,9 +286,9 @@
                     if ($this.is(':disabled') || opt.start && !eval(opt.start).call($this, drop, opt, e))
                         return false;
                     if (opt.datas && opt.notify && !(opt.prompt || opt.confirm))//for front validations
-                        methods._pasteNotify.call($this, opt.datas, opt, hashChange);
+                        methods._pasteNotify.call($this, opt.datas, opt, hashChange, e);
                     else {
-                        if (opt.prompt || opt.confirm || opt.source && !$.existsN(drop) || opt.source && opt.always) {
+                        if (opt.prompt || opt.confirm || opt.source && (!$.existsN(drop) || opt.always || opt.notify)) {
                             if (!opt.confirm && !opt.prompt)
                                 _confirmF();
                             else
@@ -322,7 +324,8 @@
             opt.afterG = $.drop.dP.afterG;
             opt.closeG = $.drop.dP.closeG;
             opt.closedG = $.drop.dP.closedG;
-            //opt = $.extend({}, drop.data('drp'), opt);
+            
+            //var drp = $.extend({}, drop.data('drp'));
 
             drop.data('drp', opt);
             if (opt.rel)
@@ -345,8 +348,9 @@
             }
 
             $('.forCenter').css('z-index', 1104);
+            console.log(drp.forCenter)
             var forCenter = null,
-                    objForC = $('[data-rel="' + opt.drop + '"].forCenter');
+                    objForC = drp.forCenter ? drp.forCenter : $('[data-rel="' + opt.drop + '"].forCenter');
             if ($.existsN(objForC))
                 forCenter = objForC;
             if (forCenter) {
@@ -678,7 +682,7 @@
                     $(e.drop).find(opt.notifyPlace).empty().append(opt.message.info(e.datas.data));
             });
         },
-        _pasteNotify: function(datas, opt, hashChange) {
+        _pasteNotify: function(datas, opt, hashChange, e) {
             var el = this,
                     drop = $(opt.drop);
 
@@ -691,7 +695,7 @@
                     datas: datas || el.data('datas')
                 }
             });
-            methods._show.call(el, drop, null, opt, hashChange);
+            methods._show.call(el, drop, e, opt, hashChange);
             return el;
         },
         _pasteDrop: function(opt, drop, rel, aClass) {
