@@ -160,23 +160,23 @@
                     methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'image is not found'}});
                 };
                 img.src = opt.source;
-            }
+            };
             var _getAjax = function() {
                 $.drop.drp.curAjax = $.ajax($.extend({}, opt.ajax, {
                     url: opt.source,
                     dataType: opt.ajax.dataType ? opt.ajax.dataType : (opt.notify ? 'json' : 'html'),
                     success: function(data) {
                         if (opt.notify)
-                            methods._pasteNotify.call(el, data, opt, opt.rel, hashChange);
+                            methods._pasteNotify.call(el, data, opt, hashChange);
                         else
                             _update(data, cLS);
                     },
                     error: function() {
                         $.drop.hideLoading();
-                        methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'file is not found'}});
+                        methods.open.call(null, {notify: true, datas: {answer: 'error', data: arguments[2].message}});
                     }
                 }));
-            }
+            };
             if (opt.type === 'auto') {
                 if (opt.source.match($.drop.drp.regImg))
                     _getImage();
@@ -199,19 +199,22 @@
             opt = $.extend({}, $.drop.dP, opt);
             if (opt.context)
                 $.extend(opt, {place: 'global', limitSize: true});
-            if (!$this || !$.existsN($this)) {
-                if ($(this).hasClass('isDrop'))
+
+            if (!$this || !$.existsN($this) || opt.notify) {
+                if ($(this).hasClass('isDrop') && !opt.notify)
                     $this = this;
                 else {
-                    if (opt.datas) {
+                    if (opt.notify) {
                         if (!$.exists('[data-drop="' + opt.notifyBtnDrop + '"]')) {
                             $this = $('<div><button data-drop="' + opt.notifyBtnDrop + '" data-notify="true"></button></div>').appendTo($('body')).hide().children();
                             methods._pasteDrop($.extend(opt, $this.data()), opt.patternNotify, opt.rel);
                         }
                         else
                             $this = $('[data-drop="' + opt.notifyBtnDrop + '"]');
-                        $this.data('datas', opt.datas);
-                        methods._notifyTrigger.call($this, $.extend(opt, $this.data()));
+                        if (opt.datas) {
+                            $this.data('datas', opt.datas);
+                            methods._notifyTrigger.call($this, $.extend(opt, $this.data()));
+                        }
                     }
                     else if (opt.source) {
                         var sourcePref = opt.source.replace($.drop.drp.reg, '');
@@ -264,7 +267,7 @@
                 function _confirmF() {
                     if (!$.existsN(drop) || $.existsN(drop) && opt.source && !$.drop.drp.drops[sourceC] || opt.notify || opt.always) {
                         if (opt.datas && opt.notify)
-                            methods._pasteNotify.call($this, opt.datas, opt, null, hashChange);
+                            methods._pasteNotify.call($this, opt.datas, opt, hashChange);
                         else if (opt.source)
                             methods._get.call($this, opt, e, hashChange);
                     }
@@ -280,8 +283,8 @@
                 function _show() {
                     if ($this.is(':disabled') || opt.start && !eval(opt.start).call($this, drop, opt, e))
                         return false;
-                    if (opt.notify && !(opt.prompt || opt.confirm))//for front validations
-                        methods._pasteNotify.call($this, opt.datas, opt, null, hashChange);
+                    if (opt.datas && opt.notify && !(opt.prompt || opt.confirm))//for front validations
+                        methods._pasteNotify.call($this, opt.datas, opt, hashChange);
                     else {
                         if (opt.prompt || opt.confirm || opt.source && !$.existsN(drop) || opt.source && opt.always) {
                             if (!opt.confirm && !opt.prompt)
@@ -675,13 +678,9 @@
                     $(e.drop).find(opt.notifyPlace).empty().append(opt.message.info(e.datas.data));
             });
         },
-        _pasteNotify: function(datas, opt, rel, hashChange) {
-            var el = this;
-            datas = datas || el.data('datas');
-
-            el.attr('data-drop', opt.notifyBtnDrop).data('drop', opt.notifyBtnDrop);
-            $.extend(opt, el.data());
-            var drop = methods._pasteDrop(opt, opt.patternNotify, rel);
+        _pasteNotify: function(datas, opt, hashChange) {
+            var el = this,
+                    drop = $(opt.drop);
 
             el.trigger({
                 type: 'successJson.' + $.drop.nS,
@@ -689,11 +688,11 @@
                     refer: el,
                     drop: drop,
                     options: opt,
-                    datas: datas
+                    datas: datas || el.data('datas')
                 }
             });
             methods._show.call(el, drop, null, opt, hashChange);
-            return this;
+            return el;
         },
         _pasteDrop: function(opt, drop, rel, aClass) {
             if (opt.place === 'inherit' && opt.placeInherit)

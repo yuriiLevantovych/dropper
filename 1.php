@@ -1,3 +1,4 @@
 <?php
 sleep(0);
-echo '<div><div class="a1 drop">2</div><div>asdf2</div></div>';
+echo json_encode(['answer' => true, 'data' => 'asdf']);
+//'<div><div class="a1 drop">2</div><div>asdf2</div></div>';
