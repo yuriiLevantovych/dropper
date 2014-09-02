@@ -18,7 +18,7 @@
         };
     })(jQuery);
     $.existsN = function(nabir) {
-        return nabir.length > 0 && nabir instanceof jQuery;
+        return nabir && nabir.length > 0 && nabir instanceof jQuery;
     };
     $.exists = function(selector) {
         return $(selector).length > 0 && $(selector) instanceof jQuery;
@@ -198,9 +198,14 @@
         open: function(opt, e, hashChange) {
             var $this = this;
             e = e ? e : window.event;
-            opt = $.extend({}, $.drop.dP, opt);
-            if (opt.context)
+            opt = $.extend({}, $.drop.dP, $this.data('drp') ? $this.data('drp').genOpt : {}, opt);
+            if (opt.context) {
                 $.extend(opt, {place: 'global', limitSize: true});
+                if (e && e.pageX >= 0)
+                    opt.placement = {'left': parseInt(e.pageX), 'top': parseInt(e.pageY)};
+                else
+                    opt.placement = {'left': $this.offset().left, 'top': $this.offset().top};
+            }
 
             if (!$this || !$.existsN($this) || opt.notify) {
                 if ($(this).hasClass('isDrop') && !opt.notify)
@@ -324,8 +329,6 @@
             opt.afterG = $.drop.dP.afterG;
             opt.closeG = $.drop.dP.closeG;
             opt.closedG = $.drop.dP.closedG;
-            
-            //var drp = $.extend({}, drop.data('drp'));
 
             drop.data('drp', opt);
             if (opt.rel)
@@ -333,14 +336,12 @@
                     methods.galleries(drop, opt);
                 });
             var overlays = $('.overlayDrop').css('z-index', 1103),
-                    condOverlay = opt.overlayOpacity !== 0,
                     dropOver = null;
-            if (condOverlay) {
+            if (opt.overlay) {
                 if (!$.exists('[data-rel="' + opt.drop + '"].overlayDrop'))
                     $('body').append('<div class="overlayDrop" data-rel="' + opt.drop + '" style="display:none;position:absolute;width:100%;left:0;top:0;"></div>');
-                dropOver = $('[data-rel="' + opt.drop + '"].overlayDrop');
-                opt.dropOver = dropOver;
-                dropOver.css('height', '').css({
+                (opt.dropOver = dropOver = $('[data-rel="' + opt.drop + '"].overlayDrop')).css({
+                    'height': '',
                     'background-color': opt.overlayColor,
                     'opacity': opt.overlayOpacity,
                     'z-index': overlays.length + 1103
@@ -348,15 +349,10 @@
             }
 
             $('.forCenter').css('z-index', 1104);
-            console.log(drp.forCenter)
-            var forCenter = null,
-                    objForC = drp.forCenter ? drp.forCenter : $('[data-rel="' + opt.drop + '"].forCenter');
-            if ($.existsN(objForC))
-                forCenter = objForC;
-            if (forCenter) {
-                opt.forCenter = forCenter;
-                forCenter.css('z-index', overlays.length + 1104);
-            }
+            var forCenter = null;
+            if (opt.place === 'center')
+                (forCenter = opt.forCenter = $('[data-rel="' + opt.drop + '"].forCenter')).css('z-index', overlays.length + 1104);
+
             methods._setHeightAddons(dropOver, forCenter);
             drop.css('z-index', overlays.length + 1104);
             methods._pasteContent($this, drop, opt);
@@ -412,11 +408,10 @@
             wnd.off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function(e) {
                 if (opt.place === 'center' && opt.centerOnScroll)
                     methods._checkMethod(function() {
-                        methods[opt.place].call(drop, e);
+                        methods[opt.place].call(drop);
                     }, opt.place);
             });
-            if (condOverlay)
-                dropOver.stop().fadeIn(opt.durationOn / 2);
+            $(dropOver).stop().fadeIn(opt.durationOn / 2);
             if (opt.closeClick)
                 $(forCenter).add(dropOver).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
                     if ($(e.target).is('.overlayDrop') || $(e.target).is('.forCenter'))
@@ -463,10 +458,9 @@
                 methods.placeBeforeShow(drop, $this, opt.place, opt.placeBeforeShow, e);
             if (opt.place !== 'inherit')
                 methods._checkMethod(function() {
-                    methods[opt.place].call(drop, e);
+                    methods[opt.place].call(drop);
                 }, opt.place);
-            if (forCenter && opt.place === 'center')
-                forCenter.show();
+            $(forCenter).show();
             $('style' + '[data-rel="' + opt.drop + '"]').remove();
             if (!$.drop.drp.theme[opt.theme])
                 returnMsg('theme' + ' "' + opt.theme + '" ' + 'not available');
@@ -618,7 +612,7 @@
             });
             return sel;
         },
-        update: function(e, opt) {
+        update: function(opt, e) {
             var drop = this;
             opt = $.extend({}, opt, drop.data('drp'));
             if (opt.limitSize)
@@ -627,11 +621,11 @@
                 });
             if (opt.place !== 'inherit')
                 methods._checkMethod(function() {
-                    methods[opt.place].call(drop, e);
+                    methods[opt.place].call(drop);
                 }, opt.place);
             methods._setHeightAddons(opt.dropOver, opt.forCenter);
         },
-        center: function(e, start) {
+        center: function(start) {
             return this.each(function() {
                 var drop = $(this),
                         drp = drop.data('drp');
@@ -684,7 +678,7 @@
         },
         _pasteNotify: function(datas, opt, hashChange, e) {
             var el = this,
-                    drop = $(opt.drop);
+                    drop = methods._pasteDrop(opt, $(opt.drop), opt.rel);
 
             el.trigger({
                 type: 'successJson.' + $.drop.nS,
@@ -722,10 +716,10 @@
                 if (!content)
                     return false;
                 place = drop.find(place);
-                if (typeof content === 'string' || typeof content === 'number' || typeof content === 'object')
-                    place.empty().append(content);
-                else if (typeof content === 'function')
+                if (typeof content === 'function')
                     content(place, $this, drop);
+                else
+                    place.empty().append(content);
             }
             _pasteContent(opt.contentHeader, opt.dropHeader);
             _pasteContent(opt.contentContent, opt.dropContent);
@@ -736,12 +730,12 @@
             $(dropOver).add(forCenter).css('height', '').css('height', doc.height());
         },
         _checkMethod: function(f, nm) {
-            try {
+            //try {
                 f();
-            } catch (e) {
-                var method = f.toString().match(/\.\S*\(/);
-                returnMsg('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
-            }
+//            } catch (e) {
+//                var method = f.toString().match(/\.\S*\(/);
+//                returnMsg('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
+//            }
             return this;
         },
         _positionType: function(drop) {
@@ -865,6 +859,7 @@
         effectOff: 'hide',
         place: 'center',
         placement: 'left bottom',
+        overlay: true,
         overlayColor: '#000',
         overlayOpacity: .6,
         position: 'absolute',

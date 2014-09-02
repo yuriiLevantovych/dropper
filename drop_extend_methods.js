@@ -47,13 +47,12 @@
                     });
                 });
             },
-            global: function(e, start) {
+            global: function(start) {
                 return this.each(function() {
                     var drop = $(this),
                             drp = drop.data('drp');
                     if (drp && !drp.droppableIn) {
                         var method = drp.animate && !start ? 'animate' : 'css',
-                                placement = drp.placement,
                                 $this = drp.elrun,
                                 t = 0,
                                 l = 0,
@@ -69,25 +68,19 @@
                         if (!drop.is(':visible'))
                             drop.css({top: 'auto', bottom: 'auto', left: 'auto', right: 'auto'});
 
-                        if (drp.context)
-                            if (e.pageX)
-                                drp.placement = placement = {'left': parseInt(e.pageX), 'top': parseInt(e.pageY)};
-                            else
-                                drp.placement = placement = {'left': offLeft, 'top': offTop};
-
-                        if (typeof placement === 'object') {
-                            if (placement.left + dropW > wnd.width())
-                                placement.left -= dropW;
-                            if (placement.top + dropH > wnd.height()) {
-                                placement.top -= dropH;
+                        if (typeof drp.placement === 'object') {
+                            if (drp.placement.left + dropW > wnd.width())
+                                drp.placement.left -= dropW;
+                            if (drp.placement.top + dropH > wnd.height()) {
+                                drp.placement.top -= dropH;
                             }
-                            drop[method](placement, {
+                            drop[method](drp.placement, {
                                 duration: drp.durationOn,
                                 queue: false
                             });
                         }
                         else {
-                            var pmt = placement.toLowerCase().split(' ');
+                            var pmt = drp.placement.toLowerCase().split(' ');
                             if (pmt[1] === 'top')
                                 t = -drop.actual('outerHeight');
                             if (pmt[1] === 'bottom')
@@ -117,9 +110,6 @@
             },
             _heightContent: function(drop) {
                 return (drop || this).each(function() {
-                    function _setHeight(h) {
-                        return this.css('height', h > drp.minHeightContent ? h : drp.minHeightContent);
-                    }
                     var drop = $(this),
                             drp = drop.data('drp');
                     if (!drp.limitSize)
@@ -171,15 +161,15 @@
                                         mayHeight = refer.offset().top - footerHeader - (dropH - dropHm);
                                 }
                                 if (mayHeight > elCH)
-                                    _setHeight.call(el, elCH);
+                                    el.css('height', elCH);
                                 else
-                                    _setHeight.call(el, mayHeight);
+                                    el.css('height', mayHeight);
                             }
                             else {
                                 if (elCH + footerHeader > dropHm)
-                                    _setHeight.call(el, dropHm - footerHeader);
+                                    el.css('height', dropHm - footerHeader);
                                 else
-                                    _setHeight.call(el, elCH);
+                                    el.css('height', elCH);
                             }
                             if (api)
                                 api.reinitialise();
@@ -324,7 +314,7 @@
                         l = -drop.actual('outerWidth');
                 if (pmt[0] === 'center' || pmt[1] === 'center') {
                     self._checkMethod(function() {
-                        self[place].call(drop, e, true);
+                        self[place].call(drop, true);
                     });
                     t = drop.css('top');
                     l = drop.css('left');
@@ -455,7 +445,7 @@
                             return myJson;
                         }
 
-                        opt.dataPrompt = getUrlVars($(this).closest('form').serialize());
+                        optP.dataPrompt = opt.dataPrompt = getUrlVars($(this).closest('form').serialize());
                         self.close.call($(opt.promptBtnDrop), e, _confirmF, null);
                     });
                 }
