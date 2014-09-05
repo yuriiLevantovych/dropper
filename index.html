@@ -36,7 +36,9 @@
     <body>
         <div>
             <h3>Simple drop inline</h3>
+            <div data-drop=".asdf">asdf</div>
             <button type="button" data-drop data-context="true" data-href="#dd" data-overlay="false" data-place-before-show="inherit" data-notify="false" data-source="1.php" style="width: 200px;height: 150px;float: right;">click</button>
+            <button type="button" data-drop data-context="true" data-href="#dd" data-overlay="false" data-place-before-show="inherit" data-notify="false" data-source="2.php" style="width: 200px;height: 150px;float: right;">click</button>
             <div class="drop drop-simple" style="width: 150px">
                 <button type="button" data-closed>*</button>
                 <div class="drop-content-default">
@@ -100,7 +102,7 @@
                 </div>    
             </div>
         </div>
-        <a href="http://fc08.deviantart.net/fs70/f/2010/324/a/2/avatar_upd_big_size_by_merychess-d30zufu.jpg" rel="group" onClick="return false;" data-href="#a" data-prompt="true">
+        <a rel="group" onClick="return false;" data-href="#a" data-prompt="true" data-drop=".asdf">
             <img src="3.jpg" width="50"/>
         </a>
         <a href="4.jpg" rel="group" data-href="#b" data-place="center">
