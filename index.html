@@ -37,8 +37,8 @@
         <div>
             <h3>Simple drop inline</h3>
             <div data-drop=".asdf">asdf</div>
-            <button type="button" data-drop data-context="true" data-href="#dd" data-overlay="false" data-place-before-show="inherit" data-notify="false" data-source="1.php" style="width: 200px;height: 150px;float: right;">click</button>
-            <button type="button" data-drop data-context="true" data-href="#dd" data-overlay="false" data-place-before-show="inherit" data-notify="false" data-source="2.php" style="width: 200px;height: 150px;float: right;">click</button>
+            <button type="button" data-context="true" data-hash="#dd" data-overlay="false" data-place-before-show="inherit" data-notify="false" data-drop=".a1" data-href="1.php" style="width: 200px;height: 150px;float: right;">click</button>
+            <button type="button" data-drop data-context="true" data-hash="#dd" data-overlay="false" data-place-before-show="inherit" data-notify="false" data-href="2.php" style="width: 200px;height: 150px;float: right;">click</button>
             <div class="drop drop-simple" style="width: 150px">
                 <button type="button" data-closed>*</button>
                 <div class="drop-content-default">
@@ -61,7 +61,7 @@
                     1234<br/>
                 </div>    
             </div>
-            <a data-drop data-source  data-prompt="true">click</a>
+            <a data-drop data-prompt="true">click</a>
             <div class="drop drop-simple2" style="width: 150px">
                 <button type="button" data-closed>*</button>
                 <div class="drop-content-default">
@@ -102,13 +102,13 @@
                 </div>    
             </div>
         </div>
-        <a rel="group" onClick="return false;" data-href="#a" data-prompt="true" data-drop=".asdf">
+        <a href="http://fc08.deviantart.net/fs70/f/2010/324/a/2/avatar_upd_big_size_by_merychess-d30zufu.jpg" rel="group" onClick="return false;" data-hash="#a">
             <img src="3.jpg" width="50"/>
         </a>
-        <a href="4.jpg" rel="group" data-href="#b" data-place="center">
+        <a href="4.jpg"  data-hash="#b" data-place="inherit" data-place-inherit=".placeInherit" data-drop=".asdf" data-overlay="false" data-close-active-click="true">
             <img src="3.jpg" width="50"/>
         </a>
-        <a href="6.jpg" rel="group" data-href="#c">
+        <a href="6.jpg" rel="group" data-hash="#c">
             <img src="5.jpg" width="50"/>
         </a>
         <div class="drop asdf">asdf</div>
@@ -130,19 +130,7 @@
                         return false;
                     }
                 });
-//                $('[data-prompt]').drop({
-//                    closed: function(drop, opt) {
-//                        // console.log(this);
-//                    }
-//                });
             });
         </script>
-        <div class="drop drop-style" id="notification">
-            <div class="drop-content-notification">
-                <div class="inside-padd drop-notification-default">
-                    іа
-                </div>
-            </div>
-        </div>
     </body>
 </html>
