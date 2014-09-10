@@ -116,7 +116,7 @@
                 el.off('contextmenu.' + $.drop.nS).off('mouseup.' + $.drop.nS);
             });
         },
-        _get: function(opt, e, hashChange) {
+        _get: function(opt, e, hashChange, cLS) {
             var el = this,
                     elSet = el.data();
             $.extend(opt, elSet);
@@ -127,8 +127,10 @@
                     drop = methods._pasteDrop(opt, opt.pattern, cLS);
                 if (opt.href && !opt.always && !opt.notify)
                     $.drop.drp.drops[opt.href.replace($.drop.drp.reg, '')] = drop;
-                if (!oldDrop)
+                if (!oldDrop) {
+                    console.log(drop)
                     drop.find($(opt.placePaste)).html(data);
+                }
                 doc.trigger({
                     type: 'successHtml.' + $.drop.nS,
                     drp: {
@@ -140,12 +142,11 @@
                 });
                 methods._show.call(el, drop, e, opt, hashChange);
             }
-            var cLS = opt.defaultClassBtnDrop + (+new Date()),
-                    oldDrop = opt.drop;
-            opt.drop = $.type(oldDrop) === 'string' && !opt.notify ? oldDrop : '.' + cLS;
+            var oldDrop = opt.drop && opt.drop.constructor === jQuery;
+            opt.drop = $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + cLS;
             el.attr('data-drop', opt.drop).data('drop', opt.drop);
             if ($.drop.drp.drops[opt.href.replace($.drop.drp.reg, '')]) {
-                var drop = methods._pasteDrop(opt, $.drop.drp.drops[opt.href.replace($.drop.drp.reg, '')], cLS);
+                var drop = methods._pasteDrop(opt, $.drop.drp.drops[opt.href.replace($.drop.drp.reg, '')]);
                 methods._show.call(el, drop, e, opt, hashChange);
                 return el;
             }
@@ -209,110 +210,85 @@
             return el;
         },
         open: function(opt, e, hashChange) {
-            var $this = this;
-            e = e ? e : window.event;
+            var $this = $(this);
             opt = $.extend({}, $.drop.dP, $.existsN($this) && $this.data('drp') ? $this.data('drp').genOpt : {}, opt);
+            e = e ? e : window.event;
 
-            function _dec() {
-                if (opt.context) {
-                    $.extend(opt, {place: 'global', limitSize: true, overlay: false});
-                    if (e && e.pageX >= 0)
-                        opt.placement = {'left': parseInt(e.pageX), 'top': parseInt(e.pageY)};
-                    else
-                        opt.placement = {'left': $this.offset().left, 'top': $this.offset().top};
-                }
-                if (!$this || !$.existsN($this) || opt.notify) {
-                    if ($(this).hasClass('isDrop') && !opt.notify)
-                        $this = this;
-                    else {
-                        var cLS = opt.defaultClassBtnDrop + (+new Date()),
-                                optD = $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + cLS;
-                        if (opt.notify) {
-                            $this = methods._referCreate(optD, opt).data('notify', true);
+            var oldDrop = opt.drop,
+                    cLS = opt.defaultClassBtnDrop + (+new Date());
+            opt.drop = $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + cLS;
+            if (!this || this && this.constructor !== jQuery || opt.notify)
+                $this = methods._referCreate(opt.drop);
 
-                            if (opt.datas) {
-                                $this.data('datas', opt.datas);
-                                methods._pasteNotify.call($this, opt.datas, $.extend(opt, $this.data()), hashChange, e, cLS);
-                                return false;
-                            }
-                        }
-                        else if (opt.href)
-                            $this = methods._referCreate(optD, opt);
-                        else {
-                            var drop = $(opt.drop),
-                                    $this = methods._referCreate(optD, opt);
-                            if (opt.html)
-                                drop = methods._pasteDrop($.extend(opt, $this.data()), opt.pattern, cLS).find($(opt.placePaste)).html(opt.html);
-                            else if ($.existsN(drop))
-                                drop = methods._pasteDrop($.extend(opt, $this.data()), drop.addClass($.drop.drp.wasCreateClass), cLS);
-                            else {
-                                returnMsg('insufficient data');
-                                return false;
-                            }
-                        }
-                    }
-                }
-                return $this.each(function() {
-                    var $this = $(this);
-                    $.extend(opt, $this.data());
-                    var drop = $(opt.drop);
-
-                    opt.href = opt.href || $this.attr('href');
-                    opt.elrun = $this;
-                    opt.rel = $this.get(0).rel || opt.rel;
-
-                    if (opt.rel && $.drop.drp.galleries[opt.rel.replace($.drop.drp.reg, '')])
-                        opt.rel = opt.rel.replace($.drop.drp.reg, '');
-                    var hrefC = opt.href ? opt.href.replace($.drop.drp.reg, '') : null;
-
-                    if (opt.dropFilter && !opt.drop) {
-                        drop = methods._filterSource($this, opt.dropFilter);
-                        var _classFilter = opt.defaultClassBtnDrop + (+new Date());
-                        opt.drop = '.' + _classFilter;
-                        $this.attr('data-drop', opt.drop).data('drop', opt.drop);
-                        drop.addClass(_classFilter);
-                    }
-
-                    function _confirmF() {
-                        if (!$.existsN(drop) || opt.href && !$.drop.drp.drops[hrefC] || opt.notify || opt.always)
-                            methods._get.call($this, opt, e, hashChange);
-                        else {
-                            drop = methods._pasteDrop(opt, $.existsN(drop) ? drop.addClass($.drop.drp.wasCreateClass) : $.drop.drp.drops[hrefC]);
-                            methods._show.call($this, drop, e, opt, hashChange);
-                        }
-                    }
-                    if (opt.closeActiveClick && $this.hasClass($.drop.dP.activeClass) && drop.hasClass($.drop.dP.activeClass) && drop.length === 1) {
-                        methods.close.call($($this.data('drop')), 'element already open');
-                        return false;
-                    }
-                    function _show() {
-                        if ($this.is(':disabled') || opt.drop && opt.start && !eval(opt.start).call($this, drop, opt, e))
-                            return false;
-
-                        if (opt.prompt || opt.confirm || opt.href && (!$.existsN(drop) || opt.always || opt.notify)) {
-                            if (!opt.confirm && !opt.prompt)
-                                _confirmF();
-                            else
-                                methods._checkMethod(function() {
-                                    methods.confirmPrompt(opt, hashChange, _confirmF, e, $this);
-                                });
-                        }
-                        else if ($.existsN(drop) || opt.href && $.drop.drp.drops[hrefC]) {
-                            drop = methods._pasteDrop(opt, $.existsN(drop) ? drop.addClass($.drop.drp.wasCreateClass) : $.drop.drp.drops[hrefC]);
-                            methods._show.call($this, drop, e, opt, hashChange);
-                        }
-                        else
-                            returnMsg('insufficient data');
-                    }
-                    if (!opt.moreOne && $.exists($.drop.drp.aDS))
-                        return methods.close.call($($.drop.drp.aDS), 'close more one element', _show);
-                    return _show();
-                });
+            if (opt.context) {
+                $.extend(opt, {place: 'global', limitSize: true, overlay: false});
+                if (e && e.pageX >= 0)
+                    opt.placement = {'left': parseInt(e.pageX), 'top': parseInt(e.pageY)};
+                else
+                    opt.placement = {'left': $this.offset().left, 'top': $this.offset().top};
             }
 
-            if (!opt.moreOne && $.exists($.drop.drp.aDS) && !opt.closeActiveClick)
-                return methods.close.call($($.drop.drp.aDS), 'close more one element', _dec);
-            return _dec();
+            $.extend(opt, $this.data());
+            var drop = oldDrop && oldDrop.constructor === jQuery ? oldDrop : $(opt.drop);
+            console.log(drop)
+
+            opt.href = opt.href || $this.attr('href');
+            opt.elrun = $this;
+            opt.rel = $this.get(0).rel || opt.rel;
+
+            if (opt.rel && $.drop.drp.galleries[opt.rel.replace($.drop.drp.reg, '')])
+                opt.rel = opt.rel.replace($.drop.drp.reg, '');
+            var hrefC = opt.href ? opt.href.replace($.drop.drp.reg, '') : null;
+
+            if (opt.dropFilter && !opt.drop) {
+                drop = methods._filterSource($this, opt.dropFilter);
+                var _classFilter = opt.defaultClassBtnDrop + (+new Date());
+                opt.drop = '.' + _classFilter;
+                $this.attr('data-drop', opt.drop).data('drop', opt.drop);
+                drop.addClass(_classFilter);
+            }
+
+            function _confirmF() {
+                if (!$.existsN(drop) || opt.href && !$.drop.drp.drops[hrefC] || opt.always || opt.notify)
+                    methods._get.call($this, opt, e, hashChange, cLS);
+                else {
+                    drop = methods._pasteDrop(opt, $.existsN(drop) ? drop.addClass($.drop.drp.wasCreateClass) : $.drop.drp.drops[hrefC]);
+                    methods._show.call($this, drop, e, opt, hashChange);
+                }
+            }
+            if (opt.closeActiveClick && $this.hasClass($.drop.dP.activeClass) && drop.hasClass($.drop.dP.activeClass) && drop.length === 1) {
+                methods.close.call($($this.data('drop')), 'element already open');
+                return $this;
+            }
+            function _show() {
+                if ($this.is(':disabled') || opt.drop && opt.start && !eval(opt.start).call($this, drop, opt, e))
+                    return $this;
+
+                if (opt.notify && opt.datas)
+                    return methods._pasteNotify.call($this, opt.datas, opt, hashChange, e, cLS);
+
+                if (opt.html) {
+                    drop = methods._pasteDrop($.extend(opt, $this.data()), opt.pattern, cLS).find($(opt.placePaste)).html(opt.html);
+                    methods._show.call($this, drop, e, opt, hashChange);
+                }
+                else if (opt.prompt || opt.confirm || opt.href && (!$.existsN(drop) || opt.always || opt.notify)) {
+                    if (!opt.confirm && !opt.prompt)
+                        _confirmF();
+                    else
+                        methods._checkMethod(function() {
+                            methods.confirmPrompt(opt, hashChange, _confirmF, e, $this);
+                        });
+                }
+                else if ($.existsN(drop) || opt.href && $.drop.drp.drops[hrefC]) {
+                    drop = methods._pasteDrop(opt, $.existsN(drop) ? drop.addClass($.drop.drp.wasCreateClass) : $.drop.drp.drops[hrefC], cLS);
+                    methods._show.call($this, drop, e, opt, hashChange);
+                }
+                else
+                    returnMsg('insufficient data');
+            }
+            if (!opt.moreOne && $.exists($.drop.drp.aDS))
+                return methods.close.call($($.drop.drp.aDS), 'close more one element', _show);
+            return _show();
         },
         _show: function(drop, e, opt, hashChange) {
             var $this = this;
@@ -756,10 +732,8 @@
                 $.drop.drp.wLH = $.drop.drp.wLHN;
             });
         },
-        _referCreate: function(sel, opt) {
-            if (!$.exists('[data-drop="' + sel + '"]'))
-                return opt.elrun = $('<div><button data-drop="' + sel + '" class="' + $.drop.drp.tempClass + '"></button></div>').appendTo($('body')).hide().children();
-            return opt.elrun = $('[data-drop="' + sel + '"]');
+        _referCreate: function(sel) {
+            return $('<div><button data-drop="' + sel + '" class="' + $.drop.drp.tempClass + '"></button></div>').appendTo($('body')).hide().children();
         }
     };
     $.fn.drop = function(method) {
@@ -777,7 +751,7 @@
     $.drop = function(m, opt) {
         if (!opt)
             opt = {};
-        if (m.constructor === jQuery)
+        if (m && m.constructor === jQuery)
             return methods.open.call(null, $.extend({'drop': m}, opt));
         else if ($.type(m) === 'array' || $.type(m) === 'string' && m.match($.drop.drp.regImg)) {
             if ($.type(m) === 'array') {
@@ -797,6 +771,8 @@
             return methods.open.call(null, $.extend(opt, {'html': m}));
         else if ($.type(m) === 'object')
             return methods.open.call(null, m);
+        else
+            return returnMsg('insufficient data');
     };
     $.drop.nS = 'drop';
     $.drop.version = '1.0';
