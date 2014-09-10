@@ -308,7 +308,7 @@
                     self._cIGalleries($(this).data('drp').rel);
                 });
                 if (opt.rel && opt.keyNavigate)
-                    drop.off('after.kn' + $.drop.nS).on('after.kn' + $.drop.nS, function() {
+                    drop.off('after.' + $.drop.nS).on('after.' + $.drop.nS, function() {
                         var opt = $(this).data('drp'),
                                 ev = opt.drop ? opt.drop.replace($.drop.drp.reg, '') : '';
                         doc.off('keydown.' + $.drop.nS + ev).on('keydown.' + $.drop.nS + ev, function(e) {
@@ -419,7 +419,7 @@
                 var self = this,
                         cLS = opt.defaultClassBtnDrop + (+new Date());
                 if (opt.confirm) {
-                    var confirmBtn = self._referCreate('.' + cLS, opt).data('confirm', true),
+                    var confirmBtn = opt.elrun = self._referCreate('.' + cLS).data('confirm', true),
                             optC = $.extend({}, opt, confirmBtn.data()),
                             drop = self._pasteDrop(optC, opt.patternConfirm, cLS);
 
@@ -433,7 +433,7 @@
                     })(drop, _confirmF, opt);
                 }
                 if (opt.prompt) {
-                    var promptBtn = self._referCreate('.' + cLS, opt).data({'prompt': true, 'promptInputValue': opt.promptInputValue}),
+                    var promptBtn = opt.elrun = self._referCreate('.' + cLS).data({'prompt': true, 'promptInputValue': opt.promptInputValue}),
                             optP = $.extend({}, opt, promptBtn.data()),
                             drop = self._pasteDrop(optP, opt.patternPrompt, cLS);
 

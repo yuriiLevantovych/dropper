@@ -36,8 +36,7 @@
     <body>
         <div>
             <h3>Simple drop inline</h3>
-            <div data-drop=".asdf">asdf</div>
-            <button type="button" data-context="true" data-overlay="false" data-place-before-show="inherit" data-notify="false" data-drop=".a1" data-href="1.php" style="width: 200px;height: 150px;float: right;">click</button>
+            <button data-type="iframe" type="button" data-place-before-show="inherit" data-animate="true" data-notify="false" data-drop data-href="1.txt" data-width="800" data-height="800" style="width: 200px;height: 150px;float: right;">click</button>
             <button type="button" data-drop data-context="true" data-overlay="false" data-place-before-show="inherit" data-notify="true" data-href="2.php" style="width: 200px;height: 150px;float: right;">click</button>
             <div class="drop drop-simple" style="width: 150px">
                 <button type="button" data-closed>*</button>
@@ -102,16 +101,17 @@
                 </div>    
             </div>
         </div>
+        <div data-drop=".asdf">asdf</div>
         <a href="http://fc08.deviantart.net/fs70/f/2010/324/a/2/avatar_upd_big_size_by_merychess-d30zufu.jpg" rel="group" onClick="return false;" data-hash="#a">
             <img src="3.jpg" width="50"/>
         </a>
-        <a href="4.jpg"  data-hash="#b" data-place="inherit" data-place-inherit=".placeInherit" data-drop=".asdf" data-overlay="false" data-close-active-click="true">
+        <a href="4.jpg" data-hash="#b" data-place="global" data-place-inherit=".placeInherit" data-drop-filter="next()" data-overlay="false" data-close-active-click="true">
             <img src="3.jpg" width="50"/>
         </a>
-        <a href="6.jpg" rel="group" data-hash="#c">
+        <div class="drop asdf">asdf</div>
+        <a href="6.jpg" rel="group" data-hash="#c" data-always="true">
             <img src="5.jpg" width="50"/>
         </a>
-        <div class="drop asdf">asdf</div>
         <div class="placeInherit" style="width: 500px;height: 500px;position: relative;"></div>
         <script>
             $.drop.extendMethod('droppable', 'global', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPrompt');
