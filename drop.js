@@ -211,12 +211,12 @@
             opt = $.extend({}, DP, $.existsN($this) && $this.data('drp') ? $this.data('drp').genOpt : {}, opt);
             e = e ? e : window.event;
 
-            $.extend(opt, elSet);
             var cLS = opt.defaultClassBtnDrop + (+new Date());
 
             if (elSet.dropn !== null)
-                opt.dropn = opt.drop;
-            elSet.dropn = opt.dropn ? opt.dropn : null;
+                elSet.dropn = opt.drop;
+
+            $.extend(opt, elSet);
 
             opt.drop = opt.drop && $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + cLS;
             if (!this || this && this.constructor !== jQuery || opt.notify)
@@ -238,14 +238,18 @@
                 opt.rel = opt.rel.replace(D.reg, '');
             var hrefC = opt.href ? opt.href.replace(D.reg, '') : null;
 
-            if (opt.dropFilter && !$this.hasClass('drop-filter')) {
-                methods._filterSource($this, opt.dropFilter).addClass(cLS);
-                opt.drop = opt.dropn = '.' + cLS;
-                $this.attr('data-drop', opt.drop).data('drop', opt.drop).addClass('drop-filter');
+            if (opt.dropFilter) {
+                if ($this.hasClass('drop-filter'))
+                    elSet.dropn = opt.drop;
+                else {
+                    methods._filterSource($this, opt.dropFilter).addClass(cLS);
+                    elSet.dropn = opt.drop = '.' + cLS;
+                    $this.addClass('drop-filter');
+                }
             }
-            
+
             $this.attr('data-drop', opt.drop).data('drop', opt.drop);
-            var drop = $(opt.dropn);
+            var drop = $(elSet.dropn);
 
             function _confirmF() {
                 if (opt.href && (!$.existsN(drop) || !D.drops[hrefC] || opt.always || opt.notify))
@@ -449,24 +453,26 @@
             if (!D.theme[opt.theme])
                 returnMsg('theme' + ' "' + opt.theme + '" ' + 'not available');
             else
-                $('<style>', {
-                    'data-rel': opt.drop,
-                    text: D.theme[opt.theme].replace(/\}[^$]/g, '} ' + opt.drop + ' ').replace(/,/g, ', ' + opt.drop + ' ').replace(/^/, opt.drop + ' ').replace(/\s\s+/g, ' ')
-                }).appendTo($('body'));
+                methods._styleCreate(opt, opt.type === 'iframe' ? drop.css('visibility', 'hidden') : $('body'));
             drop[opt.effectOn](opt.durationOn, function(e) {
+                var drop = $(this);
+                if (opt.type === 'iframe')
+                    methods._styleCreate(opt, drop.css('visibility', '').contents().find('body'));
                 $('html, body').css({'overflow': '', 'overflow-x': ''});
                 methods._setHeightAddons(dropOver, forCenter);
                 if (opt.context)
                     collect.off('contextmenu.' + $.drop.nS);
-                var drop = $(this);
                 if ($.existsN(drop.find('[data-drop]')))
                     methods.init.call(drop.find('[data-drop]'));
-                drop.addClass(DP.activeClass);
-                $this.addClass(DP.activeClass);
+                drop.add($this).addClass(DP.activeClass);
                 if (opt.notify && !isNaN(opt.timeclosenotify))
                     setTimeout(function() {
                         methods.close.call(drop, 'close notify setTimeout');
                     }, opt.timeclosenotify);
+                if (opt.droppable && opt.place !== 'inherit')
+                    methods._checkMethod(function() {
+                        methods.droppable(drop);
+                    });
                 var cB = opt.elAfter;
                 if (cB)
                     eval(cB).call($this, drop, opt, e);
@@ -474,6 +480,7 @@
                     opt.after.call($this, drop, opt, e);
                 if (opt.afterG)
                     opt.afterG.call($this, drop, opt, e);
+
                 drop.add(doc).trigger({
                     type: 'after.' + $.drop.nS,
                     drp: {
@@ -483,10 +490,6 @@
                         options: opt
                     }
                 });
-                if (opt.droppable && opt.place !== 'inherit')
-                    methods._checkMethod(function() {
-                        methods.droppable(drop);
-                    });
             });
             return this;
         },
@@ -742,6 +745,12 @@
         },
         _referCreate: function(sel) {
             return $('<div><button data-drop="' + sel + '" class="' + D.tempClass + '"></button></div>').appendTo($('body')).hide().children();
+        },
+        _styleCreate: function(opt, where) {
+            return $('<style>', {
+                'data-rel': opt.drop,
+                text: opt.type === 'iframe' ? D.theme[opt.theme] : D.theme[opt.theme].replace(/\}[^$]/g, '} ' + opt.drop + ' ').replace(/,/g, ', ' + opt.drop + ' ').replace(/^/, opt.drop + ' ').replace(/\s\s+/g, ' ')
+            }).appendTo(where);
         }
     };
     $.fn.drop = function(method) {
@@ -895,7 +904,8 @@
     $.drop.drp = {
         theme: {
             default:
-                    '.drop-header-default{border: 2px solid red;}\n\
+                    '*{margin: 0;}\n\
+                .drop-header-default{border: 2px solid red;}\n\
                 .drop-prev, .drop-next{position: absolute;top: 0;width: 35%;height: 100%;background: none;border: 0;cursor: pointer;}\n\
                 .drop-next{right: 0;}\n\
                 .drop-prev{left: 0;}\n\
