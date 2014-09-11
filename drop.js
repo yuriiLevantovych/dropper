@@ -212,10 +212,7 @@
             e = e ? e : window.event;
 
             var cLS = opt.defaultClassBtnDrop + (+new Date());
-
-            if (elSet.dropn !== null)
-                elSet.dropn = opt.drop;
-
+            elSet.dropn = opt.drop;
             $.extend(opt, elSet);
 
             opt.drop = opt.drop && $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + cLS;
