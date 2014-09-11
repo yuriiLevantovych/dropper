@@ -5,46 +5,56 @@
                 return (drop || this).each(function() {
                     var drop = $(this);
                     drop.off('close.' + $.drop.nS).on('close.' + $.drop.nS, function() {
-                        if (drop.data('drp').droppableIn)
-                            drop.data('drp').positionDroppableIn = {'left': drop.css('left'), 'top': drop.css('top')}
+                        var drop = $(this),
+                                drp = drop.data('drp');
+                        if (drp.droppableIn)
+                            drp.positionDroppableIn = {'left': drop.css('left'), 'top': drop.css('top')};
                     });
                     drop.find('img').off('dragstart.' + $.drop.nS).on('dragstart.' + $.drop.nS, function(e) {
                         e.preventDefault();
                     });
                     drop.off('mousedown.' + $.drop.nS).on('mousedown.' + $.drop.nS, function(e) {
-                        if (!$(e.target).is(':input')) {
-                            doc.on('mouseup.' + $.drop.nS, function(e) {
-                                drop.css('cursor', '');
-                                doc.off('selectstart.' + $.drop.nS + ' mousemove.' + $.drop.nS + ' mouseup.' + $.drop.nS);
-                            });
-                            var $this = $(this).css('cursor', 'move'),
-                                    left = e.pageX - $this.offset().left,
-                                    top = e.pageY - $this.offset().top,
-                                    w = $this.outerWidth(),
-                                    h = $this.outerHeight(),
-                                    wndW = wnd.width(),
-                                    wndH = wnd.height();
-                            doc.on('selectstart.' + $.drop.nS, function(e) {
-                                e.preventDefault();
-                            });
-                            doc.on('mousemove.' + $.drop.nS, function(e) {
-                                e.preventDefault();
-                                drop.data('drp').droppableIn = true;
-                                var l = e.pageX - left,
-                                        t = e.pageY - top;
-                                if (!drop.data('drp').droppableLimit) {
-                                    l = l < 0 ? 0 : l;
-                                    t = t < 0 ? 0 : t;
+                        var drop = $(this),
+                                drp = drop.data('drp');
+                        if ($(e.target).is(':input'))
+                            return false;
+                        var drop = $(this),
+                                w = drop.outerWidth(),
+                                h = drop.outerHeight(),
+                                wndW = wnd.width(),
+                                wndH = wnd.height();
 
-                                    l = l + w < wndW ? l : wndW - w;
-                                    t = t + h < wndH ? t : wndH - h;
-                                }
-                                $this.css({
-                                    'left': l,
-                                    'top': t
-                                });
+                        if ((w > wndW || h > wndH) && drp.droppableLimit)
+                            return false;
+
+                        doc.on('mouseup.' + $.drop.nS, function(e) {
+                            drop.css('cursor', '');
+                            doc.off('selectstart.' + $.drop.nS + ' mousemove.' + $.drop.nS + ' mouseup.' + $.drop.nS);
+                        });
+                        var left = e.pageX - drop.offset().left,
+                                top = e.pageY - drop.offset().top;
+                        drop.css('cursor', 'move');
+                        doc.on('selectstart.' + $.drop.nS, function(e) {
+                            e.preventDefault();
+                        });
+                        doc.on('mousemove.' + $.drop.nS, function(e) {
+                            e.preventDefault();
+                            drp.droppableIn = true;
+                            var l = e.pageX - left,
+                                    t = e.pageY - top;
+                                    console.log(drp.droppableLimit)
+                            if (drp.droppableLimit) {
+                                l = l < 0 ? 0 : l;
+                                t = t < 0 ? 0 : t;
+
+                                l = l + w < wndW ? l : wndW - w;
+                                t = t + h < wndH ? t : wndH - h;
+                            }
+                            drop.css({
+                                'left': l,
+                                'top': t
                             });
-                        }
+                        });
                     });
                 });
             },
@@ -52,60 +62,60 @@
                 return this.each(function() {
                     var drop = $(this),
                             drp = drop.data('drp');
-                    if (drp && !drp.droppableIn) {
-                        var method = drp.animate && !start ? 'animate' : 'css',
-                                $this = drp.elrun,
-                                t = 0,
-                                l = 0,
-                                $thisW = $this.width(),
-                                $thisH = $this.height(),
-                                dropW = +drop.actual('width'),
-                                dropH = +drop.actual('height'),
-                                offTop = $this.offset().top,
-                                offLeft = $this.offset().left,
-                                $thisT = 0,
-                                $thisL = 0;
+                    if (!drp && drp.droppableIn)
+                        return false;
+                    var method = drp.animate && !start ? 'animate' : 'css',
+                            $this = drp.elrun,
+                            t = 0,
+                            l = 0,
+                            $thisW = $this.width(),
+                            $thisH = $this.height(),
+                            dropW = +drop.actual('width'),
+                            dropH = +drop.actual('height'),
+                            offTop = $this.offset().top,
+                            offLeft = $this.offset().left,
+                            $thisT = 0,
+                            $thisL = 0;
 
-                        if (!drop.is(':visible'))
-                            drop.css({top: 'auto', bottom: 'auto', left: 'auto', right: 'auto'});
+                    if (!drop.is(':visible'))
+                        drop.css({top: 'auto', bottom: 'auto', left: 'auto', right: 'auto'});
 
-                        if ($.type(drp.placement) === 'object') {
-                            if (drp.placement.left + dropW > wnd.width())
-                                drp.placement.left -= dropW;
-                            if (drp.placement.top + dropH > wnd.height()) {
-                                drp.placement.top -= dropH;
-                            }
-                            drop[method](drp.placement, {
-                                duration: drp.durationOn,
-                                queue: false
-                            });
+                    if ($.type(drp.placement) === 'object') {
+                        if (drp.placement.left + dropW > wnd.width())
+                            drp.placement.left -= dropW;
+                        if (drp.placement.top + dropH > wnd.height()) {
+                            drp.placement.top -= dropH;
                         }
-                        else {
-                            var pmt = drp.placement.toLowerCase().split(' ');
-                            if (pmt[1] === 'top')
-                                t = -drop.actual('outerHeight');
-                            if (pmt[1] === 'bottom')
-                                t = $thisH;
-                            if (pmt[0] === 'left')
-                                l = 0;
-                            if (pmt[0] === 'right')
-                                l = -dropW - $thisW;
-                            if (pmt[0] === 'center')
-                                l = -dropW / 2 + $thisW / 2;
-                            if (pmt[1] === 'center')
-                                t = -dropH / 2 + $thisH / 2;
-                            $thisT = offTop + t;
-                            $thisL = offLeft + l;
-                            if ($thisL < 0)
-                                $thisL = 0;
-                            drop[method]({
-                                'top': $thisT,
-                                'left': $thisL
-                            }, {
-                                duration: drp.durationOn,
-                                queue: false
-                            });
-                        }
+                        drop[method](drp.placement, {
+                            duration: drp.durationOn,
+                            queue: false
+                        });
+                    }
+                    else {
+                        var pmt = drp.placement.toLowerCase().split(' ');
+                        if (pmt[1] === 'top')
+                            t = -drop.actual('outerHeight');
+                        if (pmt[1] === 'bottom')
+                            t = $thisH;
+                        if (pmt[0] === 'left')
+                            l = 0;
+                        if (pmt[0] === 'right')
+                            l = -dropW - $thisW;
+                        if (pmt[0] === 'center')
+                            l = -dropW / 2 + $thisW / 2;
+                        if (pmt[1] === 'center')
+                            t = -dropH / 2 + $thisH / 2;
+                        $thisT = offTop + t;
+                        $thisL = offLeft + l;
+                        if ($thisL < 0)
+                            $thisL = 0;
+                        drop[method]({
+                            'top': $thisT,
+                            'left': $thisL
+                        }, {
+                            duration: drp.durationOn,
+                            queue: false
+                        });
                     }
                 });
             },

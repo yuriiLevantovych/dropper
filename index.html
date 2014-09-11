@@ -8,7 +8,6 @@
         <script src="drop_extend_methods.js"></script>
         <style>
             *{margin: 0;padding: 0;}
-            .drop > [data-closed]{position: absolute;right: 0;top: 0;}
             #drop-loading {
                 position: fixed;
                 top: 50%;
@@ -31,6 +30,8 @@
                 background-image: url(drop.png);
             }
             .drop{display: none;background-color: #fff;}
+
+
         </style>
     </head>
     <body>
@@ -116,13 +117,16 @@
         <div class="placeInherit" style="width: 500px;height: 500px;position: relative;"></div>
         <script>
             $.drop.extendMethod('droppable', 'global', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPrompt');
-//            $.drop.setTheme({green: '.drop-header-default{border: 2px solid green;}'});
-//            $('[href]').data('theme', 'green')
+//            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
+            //$('[href]').data('theme', 'green')
             $(document).ready(function() {
                 $('[href]').drop({
                     overlay: false,
+                    contentHeader: function(opt) {
+                        return ($.inArray(opt.href, $.drop.drp.galleries[opt.rel]) + 1) + ' картинка'
+                    },
                     animate: true,
-                    start: function(drop, opt) {
+                    start: function(opt, drop) {
                         //console.log(opt);
                         return true;
                     },
