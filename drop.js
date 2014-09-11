@@ -118,7 +118,6 @@
         },
         _get: function(opt, e, hashChange, cLS) {
             var el = this;
-            $.extend(opt, el.data());
             function _update(data, cLS) {
                 if (opt.dropn)
                     var drop = methods._pasteDrop(opt, data, cLS);
@@ -140,9 +139,6 @@
                 });
                 methods._show.call(el, drop, e, opt, hashChange);
             }
-
-            opt.drop = opt.drop && $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + cLS;
-            el.attr('data-drop', opt.drop).data('drop', opt.drop);
             if (D.drops[opt.href.replace(D.reg, '')]) {
                 methods._show.call(el, methods._pasteDrop(opt, D.drops[opt.href.replace(D.reg, '')]), e, opt, hashChange);
                 return el;
@@ -184,11 +180,11 @@
             };
             var _getIframe = function() {
                 opt.type = 'iframe';
-                var iframe = $(opt.patternIframe).attr('src', opt.href);
-                iframe.one('load.' + $.drop.nS, function() {
+                var iframe = $(opt.patternIframe).attr('src', opt.href).one('load.' + $.drop.nS, function() {
                     $.drop.hideLoading();
                 });
-                methods._show.call(el, methods._pasteDrop(opt, iframe, cLS), e, opt, hashChange);
+                opt.dropn = true;
+                _update(iframe, cLS);
             };
             if (opt.type === 'auto') {
                 if (opt.href.match(D.regImg))
@@ -247,7 +243,8 @@
                 opt.drop = opt.dropn = '.' + cLS;
                 $this.attr('data-drop', opt.drop).data('drop', opt.drop).addClass('drop-filter');
             }
-
+            
+            $this.attr('data-drop', opt.drop).data('drop', opt.drop);
             var drop = $(opt.dropn);
 
             function _confirmF() {
@@ -297,9 +294,11 @@
             return _show();
         },
         _show: function(drop, e, opt, hashChange) {
-            var $this = this;
+            if (!$.existsN(drop))
+                return false;
+            var $this = this,
+                    elSet = $this.data();
             e = e ? e : window.event;
-            var elSet = $this.data();
             //callbacks for element, options and global DP
             opt.elBefore = elSet.elBefore;
             opt.elAfter = elSet.elAfter;
@@ -383,7 +382,6 @@
                 setTimeout(focusConfirm, 0);
                 drop.click(focusConfirm);
             }
-
             wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function(e) {
                 methods.update.call(drop, e);
             });
@@ -434,7 +432,7 @@
                 drop.css('width', opt.width);
             if (opt.height)
                 drop.css('height', opt.height);
-            
+
             if (opt.limitSize)
                 methods._checkMethod(function() {
                     methods.limitSize(drop);
