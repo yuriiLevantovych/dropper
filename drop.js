@@ -116,6 +116,11 @@
             });
         },
         _get: function(opt, e, hashChange, cLS) {
+            var hrefC = opt.href.replace(D.reg, '');
+            if (D.curAjax[hrefC]) {
+                D.curAjax[hrefC].abort();
+                D.curAjax[hrefC] = null;
+            }
             var el = this;
             function _update(data, cLS) {
                 if (opt.dropn)
@@ -125,7 +130,7 @@
                 if (!opt.dropn)
                     drop.find($(opt.placePaste)).html(data);
                 if (opt.href && !opt.always && !opt.notify)
-                    D.drops[opt.href.replace(D.reg, '')] = drop.clone();
+                    D.drops[hrefC] = drop.clone();
 
                 doc.trigger({
                     type: 'successHtml.' + $.drop.nS,
@@ -141,7 +146,7 @@
 
             $.drop.showLoading();
             var _getImage = function() {
-                opt.type = 'image';
+                opt.type = el.data().type = 'image';
                 var img = D.imgPreload = new Image();
                 img.onload = function() {
                     $.drop.hideLoading();
@@ -156,8 +161,8 @@
                 img.src = opt.href + (opt.always ? '?' + (+new Date()) : '');
             };
             var _getAjax = function() {
-                opt.type = 'ajax';
-                D.curAjax.push($.ajax($.extend({}, opt.ajax, {
+                opt.type = el.data().type = 'ajax';
+                D.curAjax[hrefC] = $.ajax($.extend({}, opt.ajax, {
                     url: opt.href,
                     dataType: opt.ajax.dataType ? opt.ajax.dataType : (opt.notify ? 'json' : 'html'),
                     success: function(data) {
@@ -172,10 +177,10 @@
                         if (arguments[2].message)
                             methods.open.call(null, {notify: true, datas: {answer: 'error', data: arguments[2].message}});
                     }
-                })));
+                }));
             };
             var _getIframe = function() {
-                opt.type = 'iframe';
+                opt.type = el.data().type = 'iframe';
                 var iframe = $('<iframe name="drop-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen' + (IE ? ' allowtransparency="true"' : '') + '></iframe>').attr('src', opt.href).one('load.' + $.drop.nS, function() {
                     $.drop.hideLoading();
                 });
@@ -342,7 +347,7 @@
                     options: opt
                 }
             });
-            drop.addClass(opt.place);
+            drop.addClass(D.pC + opt.place).addClass(D.pC + opt.type);
             methods._positionType(drop);
 
             var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
@@ -382,11 +387,10 @@
                     }, opt.place);
             });
             $(dropOver).stop().fadeIn(opt.durationOn / 2);
-            if (opt.closeClick)
-                $(forCenter).add(dropOver).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
-                    if ($(e.target).is('.overlayDrop') || $(e.target).is('.forCenter'))
-                        methods.close.call($($(e.target).attr('data-rel')), e);
-                });
+            $(forCenter).add(dropOver).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
+                if (opt.closeClick && $(e.target).is('.overlayDrop') || $(e.target).is('.forCenter'))
+                    methods.close.call($($(e.target).attr('data-rel')), e);
+            });
             if (opt.prompt) {
                 var input = drop.find(opt.promptInput).val(opt.promptInputValue);
                 function focusInput() {
@@ -409,7 +413,7 @@
                         methods.close.call(null, e);
                 });
             $('html, body').css('height', '100%');
-            doc.off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
+            doc.off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
                 if (opt.closeClick && !$.existsN($(e.target).closest('[data-elrun]')))
                     methods.close.call(null, e);
             });
@@ -423,6 +427,8 @@
             if (opt.height)
                 drop.css('height', opt.height);
 
+            $('style' + '[data-rel="' + opt.drop + '"]').remove();
+            methods._styleCreate(opt);
             if (opt.limitSize)
                 methods._checkMethod(function() {
                     methods.limitSize(drop);
@@ -435,12 +441,8 @@
                     methods[opt.place].call(drop);
                 }, opt.place);
             $(forCenter).show();
-            $('style' + '[data-rel="' + opt.drop + '"]').remove();
-            methods._styleCreate(opt, opt.type === 'iframe' ? drop.css('visibility', 'hidden') : $('body'));
             drop[opt.effectOn](opt.durationOn, function(e) {
                 var drop = $(this);
-                if (opt.type === 'iframe')
-                    methods._styleCreate(opt, drop.css('visibility', '').contents().find('body'));
                 $('html, body').css({'overflow': '', 'overflow-x': ''});
                 methods._setHeightAddons(dropOver, forCenter);
                 if (opt.context)
@@ -486,14 +488,13 @@
                     return false;
                 if (hashChange && opt.hash && window.location.hash.indexOf(opt.hash) !== -1)
                     return false;
-                var $thisB = opt.elrun;
-                if (!(opt.notify || $.existsN(sel) || opt.place !== 'inherit' || opt.inheritClose || opt.overlay) && $thisB)
+                if (!(opt.notify || $.existsN(sel) || opt.place !== 'inherit' || opt.inheritClose || opt.overlay) && opt.elrun)
                     return false;
                 function _hide() {
                     var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
                     wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
-                    doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS);
-                    $thisB.add(drop).removeClass(DP.activeClass);
+                    doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS + ev);
+                    opt.elrun.add(drop).removeClass(DP.activeClass);
                     if (opt.hash && !hashChange) {
                         D.scrollTop = wnd.scrollTop();
                         wnd.off('hashchange.' + $.drop.nS);
@@ -501,7 +502,7 @@
                         setTimeout(methods._setEventHash, 0);
                     }
                     if (methods.placeAfterClose)
-                        methods.placeAfterClose(drop, $thisB, opt);
+                        methods.placeAfterClose(drop, opt.elrun, opt);
 
                     drop[opt.effectOff](opt.durationOff, function() {
                         $('style' + '[data-rel="' + opt.drop + '"]').remove();
@@ -514,18 +515,18 @@
                             opt.dropOver.fadeOut(opt.durationOff);
                         if (!opt.context)
                             methods._resetStyleDrop.call($(this));
-                        $this.removeClass(opt.place);
+                        $this.removeClass(D.pC + opt.place).removeClass(D.pC + opt.type);
                         if (opt.closed)
-                            opt.closed.call($thisB, opt, $this, e);
+                            opt.closed.call(opt.elrun, opt, $this, e);
                         if (opt.elClosed)
-                            eval(opt.elClosed).call($thisB, opt, $this, e);
+                            eval(opt.elClosed).call(opt.elrun, opt, $this, e);
                         if (opt.closedG)
-                            opt.closedG.call($thisB, opt, $this, e);
+                            opt.closedG.call(opt.elrun, opt, $this, e);
                         $this.add(doc).trigger({
                             type: 'closed.' + $.drop.nS,
                             drp: {
                                 event: e,
-                                refer: $thisB,
+                                refer: opt.elrun,
                                 drop: $this,
                                 options: opt
                             }
@@ -536,7 +537,7 @@
                         if (!$.exists(D.aDS))
                             $('body, html').css('height', '');
                         if (opt.always && !opt.dropn)
-                            $thisB.data('drop', null);
+                            opt.elrun.data('drop', null);
                         if ($this.hasClass(D.tempClass)) {
                             if (opt.tempClass)
                                 $this.removeClass(opt.tempClass);
@@ -556,7 +557,7 @@
                     type: 'close.' + $.drop.nS,
                     drp: {
                         event: e,
-                        refer: $thisB,
+                        refer: opt.elrun,
                         drop: drop,
                         options: opt
                     }
@@ -564,9 +565,9 @@
                 var close = opt.elClose || opt.close || opt.closeG;
                 if (close) {
                     if ($.type(close) === 'string')
-                        var res = eval(close).call($thisB, opt, $(this), e);
+                        var res = eval(close).call(opt.elrun, opt, drop, e);
                     else
-                        var res = close.call($thisB, opt, $(this), e);
+                        var res = close.call(opt.elrun, opt, drop, e);
                     if (res === false && res !== true)
                         returnMsg(res);
                     else
@@ -739,23 +740,21 @@
         _referCreate: function(sel) {
             return $('<div><button data-drop="' + sel + '" class="' + D.tempClass + '"></button></div>').appendTo($('body')).hide().children();
         },
-        _styleCreate: function(opt, where) {
+        _styleCreate: function(opt) {
             if (!D.theme[opt.theme])
                 return returnMsg('theme' + ' "' + opt.theme + '" ' + 'not available');
-            var text = D.theme[opt.theme];
-            if (opt.type !== 'iframe') {
-                var coms = D.theme[opt.theme].match(/.*,([^{]*)/gm);
-                if (coms)
-                    $.map(coms, function(n) {
-                        n = n.split('{')[0];
-                        text = text.replace(n, n.replace(/,/g, ', ' + opt.drop + ' '));
-                    });
-                text = text.replace(/\}[^$]/g, '} ' + opt.drop + ' ').replace(/^(?!\[drop\])/, opt.drop + ' ').replace(/\[drop\]/, opt.drop).replace(/\s\s+/g, ' ');
-            }
+            var text = D.theme[opt.theme],
+                    coms = D.theme[opt.theme].match(/.*,([^{]*)/gm);
+            if (coms)
+                $.map(coms, function(n) {
+                    n = n.split('{')[0];
+                    text = text.replace(n, n.replace(/,(?!(\s*\[drop\])|(\s*\[\[))/g, ', ' + opt.drop + ' '));
+                });
+            text = text.replace(/\}[^$](?!(\s*\[drop\])|(\s*\[\[))/g, '} ' + opt.drop + ' ').replace(/^(?!(\s*\[drop\])|(\s*\[\[))/, opt.drop + ' ').replace(/\[drop\]/g, opt.drop).replace(/\[\[(.*)\]\]/g, '$1').replace(/\s\s+/g, ' ');
             return $('<style>', {
                 'data-rel': opt.drop,
                 text: text
-            }).appendTo(where);
+            }).appendTo($('body'));
         }
     };
     $.fn.drop = function(method) {
@@ -829,7 +828,7 @@
         triggerOff: null,
         exit: '[data-closed]',
         effectOn: 'fadeIn',
-        effectOff: 'hide',
+        effectOff: 'fadeOut',
         place: 'center',
         placement: 'left bottom',
         overlay: true,
@@ -866,7 +865,7 @@
         },
         durationOn: 300,
         durationOff: 200,
-        timeclosenotify: 200000,
+        timeclosenotify: 3000,
         notify: false,
         datas: null,
         handleNotify: function(e, opt) {
@@ -895,7 +894,7 @@
         closeEsc: true,
         cycle: true,
         limitSize: false,
-        droppable: true,
+        droppable: false,
         droppableLimit: true,
         inheritClose: false,
         keyNavigate: true,
@@ -911,25 +910,31 @@
     };
     $.drop.drp = {
         theme: {
-            default: '[drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;}\n\
-                    .drop-header-default{background-color: #f8f8f8;padding: 0 55px 0 15px;font-size: 14px;}\n\
+            default: '.drop-header-default{background-color: #f8f8f8;padding: 0 55px 0 15px;font-size: 14px;}\n\
+                    input, textarea{margin-bottom: 6px;}\n\
+                    input, textarea, .drop-content-default button{outline: none;font-family: Arial, Helvetica CY, Nimbus Sans L, sans-serif;line-height: 1.5;border: 1px solid #d8d8d8;padding: 4px 6px;}\n\
+                    button{background-color: #fafafa;box-shadow: inset 0 1px #fefefe;color: #666;cursor: pointer;}\n\
                     .drop-header-default.drop-no-empty, .drop-footer-default.drop-no-empty{padding-top: 6px;padding-bottom: 6px;}\n\
                     .drop-header-default.drop-no-empty{border-bottom: 1px solid #d8d8d8;}\n\
                     .drop-footer-default.drop-no-empty{border-top: 1px solid #d8d8d8;}\n\
-                    .drop-content-default .inside-padd{padding: 12px 10px;}\n\
-                    input, textarea, .drop-content-default button{outline: none;font-family: Arial, Helvetica CY, Nimbus Sans L, sans-serif;line-height: 1.5;border: 1px solid #d8d8d8;padding: 4px 6px;margin-bottom: 6px;}\n\
-                    button{background-color: #fafafa;box-shadow: inset 0 1px #fefefe;color: #666;cursor: pointer;}\n\
+                    .drop-content-default .inside-padd{padding: 12px 28px 12px 10px;}\n\
+                    [[.drop-image .drop-content-default .inside-padd]]{padding: 10px;}\n\
+                    [[.drop-alert .drop-content-default .inside-padd]]{padding: 10px;}\n\
+                    [[.drop-alert .drop-group-btns]]{text-align: center;}\n\
                     .drop-content-default button{margin-right: 4px;}{\n\
-                    button:focus{outline: #b3b3b3 solid 1px;}\n\
+                    button:focus, input:focus, textarea:focus{outline: #b3b3b3 solid 1px;}\n\
                     .drop-footer-default{background-color: #d5d5d5;padding: 0 10px;}\n\
                     .drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;}\n\
                     .drop-prev,.drop-next{width: 35%;height: 100%;top: 0;}\n\
-                    .drop-icon-prev, .drop-icon-next, .drop-icon-close{font-family: "Trebuchet MS", "Helvetica CY", sans-serif;font-size: 21px;color: #999;background-color: #fff;width: 20px;height: 20px;display: inline-block;line-height: 20px;text-align: center;//display: inline;zoom: 1;}\n\
+                    .drop-icon-prev, .drop-icon-next{width: 20px;height: 80px;line-height: 80px;}\n\
+                    .drop-icon-prev, .drop-icon-next, .drop-icon-close{font-family: "Trebuchet MS", "Helvetica CY", sans-serif;font-size: 21px;color: #999;background-color: #fff;display: inline-block;text-align: center;//display: inline;zoom: 1;}\n\
+                    .drop-icon-close{line-height: 20px;width: 20px;height: 20px;}\n\
                     .drop-close{right: 5px;top: 4px;z-index: 1;}\n\
-                    .drop-next{right: 10px;text-align: right;}\n\
-                    .drop-prev{left: 10px;text-align: left;}\n\
+                    .drop-next{right: 5px;text-align: right;}\n\
+                    .drop-prev{left: 5px;text-align: left;}\n\
                     .drop-icon-next{text-align: center;}\n\
-                    .icon-times-drop{position: absolute;z-index:1;right:0;top: 0;cursor: pointer;width: 15px;height: 15px;}'
+                    .icon-times-drop{position: absolute;z-index:1;right:0;top: 0;cursor: pointer;width: 15px;height: 15px;}\n\
+                    [drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;}'
         },
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
         reg: /[^a-zA-Z0-9]+/ig,
@@ -940,8 +945,8 @@
         galleryHashs: {
             _butRel: []
         },
-        curAjax: [],
-        aDS: '[data-elrun].center:visible, [data-elrun].global:visible',
+        curAjax: {},
+        aDS: '[data-elrun].drop-center:visible, [data-elrun].drop-global:visible',
         tempClass: 'drop-temp',
         wasCreateClass: 'drop-was-create',
         wLH: null,
@@ -949,7 +954,8 @@
         curDrop: null,
         scrollTop: null,
         emptyClass: 'drop-empty',
-        noEmptyClass: 'drop-no-empty'
+        noEmptyClass: 'drop-no-empty',
+        pC: 'drop-'
     };
     var D = $.drop.drp,
             DP = $.drop.dP;
@@ -969,11 +975,11 @@
         return methods.close.call(null, 'artificial close element');
     };
     $.drop.cancel = function() {
-        if (D.curAjax.length)
-            D.curAjax.map(function(n) {
-                n.abort();
-            });
-        D.curAjax.length = 0;
+        for (var i in D.curAjax)
+            if (D.curAjax[i]) {
+                D.curAjax[i].abort();
+                D.curAjax[i] = null;
+            }
         if (D.imgPreload)
             D.imgPreload.onload = D.imgPreload.onerror = null;
 
