@@ -267,18 +267,18 @@
                 }
                 else
                     returnMsg('insufficient data');
-            }
+            };
             var _show = function() {
                 if ($this.is(':disabled') || opt.drop && opt.start && !eval(opt.start).call($this, opt, drop, e))
                     return $this;
 
-                if (opt.prompt || opt.confirm)
+                if (opt.prompt || opt.confirm || opt.alert)
                     methods._checkMethod(function() {
-                        methods.confirmPrompt(opt, hashChange, _confirmF, e, $this);
+                        methods.confirmPromptAlert(opt, hashChange, _confirmF, e, $this);
                     });
                 else
                     _confirmF();
-            }
+            };
             if (!opt.moreOne && $.exists(D.aDS))
                 return methods.close.call($(D.aDS), 'close more one element', _show);
             return _show();
@@ -436,10 +436,7 @@
                 }, opt.place);
             $(forCenter).show();
             $('style' + '[data-rel="' + opt.drop + '"]').remove();
-            if (!D.theme[opt.theme])
-                returnMsg('theme' + ' "' + opt.theme + '" ' + 'not available');
-            else
-                methods._styleCreate(opt, opt.type === 'iframe' ? drop.css('visibility', 'hidden') : $('body'));
+            methods._styleCreate(opt, opt.type === 'iframe' ? drop.css('visibility', 'hidden') : $('body'));
             drop[opt.effectOn](opt.durationOn, function(e) {
                 var drop = $(this);
                 if (opt.type === 'iframe')
@@ -666,15 +663,25 @@
             return drop;
         },
         _pasteContent: function($this, drop, opt) {
-            function _pasteContent(content, place) {
+            var _checkCont = function(place) {
+                if (place.is(':empty'))
+                    place.removeClass(D.noEmptyClass).addClass(D.emptyClass);
+                else
+                    place.addClass(D.noEmptyClass).removeClass(D.emptyClass);
+            };
+            var _pasteContent = function(content, place) {
+                place = drop.find(place).first();
+                if (!$.existsN(place))
+                    return false;
+                _checkCont(place);
                 if (!content)
                     return false;
-                place = drop.find(place);
-                if ($.type(content) === 'function')
-                    place.empty().append(content.call(place, opt, drop, $this));
-                else
-                    place.empty().append(content);
-            }
+                place.empty();
+                content = $.type(content) === 'function' ? content.call(place, opt, drop, $this) : content;
+                if (content)
+                    place.append(content);
+                _checkCont(place);
+            };
             _pasteContent(opt.contentHeader, opt.dropHeader);
             _pasteContent(opt.contentContent, opt.dropContent);
             _pasteContent(opt.contentFooter, opt.dropFooter);
@@ -724,7 +731,7 @@
                     if (D.wLH.indexOf(i) === -1 && D.wLHN.indexOf(i) !== -1)
                         methods.open.call(D.hashs[i], D.hashs[i].data('drp').genOpt, e, true);
                     else
-                        methods.close.call($(D.hashs[i].data('drop')).add(D.hashs[i].data('dropConfirmPrompt')), e, null, true);
+                        methods.close.call($(D.hashs[i].data('drop')).add(D.hashs[i].data('dropConfirmPromptAlert')), e, null, true);
                 }
                 D.wLH = D.wLHN;
             });
@@ -733,9 +740,21 @@
             return $('<div><button data-drop="' + sel + '" class="' + D.tempClass + '"></button></div>').appendTo($('body')).hide().children();
         },
         _styleCreate: function(opt, where) {
+            if (!D.theme[opt.theme])
+                return returnMsg('theme' + ' "' + opt.theme + '" ' + 'not available');
+            var text = D.theme[opt.theme];
+            if (opt.type !== 'iframe') {
+                var coms = D.theme[opt.theme].match(/.*,([^{]*)/gm);
+                if (coms)
+                    $.map(coms, function(n) {
+                        n = n.split('{')[0];
+                        text = text.replace(n, n.replace(/,/g, ', ' + opt.drop + ' '));
+                    });
+                text = text.replace(/\}[^$]/g, '} ' + opt.drop + ' ').replace(/^(?!\[drop\])/, opt.drop + ' ').replace(/\[drop\]/, opt.drop).replace(/\s\s+/g, ' ');
+            }
             return $('<style>', {
                 'data-rel': opt.drop,
-                text: opt.type === 'iframe' ? D.theme[opt.theme] : D.theme[opt.theme].replace(/\}[^$]/g, '} ' + opt.drop + ' ').replace(/,/g, ', ' + opt.drop + ' ').replace(/^/, opt.drop + ' ').replace(/\s\s+/g, ' ')
+                text: text
             }).appendTo(where);
         }
     };
@@ -825,12 +844,14 @@
         closeG: $.noop,
         closedG: $.noop,
         pattern: '<div class="drop drop-default"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev"><</i>&#60;</button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default"></div><div class="drop-content-default"><div class="inside-padd placePaste"></div></div><div class="drop-footer-default"></div></div>',
-        patternNotify: '<div class="drop drop-notify"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default"></div><div class="drop-content-default"><div class="inside-padd drop-notification-default"></div></div><div class="drop-footer-default"></div></div>',
-        patternConfirm: '<div class="drop drop-confirm"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default">Confirm</div><div class="drop-content-default"><div class="inside-padd"><div class="drop-group-btns"><button type="button" class="drop-btn-confirm" data-button-confirm><span class="text-el">confirm</span></button><button type="button" class="drop-btn-cancel" data-closed><span class="text-el">cancel</span></button></div></div></div><div class="drop-footer-default"></div></div>',
-        patternPrompt: '<div class="drop drop-prompt"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default">Prompt</div><div class="drop-content-default"><form class="inside-padd"><input type="text" name="promptInput"/><div class="drop-group-btns"><button data-button-prompt type="submit" class="drop-btn-prompt"><span class="text-el">ok</span></button><button type="button" data-closed class="drop-btn-cancel"><span class="text-el">cancel</span></button></div></form></div><div class="drop-footer-default"></div></div>',
+        patternNotify: '<div class="drop drop-notify"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default"></div><div class="drop-content-default"><div class="inside-padd placePaste"></div></div><div class="drop-footer-default"></div></div>',
+        patternConfirm: '<div class="drop drop-confirm"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default">Confirm</div><div class="drop-content-default"><div class="inside-padd"><div class="placePaste"></div><div class="drop-group-btns"><button type="button" class="drop-button-confirm" data-button-confirm>ok</button><button type="button" class="drop-btn-cancel" data-closed>cancel</button></div></div></div><div class="drop-footer-default"></div></div>',
+        patternPrompt: '<div class="drop drop-prompt"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default">Prompt</div><div class="drop-content-default"><form class="inside-padd"><div class="placePaste"></div><input type="text" name="promptInput"/><div class="drop-group-btns"><button data-button-prompt type="submit" class="drop-button-prompt">ok</button><button type="button" data-closed class="drop-btn-cancel">cancel</button></div></form></div><div class="drop-footer-default"></div></div>',
+        patternAlert: '<div class="drop drop-alert"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default">Alert</div><div class="drop-content-default"><div class="inside-padd"><div class="placePaste"></div><div class="drop-group-btns"><button type="button" class="drop-button-alert" data-button-alert>ok</button></div></div></div><div class="drop-footer-default"></div></div>',
         defaultClassBtnDrop: 'drop-default',
         confirmActionBtn: '[data-button-confirm]',
         promptActionBtn: '[data-button-prompt]',
+        alertActionBtn: '[data-button-alert]',
         promptInput: '[name="promptInput"]',
         promptInputValue: null,
         next: '.drop-next',
@@ -845,9 +866,8 @@
         },
         durationOn: 300,
         durationOff: 200,
-        timeclosenotify: 2000,
+        timeclosenotify: 200000,
         notify: false,
-        notifyPlace: '.drop-notification-default',
         datas: null,
         handleNotify: function(e, opt) {
             e = e.drp;
@@ -859,11 +879,15 @@
                 text = e.datas.data;
             else
                 text = opt.message[e.datas.answer](e.datas.data);
-            $(e.drop).find(opt.notifyPlace).empty().append(text);
+            $(e.drop).find(opt.placePaste).empty().append(text);
             return this;
         },
         confirm: false,
+        confirmText: null,
         prompt: false,
+        promptText: null,
+        alert: false,
+        alertText: null,
         always: false,
         animate: false,
         moreOne: false,
@@ -876,7 +900,6 @@
         inheritClose: false,
         keyNavigate: true,
         context: false,
-        minHeightContent: 100,
         centerOnScroll: false,
         autoPlay: false,
         autoPlaySpeed: 2000,
@@ -888,15 +911,23 @@
     };
     $.drop.drp = {
         theme: {
-            default: '*{margin: 0;}\n\
-                    .drop-header-default{background-color: #f8f8f8;border-bottom: 1px solid #d8d8d8;padding: 0 40px 0 10px;}\n\
-                    .drop-footer-default{background-color: #d5d5d5;border-top: 1px solid #d8d8d8;padding: 0 10px;}\n\
+            default: '[drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;}\n\
+                    .drop-header-default{background-color: #f8f8f8;padding: 0 55px 0 15px;font-size: 14px;}\n\
+                    .drop-header-default.drop-no-empty, .drop-footer-default.drop-no-empty{padding-top: 6px;padding-bottom: 6px;}\n\
+                    .drop-header-default.drop-no-empty{border-bottom: 1px solid #d8d8d8;}\n\
+                    .drop-footer-default.drop-no-empty{border-top: 1px solid #d8d8d8;}\n\
+                    .drop-content-default .inside-padd{padding: 12px 10px;}\n\
+                    input, textarea, .drop-content-default button{outline: none;font-family: Arial, Helvetica CY, Nimbus Sans L, sans-serif;line-height: 1.5;border: 1px solid #d8d8d8;padding: 4px 6px;margin-bottom: 6px;}\n\
+                    button{background-color: #fafafa;box-shadow: inset 0 1px #fefefe;color: #666;cursor: pointer;}\n\
+                    .drop-content-default button{margin-right: 4px;}{\n\
+                    button:focus{outline: #b3b3b3 solid 1px;}\n\
+                    .drop-footer-default{background-color: #d5d5d5;padding: 0 10px;}\n\
                     .drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;}\n\
-                    .drop-prev, .drop-next{width: 35%;height: 100%;top: 0;}\n\
-                    .drop-icon-prev, .drop-icon-next, .drop-icon-close{font-family: "Trebuchet MS", "Helvetica CY", sans-serif;font-size: 30px;color: #333;background-color: #fff;width: 32px;height: 32px;display: inline-block;line-height: 32px;text-align: center;//display: inline;zoom: 1;}\n\
-                    .drop-close{right: 5px;top: 5px;z-index: 1;}\n\
-                    .drop-next{right: 0;text-align: right;}\n\
-                    .drop-prev{left: 0;text-align: left;}\n\
+                    .drop-prev,.drop-next{width: 35%;height: 100%;top: 0;}\n\
+                    .drop-icon-prev, .drop-icon-next, .drop-icon-close{font-family: "Trebuchet MS", "Helvetica CY", sans-serif;font-size: 21px;color: #999;background-color: #fff;width: 20px;height: 20px;display: inline-block;line-height: 20px;text-align: center;//display: inline;zoom: 1;}\n\
+                    .drop-close{right: 5px;top: 4px;z-index: 1;}\n\
+                    .drop-next{right: 10px;text-align: right;}\n\
+                    .drop-prev{left: 10px;text-align: left;}\n\
                     .drop-icon-next{text-align: center;}\n\
                     .icon-times-drop{position: absolute;z-index:1;right:0;top: 0;cursor: pointer;width: 15px;height: 15px;}'
         },
@@ -916,7 +947,9 @@
         wLH: null,
         wLHN: null,
         curDrop: null,
-        scrollTop: null
+        scrollTop: null,
+        emptyClass: 'drop-empty',
+        noEmptyClass: 'drop-no-empty'
     };
     var D = $.drop.drp,
             DP = $.drop.dP;

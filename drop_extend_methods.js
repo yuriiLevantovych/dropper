@@ -16,7 +16,7 @@
                     drop.off('mousedown.' + $.drop.nS).on('mousedown.' + $.drop.nS, function(e) {
                         var drop = $(this),
                                 drp = drop.data('drp');
-                        if ($(e.target).is(':input'))
+                        if ($(e.target).is(':input, button') || $.existsN($(e.target).closest('button')))
                             return false;
                         var drop = $(this),
                                 w = drop.outerWidth(),
@@ -42,7 +42,6 @@
                             drp.droppableIn = true;
                             var l = e.pageX - left,
                                     t = e.pageY - top;
-                                    console.log(drp.droppableLimit)
                             if (drp.droppableLimit) {
                                 l = l < 0 ? 0 : l;
                                 t = t < 0 ? 0 : t;
@@ -425,7 +424,7 @@
                     });
                 return this;
             },
-            confirmPrompt: function(opt, hashChange, _confirmF, e, el) {
+            confirmPromptAlert: function(opt, hashChange, _confirmF, e, el) {
                 var self = this,
                         cLS = opt.defaultClassBtnDrop + (+new Date());
                 if (opt.confirm) {
@@ -441,8 +440,28 @@
                             self.close.call(drop, e, _confirmF, null);
                         });
                     })(drop, _confirmF, opt);
+                    var pp = drop.find(opt.placePaste).empty();
+                    if (opt.confirmText && $.existsN(pp))
+                        pp.html(opt.confirmText);
                 }
-                if (opt.prompt) {
+                else if (opt.alert) {
+                    var alertBtn = opt.elrun = self._referCreate('.' + cLS).data('alert', true),
+                            optC = $.extend({}, opt, alertBtn.data()),
+                            drop = self._pasteDrop(optC, opt.patternAlert, cLS);
+
+                    self._show.call(alertBtn, drop, e, optC, hashChange);
+
+                    (function(drop, _confirmF, opt) {
+                        $(opt.alertActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
+                            e.stopPropagation();
+                            self.close.call(drop, e, _confirmF, null);
+                        });
+                    })(drop, _confirmF, opt);
+                    var pp = drop.find(opt.placePaste).empty();
+                    if (opt.alertText && $.existsN(pp))
+                        pp.html(opt.alertText);
+                }
+                else if (opt.prompt) {
                     var promptBtn = opt.elrun = self._referCreate('.' + cLS).data({'prompt': true, 'promptInputValue': opt.promptInputValue}),
                             optP = $.extend({}, opt, promptBtn.data()),
                             drop = self._pasteDrop(optP, opt.patternPrompt, cLS);
@@ -465,8 +484,11 @@
                             self.close.call(drop, e, _confirmF, null);
                         });
                     })(drop, _confirmF, opt);
+                    var pp = drop.find(opt.placePaste).empty();
+                    if (opt.promptText && $.existsN(pp))
+                        pp.html(opt.promptText);
                 }
-                el.data('dropConfirmPrompt', drop);
+                el.data('dropConfirmPromptAlert', drop);
                 return this;
             },
             require: {
