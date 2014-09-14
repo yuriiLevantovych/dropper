@@ -37,7 +37,7 @@
     <body>
         <div>
             <h3>Simple drop inline</h3>
-            <button type="button" data-place-before-show="inherit" data-always="true" data-animate="true" data-notify="false" data-drop=".a1" data-href="1.php" style="width: 200px;height: 150px;float: right;">click</button>
+            <button type="button" data-start="(function(){return confirm('are you sure?');})" data-place-before-show="inherit" data-always="true" data-animate="true" data-notify="false" data-drop=".a1" data-href="1.php" style="width: 200px;height: 150px;float: right;">click</button>
             <button data-type="iframe" data-hash="#sdfa" type="button" data-place-before-show="inherit" data-place-after-close="left top" data-animate="true" data-notify="false" data-drop data-href="1.txt" data-width="800" data-height="800" style="width: 200px;height: 150px;float: right;">click</button>
             <button type="button" data-drop data-context="true" data-overlay="false" data-place-before-show="inherit" data-notify="true" data-href="2.php" style="width: 200px;height: 150px;float: right;">click</button>
             <div class="drop drop-simple" style="width: 150px">
@@ -116,7 +116,8 @@
         </a>
         <div class="placeInherit" style="width: 500px;height: 500px;position: relative;"></div>
         <script>
-            $.drop.extendMethod('droppable', 'global', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert');
+            $.drop.setUrlMethods('/');
+            $.drop.require('droppable', 'global', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert');
 //            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
             //$('[href]').data('theme', 'green')
             $(document).ready(function() {

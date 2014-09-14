@@ -224,9 +224,8 @@
 
             if (opt.href && opt.notify || opt.always) {
                 $('[data-rel="' + opt.drop + '"]').add($(opt.drop)).remove();
-                opt.drop = null;
+                opt.drop = elSet.dropn ? elSet.dropn : null;
             }
-
             opt.drop = opt.drop && $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + cLS;
             if (!$.existsN($this) || opt.notify)
                 $this = methods._referCreate(opt.drop);
@@ -327,7 +326,7 @@
             var forCenter = null;
             if (opt.place === 'center')
                 (forCenter = opt.forCenter = $('[data-rel="' + opt.drop + '"].forCenter')).css('z-index', overlays.length + 1104);
-            drop.data('drp', opt).attr('data-rel', opt.rel);
+            drop.data('drp', opt).attr('data-rel', opt.rel).css('z-index', overlays.length + 1104).attr('data-elrun', opt.drop).addClass(D.pC + opt.place).addClass(D.pC + opt.type);
 
             if (opt.rel)
                 methods._checkMethod(function() {
@@ -335,24 +334,7 @@
                 });
 
             methods._setHeightAddons(dropOver, forCenter);
-            drop.css('z-index', overlays.length + 1104);
             methods._pasteContent($this, drop, opt);
-            if (opt.elBefore)
-                eval(opt.elBefore).call($this, opt, drop, e);
-            if (opt.before)
-                opt.before.call($this, opt, drop, e);
-            if (opt.beforeG)
-                opt.beforeG.call($this, opt, drop, e);
-            drop.add(doc).trigger({
-                type: 'before.' + $.drop.nS,
-                drp: {
-                    event: e,
-                    refer: $this,
-                    drop: drop,
-                    options: opt
-                }
-            });
-            drop.addClass(D.pC + opt.place).addClass(D.pC + opt.type);
             methods._positionType(drop);
 
             var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
@@ -407,10 +389,14 @@
                 });
                 drop.click(focusInput);
             }
-            drop.attr('data-elrun', opt.drop).off('click.' + $.drop.nS, opt.exit).on('click.' + $.drop.nS, opt.exit, function(e) {
-                e.stopPropagation();
-                methods.close.call($(this).closest('[data-elrun]'), e);
-            });
+            opt.exit = $.type(opt.exit) === 'string' ? drop.find(opt.exit) : opt.exit;
+            if (opt.closeClick)
+                opt.exit.show().off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
+                    e.stopPropagation();
+                    methods.close.call($(this).closest('[data-elrun]'), e);
+                });
+            else
+                opt.exit.hide();
             doc.off('keyup.' + $.drop.nS);
             if (opt.closeEsc)
                 doc.on('keyup.' + $.drop.nS, function(e) {
@@ -446,6 +432,21 @@
                     methods[opt.place].call(drop);
                 }, opt.place);
             $(forCenter).show();
+            if (opt.elBefore)
+                eval(opt.elBefore).call($this, opt, drop, e);
+            if (opt.before)
+                opt.before.call($this, opt, drop, e);
+            if (opt.beforeG)
+                opt.beforeG.call($this, opt, drop, e);
+            drop.add(doc).trigger({
+                type: 'before.' + $.drop.nS,
+                drp: {
+                    event: e,
+                    refer: $this,
+                    drop: drop,
+                    options: opt
+                }
+            });
             drop[opt.effectOn](opt.durationOn, function(e) {
                 var drop = $(this);
                 $('html, body').css({'overflow': '', 'overflow-x': ''});
@@ -656,7 +657,7 @@
                 drop = $(drop).appendTo($(opt.placeInherit).empty());
             else if (opt.place === 'global')
                 drop = $(drop).appendTo($('body'));
-            else if (opt.place === 'global')
+            else if (opt.place === 'center')
                 drop = $(drop).appendTo($('<div class="forCenter" data-rel="' + opt.drop + '" style="left: 0;top: 0;width: 100%;display:none;height: 100%;position: absolute;height: 100%;"></div>').appendTo($('body')));
             drop = $(drop).addClass(aClass).attr('data-elrun', opt.drop).filter(opt.drop);
             if (aClass) {
@@ -692,7 +693,7 @@
             return this;
         },
         _setHeightAddons: function(dropOver, forCenter) {
-            $(dropOver).add(forCenter).css('height', '').css('height', doc.height());
+            $(forCenter).add(dropOver).css('height', '').css('height', doc.height());
         },
         _checkMethod: function(f, nm) {
             try {
@@ -753,7 +754,7 @@
                     n = n.split('{')[0];
                     text = text.replace(n, n.replace(/,(?!(\s*\[drop\])|(\s*\[\[))/g, ', ' + opt.drop + ' '));
                 });
-            text = text.replace(/\}[^$](?!(\s*\[drop\])|(\s*\[\[))/g, '} ' + opt.drop + ' ').replace(/^(?!(\s*\[drop\])|(\s*\[\[))/, opt.drop + ' ').replace(/\[\[(.*)\]\]/g, '$1').replace(/\[drop\]/g, opt.drop).replace(/\s\s+/g, ' ');
+            text = text.replace(/\}[^$](?!(\s*\[drop\])|(\s*\[\[))/g, '} ' + opt.drop + ' ').replace(/^(?!(\s*\[drop\])|(\s*\[\[))/, opt.drop + ' ').replace(/\[\[(.*?)\]\]/g, '$1').replace(/\[drop\]/g, opt.drop).replace(/\s\s+/g, ' ');
             return $('<style>', {
                 'data-rel': opt.drop,
                 text: text
@@ -829,7 +830,6 @@
         trigger: 'click',
         triggerOn: null,
         triggerOff: null,
-        exit: '[data-closed]',
         effectOn: 'fadeIn',
         effectOff: 'fadeOut',
         place: 'center',
@@ -856,6 +856,7 @@
         alertActionBtn: '[data-button-alert]',
         promptInput: '[name="promptInput"]',
         promptInputValue: null,
+        exit: '[data-closed]',
         next: '.drop-next',
         prev: '.drop-prev',
         ajax: {
@@ -892,9 +893,10 @@
         alertText: null,
         always: false,
         animate: false,
-        moreOne: true,
+        moreOne: false,
         closeClick: true,
         closeEsc: true,
+        closeActiveClick: false,
         cycle: true,
         limitSize: false,
         droppable: false,
@@ -906,7 +908,6 @@
         autoPlay: false,
         autoPlaySpeed: 2000,
         theme: 'default',
-        closeActiveClick: false,
         type: 'auto',
         width: null,
         height: null
@@ -921,8 +922,7 @@
                     .drop-header-default.drop-no-empty{border-bottom: 1px solid #d8d8d8;}\n\
                     .drop-footer-default.drop-no-empty{border-top: 1px solid #d8d8d8;}\n\
                     .drop-content-default .inside-padd{padding: 12px 28px 12px 10px;}\n\
-                    [[.drop-image .drop-content-default .inside-padd]]{padding: 10px;}\n\
-                    [[.drop-alert .drop-content-default .inside-padd]]{padding: 10px;}\n\
+                    [[.drop-image .drop-content-default .inside-padd]], [[.drop-alert .drop-content-default .inside-padd]]{padding: 10px;}\n\
                     [[.drop-alert .drop-group-btns]]{text-align: center;}\n\
                     .drop-content-default button{margin-right: 4px;}{\n\
                     button:focus, input:focus, textarea:focus{outline: #b3b3b3 solid 1px;}\n\
@@ -958,7 +958,8 @@
         scrollTop: null,
         emptyClass: 'drop-empty',
         noEmptyClass: 'drop-no-empty',
-        pC: 'drop-'
+        pC: 'drop-',
+        urlOfMethods: null
     };
     var D = $.drop.drp,
             DP = $.drop.dP;
@@ -972,6 +973,10 @@
     };
     $.drop.setMethods = function(ms) {
         $.extend(methods, ms);
+        return this;
+    };
+    $.drop.setUrlMethods = function(url) {
+        D.urlOfMethods = url;
         return this;
     };
     $.drop.close = function() {

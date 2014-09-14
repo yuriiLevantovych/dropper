@@ -1,5 +1,5 @@
 (function($, wnd, doc) {
-    $.drop.extendMethod = function() {
+    $.drop.require = function() {
         var addmethods = {
             droppable: function(drop) {
                 return (drop || this).each(function() {
@@ -258,8 +258,8 @@
 
                 var relL = relA.length,
                         relP = $.inArray(opt.href, relA),
-                        prev = drop.find(opt.prev),
-                        next = drop.find(opt.next);
+                        prev = $.type(opt.prev) === 'string' ? drop.find(opt.prev) : opt.prev,
+                        next = $.type(opt.next) === 'string' ? drop.find(opt.next) : opt.next;
                 prev.add(next).hide().attr('disabled', 'disabled');
                 if (relP === -1)
                     return false;
@@ -497,7 +497,7 @@
             }
         };
         var newMethods = {};
-        for (var i = 0, length = arguments.length; i < length; i++)
+        for (var i in arguments)
             if (arguments[i] in addmethods) {
                 newMethods[arguments[i]] = addmethods[arguments[i]];
                 if (addmethods.require[arguments[i]])
