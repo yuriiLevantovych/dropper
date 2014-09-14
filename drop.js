@@ -121,7 +121,8 @@
                 D.curAjax[hrefC].abort();
                 D.curAjax[hrefC] = null;
             }
-            var el = this;
+            var el = this,
+                    elSet = el.data();
             function _update(data, cLS) {
                 if (opt.dropn)
                     var drop = methods._pasteDrop(opt, data, cLS);
@@ -129,7 +130,7 @@
                     drop = methods._pasteDrop(opt, opt.pattern, cLS);
                 if (!opt.dropn)
                     drop.find($(opt.placePaste)).html(data);
-                if (opt.href && !opt.always && !opt.notify)
+                if (!opt.always && !opt.notify)
                     D.drops[hrefC] = drop.clone();
 
                 doc.trigger({
@@ -143,10 +144,9 @@
                 });
                 methods._show.call(el, drop, e, opt, hashChange);
             }
-
             $.drop.showLoading();
             var _getImage = function() {
-                opt.type = el.data().type = 'image';
+                opt.type = elSet.type = 'image';
                 var img = D.imgPreload = new Image();
                 img.onload = function() {
                     $.drop.hideLoading();
@@ -161,7 +161,7 @@
                 img.src = opt.href + (opt.always ? '?' + (+new Date()) : '');
             };
             var _getAjax = function() {
-                opt.type = el.data().type = 'ajax';
+                opt.type = elSet.type = 'ajax';
                 D.curAjax[hrefC] = $.ajax($.extend({}, opt.ajax, {
                     url: opt.href,
                     dataType: opt.ajax.dataType ? opt.ajax.dataType : (opt.notify ? 'json' : 'html'),
@@ -180,7 +180,7 @@
                 }));
             };
             var _getIframe = function() {
-                opt.type = el.data().type = 'iframe';
+                opt.type = elSet.type = 'iframe';
                 var iframe = $('<iframe name="drop-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen' + (IE ? ' allowtransparency="true"' : '') + '></iframe>').attr('src', opt.href).one('load.' + $.drop.nS, function() {
                     $.drop.hideLoading();
                 });
@@ -211,11 +211,21 @@
             opt = $.extend({}, DP, $.existsN($this) && $this.data('drp') ? $this.data('drp').genOpt : {}, opt);
             e = e ? e : window.event;
 
+            if (opt.closeActiveClick && $this.hasClass(DP.activeClass)) {
+                methods.close.call($($this.data('drop')), 'element already open');
+                return $this;
+            }
+
             var cLS = opt.defaultClassBtnDrop + (+new Date());
 
             if (elSet || $.existsN(opt.drop))
                 elSet.dropn = opt.drop;
             $.extend(opt, elSet);
+
+            if (opt.href && opt.notify || opt.always) {
+                $('[data-rel="' + opt.drop + '"]').add($(opt.drop)).remove();
+                opt.drop = null;
+            }
 
             opt.drop = opt.drop && $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + cLS;
             if (!$.existsN($this) || opt.notify)
@@ -249,11 +259,6 @@
 
             $this.attr('data-drop', opt.drop).data('drop', opt.drop);
             var drop = $(elSet.dropn);
-
-            if (opt.closeActiveClick && $this.hasClass(DP.activeClass) && drop.hasClass(DP.activeClass) && drop.length === 1) {
-                methods.close.call($($this.data('drop')), 'element already open');
-                return $this;
-            }
 
             var _confirmF = function() {
                 if (opt.notify && opt.datas)
@@ -428,7 +433,7 @@
                 drop.css('height', opt.height);
 
             $('style' + '[data-rel="' + opt.drop + '"]').remove();
-            methods._styleCreate(opt);
+            opt.style = methods._styleCreate(opt);
             if (opt.limitSize)
                 methods._checkMethod(function() {
                     methods.limitSize(drop);
@@ -505,7 +510,6 @@
                         methods.placeAfterClose(drop, opt.elrun, opt);
 
                     drop[opt.effectOff](opt.durationOff, function() {
-                        $('style' + '[data-rel="' + opt.drop + '"]').remove();
                         $('html, body').css({'overflow': '', 'overflow-x': ''});
                         var $this = $(this);
                         if (opt.forCenter)
@@ -538,6 +542,7 @@
                             $('body, html').css('height', '');
                         if (opt.always && !opt.dropn)
                             opt.elrun.data('drop', null);
+                        opt.style.remove();
                         if ($this.hasClass(D.tempClass)) {
                             if (opt.tempClass)
                                 $this.removeClass(opt.tempClass);
@@ -545,7 +550,7 @@
                                 $(opt.elrun).parent().remove();
                             if (!$this.hasClass(D.wasCreateClass))
                                 $this.remove();
-                            else
+                            if ($this.hasClass(D.wasCreateClass) && opt.place !== 'inherit')
                                 $this.appendTo($('body'));
                             $(opt.dropOver).add($(opt.forCenter)).remove();
                         }
@@ -649,12 +654,10 @@
         _pasteDrop: function(opt, drop, aClass) {
             if (opt.place === 'inherit' && opt.placeInherit)
                 drop = $(drop).appendTo($(opt.placeInherit).empty());
-            else {
-                if (opt.place === 'global')
-                    drop = $(drop).appendTo($('body'));
-                else
-                    drop = $(drop).appendTo($('<div class="forCenter" data-rel="' + opt.drop + '" style="left: 0;top: 0;width: 100%;display:none;height: 100%;position: absolute;height: 100%;"></div>').appendTo($('body')));
-            }
+            else if (opt.place === 'global')
+                drop = $(drop).appendTo($('body'));
+            else if (opt.place === 'global')
+                drop = $(drop).appendTo($('<div class="forCenter" data-rel="' + opt.drop + '" style="left: 0;top: 0;width: 100%;display:none;height: 100%;position: absolute;height: 100%;"></div>').appendTo($('body')));
             drop = $(drop).addClass(aClass).attr('data-elrun', opt.drop).filter(opt.drop);
             if (aClass) {
                 opt.tempClass = aClass;
@@ -750,7 +753,7 @@
                     n = n.split('{')[0];
                     text = text.replace(n, n.replace(/,(?!(\s*\[drop\])|(\s*\[\[))/g, ', ' + opt.drop + ' '));
                 });
-            text = text.replace(/\}[^$](?!(\s*\[drop\])|(\s*\[\[))/g, '} ' + opt.drop + ' ').replace(/^(?!(\s*\[drop\])|(\s*\[\[))/, opt.drop + ' ').replace(/\[drop\]/g, opt.drop).replace(/\[\[(.*)\]\]/g, '$1').replace(/\s\s+/g, ' ');
+            text = text.replace(/\}[^$](?!(\s*\[drop\])|(\s*\[\[))/g, '} ' + opt.drop + ' ').replace(/^(?!(\s*\[drop\])|(\s*\[\[))/, opt.drop + ' ').replace(/\[\[(.*)\]\]/g, '$1').replace(/\[drop\]/g, opt.drop).replace(/\s\s+/g, ' ');
             return $('<style>', {
                 'data-rel': opt.drop,
                 text: text
@@ -889,7 +892,7 @@
         alertText: null,
         always: false,
         animate: false,
-        moreOne: false,
+        moreOne: true,
         closeClick: true,
         closeEsc: true,
         cycle: true,

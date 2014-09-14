@@ -107,7 +107,7 @@
         <a href="http://fc08.deviantart.net/fs70/f/2010/324/a/2/avatar_upd_big_size_by_merychess-d30zufu.jpg" rel="group" onClick="return false;" data-hash="#a">
             <img src="3.jpg" width="50"/>
         </a>
-        <a href="4.jpg" data-hash="#b" data-place="global" data-place-inherit=".placeInherit" data-drop-filter="next()" data-overlay="false" data-close-active-click="true">
+        <a data-drop=".asdf" data-hash="#b" data-place="inherit" data-overlay="false" data-close-active-click="true">
             <img src="3.jpg" width="50"/>
         </a>
         <div class="drop asdf">asdf</div>
@@ -122,6 +122,7 @@
             $(document).ready(function() {
                 $('[href]').drop({
                     overlay: false,
+                    place: 'global',
                     contentHeader: function(opt) {
                         return ($.inArray(opt.href, $.drop.drp.galleries[opt.rel]) + 1) + ' картинка'
                     },
