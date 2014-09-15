@@ -126,6 +126,7 @@
                     drop = methods._pasteDrop(opt, opt.pattern, cLS);
                 if (!opt.dropn)
                     drop.find($(opt.placePaste)).html(data);
+                drop.addClass(D.pC + opt.type);
                 if (!opt.always && !opt.notify)
                     D.drops[hrefC] = drop.clone();
                 doc.trigger({
@@ -312,7 +313,7 @@
             var forCenter = null;
             if (opt.place === 'center')
                 (forCenter = opt.forCenter = $('[data-rel="' + opt.drop + '"].forCenter')).css('z-index', overlays.length + 1104);
-            drop.data('drp', opt).attr('data-rel', opt.rel).css('z-index', overlays.length + 1104).attr('data-elrun', opt.drop).addClass(D.pC + opt.place).addClass(D.pC + opt.type);
+            drop.data('drp', opt).attr('data-rel', opt.rel).css('z-index', overlays.length + 1104).attr('data-elrun', opt.drop).addClass(D.pC + opt.place);
             if (opt.rel)
                 methods._checkMethod(function() {
                     methods.galleries(drop, opt);
