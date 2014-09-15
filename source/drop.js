@@ -393,10 +393,11 @@
                 var collect = drop.add(dropOver).add(forCenter).on('contextmenu.' + $.drop.nS, function(e) {
                     e.preventDefault();
                 });
+            var dropWH = opt.type === 'iframe' ? drop.find('iframe') : drop;
             if (opt.width)
-                drop.css('width', opt.width);
+                dropWH.css('width', opt.width);
             if (opt.height)
-                drop.css('height', opt.height);
+                dropWH.css('height', opt.height);
             $('style' + '[data-rel="' + opt.drop + '"]').remove();
             opt.style = methods._styleCreate(opt);
             if (opt.limitSize)
@@ -910,7 +911,8 @@
                     .drop-prev{left: 5px;text-align: left;}\n\
                     .drop-icon-next{text-align: center;}\n\
                     .icon-times-drop{position: absolute;z-index:1;right:0;top: 0;cursor: pointer;width: 15px;height: 15px;}\n\
-                    [drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;}'
+                    [drop][style*="width"] img{max-width: 100%;max-height: 100%;}\n\
+                    [drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}'
         },
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
         reg: /[^a-zA-Z0-9]+/ig,
