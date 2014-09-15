@@ -3,36 +3,12 @@
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="jquery.js"></script>
-        <script src="drop.js"></script>
-        <script src="drop_extend_methods.js"></script>
+        <script src="../libs/jquery.js"></script>
+        <script src="../source/drop.js"></script>
         <style>
             *{margin: 0;padding: 0;}
-            #drop-loading {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                width: 40px;
-                height: 40px;
-                margin-top: -20px;
-                margin-left: -20px;
-                cursor: pointer;
-                overflow: hidden;
-                z-index: 11104;
-                display: none;
-            }
-            #drop-loading div{
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 40px;
-                height: 480px;
-                background-image: url(drop.png);
-            }
-            .drop{display: none;background-color: #fff;}
-
-
         </style>
+        <link rel="stylesheet" type="text/css" href="../source/style.css"/>
     </head>
     <body>
         <div>
@@ -116,7 +92,7 @@
         </a>
         <div class="placeInherit" style="width: 500px;height: 500px;position: relative;"></div>
         <script>
-            $.drop.setUrlMethods('/');
+            $.drop.setUrlMethods('../source/methods');
             $.drop.require('droppable', 'global', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert');
 //            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
             //$('[href]').data('theme', 'green')
