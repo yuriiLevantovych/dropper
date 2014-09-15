@@ -433,8 +433,9 @@
                 methods._setHeightAddons(dropOver, forCenter);
                 if (opt.context)
                     collect.off('contextmenu.' + $.drop.nS);
-                if ($.existsN(drop.find('[data-drop]')))
-                    methods.init.call(drop.find('[data-drop]'));
+                var inDrop = opt.type === 'iframe' ? drop.find('iframe').contents().find('[data-drop]') : drop.find('[data-drop]');
+                if ($.existsN(inDrop))
+                    methods.init.call(inDrop);
                 drop.add($this).addClass(DP.activeClass);
                 if (opt.notify && !isNaN(opt.timeclosenotify))
                     setTimeout(function() {
