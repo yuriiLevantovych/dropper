@@ -3,14 +3,14 @@ $.drop.methods._cIGalleries = function(rel) {
     clearInterval($.drop.drp.autoPlayInterval[rel]);
     delete $.drop.drp.autoPlayInterval[rel];
 };
-$.drop.methods._galleriesDecorator = function(opt, btn, i) {
+$.drop.methods._galleriesDecorator = function(rel, btn, i) {
     var self = this,
             $ = jQuery;
-    return $('[data-elrun][data-rel].' + $.drop.dP.activeClass).each(function() {
+    return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.drop.dP.activeClass).each(function() {
         var $this = $(this),
                 drp = $this.data('drp');
         self._checkMethod(function() {
-            self.galleries($this, $.extend(opt, drp), btn, i);
+            self.galleries($this, drp, btn, i);
         });
     });
 };

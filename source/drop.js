@@ -296,12 +296,12 @@
             opt.afterG = DP.afterG;
             opt.closeG = DP.closeG;
             opt.closedG = DP.closedG;
-            var overlays = $('.overlayDrop').css('z-index', 1103),
+            var overlays = $('.drop-overlay').css('z-index', 1103),
                     dropOver = null;
             if (opt.overlay) {
-                if (!$.exists('[data-rel="' + opt.drop + '"].overlayDrop'))
-                    $('body').append('<div class="overlayDrop" data-rel="' + opt.drop + '" style="display:none;position:absolute;width:100%;left:0;top:0;"></div>');
-                (opt.dropOver = dropOver = $('[data-rel="' + opt.drop + '"].overlayDrop')).css({
+                if (!$.exists('[data-rel="' + opt.drop + '"].drop-overlay'))
+                    $('body').append('<div class="drop-overlay" data-rel="' + opt.drop + '"></div>');
+                (opt.dropOver = dropOver = $('[data-rel="' + opt.drop + '"].drop-overlay')).css({
                     'height': '',
                     'background-color': opt.overlayColor,
                     'opacity': opt.overlayOpacity,
@@ -309,10 +309,10 @@
                 });
             }
 
-            $('.forCenter').css('z-index', 1104);
+            $('.drop-for-center').css('z-index', 1104);
             var forCenter = null;
             if (opt.place === 'center')
-                (forCenter = opt.forCenter = $('[data-rel="' + opt.drop + '"].forCenter')).css('z-index', overlays.length + 1104);
+                (forCenter = opt.forCenter = $('[data-rel="' + opt.drop + '"].drop-for-center')).css('z-index', overlays.length + 1104);
             drop.data('drp', opt).attr('data-rel', opt.rel).css('z-index', overlays.length + 1104).attr('data-elrun', opt.drop).addClass(D.pC + opt.place);
             if (opt.rel)
                 methods._checkMethod(function() {
@@ -347,7 +347,7 @@
                 drop.click(focusConfirm);
             }
             wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function(e) {
-                methods.update.call(drop, e);
+                methods.update.call(drop);
             });
             wnd.off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function(e) {
                 if (opt.place === 'center' && opt.centerOnScroll)
@@ -357,7 +357,7 @@
             });
             $(dropOver).stop().fadeIn(opt.durationOn / 2);
             $(forCenter).add(dropOver).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
-                if (opt.closeClick && $(e.target).is('.overlayDrop') || $(e.target).is('.forCenter'))
+                if (opt.closeClick && $(e.target).is('.drop-overlay') || $(e.target).is('.drop-for-center'))
                     methods.close.call($($(e.target).attr('data-rel')), e);
             });
             if (opt.prompt) {
@@ -561,18 +561,18 @@
             });
             return sel;
         },
-        update: function(opt) {
-            var drop = this;
-            opt = $.extend({}, opt, drop.data('drp'));
-            if (opt.limitSize)
+        update: function() {
+            var drop = this,
+                    drp = drop.data('drp');
+            if (drp.limitSize)
                 methods._checkMethod(function() {
                     methods.limitSize(drop);
                 });
-            if (opt.place !== 'inherit')
+            if (drp.place !== 'inherit')
                 methods._checkMethod(function() {
-                    methods[opt.place].call(drop);
-                }, opt.place);
-            methods._setHeightAddons(opt.dropOver, opt.forCenter);
+                    methods[drp.place].call(drop);
+                }, drp.place);
+            methods._setHeightAddons(drp.dropOver, drp.forCenter);
         },
         center: function(start) {
             return this.each(function() {
@@ -634,7 +634,7 @@
             else if (opt.place === 'global')
                 drop = $(drop).appendTo($('body'));
             else if (opt.place === 'center')
-                drop = $(drop).appendTo($('<div class="forCenter" data-rel="' + opt.drop + '" style="left: 0;top: 0;width: 100%;display:none;height: 100%;position: absolute;height: 100%;"></div>').appendTo($('body')));
+                drop = $(drop).appendTo($('<div class="drop-for-center" data-rel="' + opt.drop + '"></div>').appendTo($('body')));
             drop = $(drop).addClass(aClass).attr('data-elrun', opt.drop).filter(opt.drop);
             if (aClass) {
                 opt.tempClass = aClass;
@@ -961,8 +961,8 @@
         D.urlOfMethods = url;
         return this;
     };
-    $.drop.close = function() {
-        return methods.close.call(null, 'artificial close element');
+    $.drop.close = function(el) {
+        return methods.close.call(el ? $(el) : null, 'artificial close element');
     };
     $.drop.cancel = function() {
         for (var i in D.curAjax)
@@ -975,29 +975,29 @@
         $.drop.hideLoading();
         return this;
     };
-    $.drop.update = function(opt) {
-        return $('[data-elrun].' + DP.activeClass).each(function() {
-            methods.update.call($(this), opt);
+    $.drop.update = function(el) {
+        return (el ? $(el) : $('[data-elrun].' + DP.activeClass)).each(function() {
+            methods.update.call($(this));
         });
     };
-    $.drop.next = function(opt) {
+    $.drop.next = function(rel) {
         return methods._checkMethod(function() {
-            methods._galleriesDecorator(opt, 1);
+            methods._galleriesDecorator(rel, 1);
         });
     };
-    $.drop.prev = function(opt) {
+    $.drop.prev = function(rel) {
         return methods._checkMethod(function() {
-            methods._galleriesDecorator(opt, -1);
+            methods._galleriesDecorator(rel, -1);
         });
     };
-    $.drop.jumpto = function(i, opt) {
+    $.drop.jumpto = function(i, rel) {
         return methods._checkMethod(function() {
-            methods._galleriesDecorator(opt, null, i);
+            methods._galleriesDecorator(rel, null, i);
         });
     };
-    $.drop.play = function(opt) {
+    $.drop.play = function(rel) {
         return methods._checkMethod(function() {
-            methods._galleriesDecorator(opt, null, null);
+            methods._galleriesDecorator(rel, null, null);
         });
     };
     $.drop.require = function() {
