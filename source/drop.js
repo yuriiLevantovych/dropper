@@ -477,7 +477,7 @@
                     return false;
                 if (!(opt.notify || $.existsN(sel) || opt.place !== 'inherit' || opt.inheritClose || opt.overlay) && opt.elrun)
                     return false;
-                function _hide() {
+                var _hide = function() {
                     var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
                     wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
                     doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS + ev);
@@ -629,13 +629,18 @@
             return methods._show.call(el, drop, e, opt, hashChange);
         },
         _pasteDrop: function(opt, drop, aClass) {
+            drop = $(drop);
+            if (opt.dropn)
+                drop = $.existsN(drop.filter(opt.drop)) ? drop.filter(opt.drop) : drop.find(opt.drop);
+
             if (opt.place === 'inherit' && opt.placeInherit)
-                drop = $(drop).appendTo($(opt.placeInherit).empty());
+                drop.appendTo($(opt.placeInherit).empty());
             else if (opt.place === 'global')
-                drop = $(drop).appendTo($('body'));
+                drop.appendTo($('body'));
             else if (opt.place === 'center')
-                drop = $(drop).appendTo($('<div class="drop-for-center" data-rel="' + opt.drop + '"></div>').appendTo($('body')));
-            drop = $(drop).addClass(aClass).attr('data-elrun', opt.drop).filter(opt.drop);
+                drop.appendTo($('<div class="drop-for-center" data-rel="' + opt.drop + '"></div>').appendTo($('body')));
+
+            drop.addClass(aClass).attr('data-elrun', opt.drop);
             if (aClass) {
                 opt.tempClass = aClass;
                 drop.addClass(D.tempClass);
@@ -891,7 +896,7 @@
     $.drop.drp = {
         handleMessageWindow: function(e) {
             if (e.originalEvent.data)
-                $.drop({href: e.originalEvent.data});
+                $.drop(e.originalEvent.data);
         },
         theme: {
             default: '.drop-header-default{background-color: #f8f8f8;padding: 0 55px 0 15px;font-size: 14px;}\n\
