@@ -46,14 +46,14 @@ $.drop.methods.confirmPromptAlert = function(opt, hashChange, _confirmF, e, el) 
         (function(drop, _confirmF, opt) {
             $(opt.promptActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                 e.stopPropagation();
-                function getUrlVars(url) {
+                var getUrlVars = function(url) {
                     var hash, myJson = {}, hashes = url.slice(url.indexOf('?') + 1).split('&');
                     for (var i = 0; i < hashes.length; i++) {
                         hash = hashes[i].split('=');
                         myJson[hash[0]] = hash[1];
                     }
                     return myJson;
-                }
+                };
 
                 optP.dataPrompt = opt.dataPrompt = getUrlVars($(this).closest('form').serialize());
                 self.close.call(drop, e, _confirmF, null);

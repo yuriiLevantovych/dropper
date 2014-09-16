@@ -36,7 +36,7 @@ $.drop.methods.galleries = function(drop, opt, btn, i) {
         prev.show().removeAttr('disabled');
     if (opt.cycle)
         prev.add(next).show().removeAttr('disabled');
-    function _goto(i, e) {
+    var _goto = function(i, e) {
         if (!relA[i]) {
             relP -= 1;
             return false;
@@ -44,8 +44,8 @@ $.drop.methods.galleries = function(drop, opt, btn, i) {
         var $next = $('[data-href="' + relA[i] + '"], [href="' + relA[i] + '"]').filter(':last');
         self._cIGalleries(opt.rel);
         self.open.call($next, $.extend($next.data('drp'), {href: relA[i], drop: null, rel: opt.rel}), e);
-    }
-    function _getnext(i) {
+    };
+    var _getnext = function(i) {
         relP += i;
         if (opt.cycle) {
             if (relP >= relL)
@@ -54,7 +54,7 @@ $.drop.methods.galleries = function(drop, opt, btn, i) {
                 relP = relL - 1;
         }
         return relP;
-    }
+    };
     prev.add(next).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
         e.stopPropagation();
         relP = $.inArray(opt.href, relA);

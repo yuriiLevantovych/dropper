@@ -22,18 +22,12 @@
     $.exists = function(selector) {
         return $(selector).length > 0 && $(selector) instanceof jQuery;
     };
-    var returnMsg = function(msg) {
-        if (window.console)
-            console.log(msg);
-    };
     var IE = navigator.userAgent.match(/msie/i);
     var methods = {
         init: function(options) {
             var set = $.extend({}, DP, options);
-            if (!$.existsN(this)) {
-                returnMsg('this object is not a jQuery object');
-                return false;
-            }
+            if (!$.existsN(this))
+                throw 'this object is not exists';
 
             return this.each(function() {
                 var el = methods.destroy.call($(this)),
@@ -119,7 +113,7 @@
             }
             var el = this,
                     elSet = el.data();
-            function _update(data, cLS) {
+            var _update = function(data, cLS) {
                 if (opt.dropn)
                     var drop = methods._pasteDrop(opt, data, cLS);
                 else
@@ -138,8 +132,8 @@
                         datas: data
                     }
                 });
-                methods._show.call(el, drop, e, opt, hashChange);
-            }
+                return drop;
+            };
             $.drop.showLoading();
             var _getImage = function() {
                 opt.type = elSet.type = 'image';
@@ -147,7 +141,7 @@
                 img.onload = function() {
                     $.drop.hideLoading();
                     this.onload = this.onerror = null;
-                    _update($(this), cLS);
+                    methods._show.call(el, _update($(this), cLS), e, opt, hashChange);
                 };
                 img.onerror = function() {
                     this.onload = this.onerror = null;
@@ -166,7 +160,7 @@
                         if (opt.notify)
                             methods._pasteNotify.call(el, data, opt, hashChange, e, cLS);
                         else
-                            _update(data, cLS);
+                            methods._show.call(el, _update(data, cLS), e, opt, hashChange);
                     },
                     error: function() {
                         $.drop.hideLoading();
@@ -177,10 +171,12 @@
             };
             var _getIframe = function() {
                 opt.type = elSet.type = 'iframe';
-                var iframe = $('<iframe name="drop-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen' + (IE ? ' allowtransparency="true"' : '') + '></iframe>').attr('src', opt.href).one('load.' + $.drop.nS, function() {
+                var iframe = $('<iframe name="drop-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen' + (IE ? ' allowtransparency="true"' : '') + '></iframe>').attr('src', opt.href),
+                        drop = _update(iframe, cLS);
+                iframe.one('load.' + $.drop.nS, function() {
                     $.drop.hideLoading();
+                    methods._show.call(el, drop, e, opt, hashChange);
                 });
-                _update(iframe, cLS);
             };
             if (opt.type === 'auto') {
                 if (opt.href.match(D.regImg))
@@ -264,7 +260,7 @@
                     methods._show.call($this, methods._pasteDrop(opt, $.existsN(drop) ? drop.addClass(D.wasCreateClass) : D.drops[hrefC], cLS), e, opt, hashChange);
                 }
                 else
-                    returnMsg('insufficient data');
+                    throw 'insufficient data';
             };
             var _show = function() {
                 if ($this.is(':disabled') || opt.drop && opt.start && !eval(opt.start).call($this, opt, drop, e))
@@ -340,9 +336,9 @@
                 setTimeout(methods._setEventHash, 0);
             }
             if (opt.confirm) {
-                function focusConfirm() {
+                var focusConfirm = function() {
                     $(opt.confirmActionBtn).focus();
-                }
+                };
                 setTimeout(focusConfirm, 0);
                 drop.click(focusConfirm);
             }
@@ -362,9 +358,9 @@
             });
             if (opt.prompt) {
                 var input = drop.find(opt.promptInput).val(opt.promptInputValue);
-                function focusInput() {
+                var focusInput = function() {
                     input.focus();
-                }
+                };
                 setTimeout(focusInput, 0);
                 drop.find('form').off('submit.' + $.drop.nS + ev).on('submit.' + $.drop.nS + ev, function(e) {
                     e.preventDefault();
@@ -471,6 +467,7 @@
             drop.each(function() {
                 var drop = $(this),
                         opt = drop.data('drp');
+                        
                 if (!opt)
                     return false;
                 if (hashChange && opt.hash && window.location.hash.indexOf(opt.hash) !== -1)
@@ -535,7 +532,7 @@
                         if ($.isFunction(f))
                             f();
                     });
-                }
+                };
                 drop.add(doc).trigger({
                     type: 'close.' + $.drop.nS,
                     drp: {
@@ -552,7 +549,7 @@
                     else
                         var res = close.call(opt.elrun, opt, drop, e);
                     if (res === false && res !== true)
-                        returnMsg(res);
+                        throw res;
                     else
                         _hide();
                 }
@@ -615,9 +612,11 @@
                 return false;
             var el = this,
                     drop = methods._pasteDrop(opt, opt.patternNotify, cLS);
+
             el.off('successJson.' + $.drop.nS).on('successJson.' + $.drop.nS, function(e) {
+                e.stopPropagation();
                 opt.handleNotify.call($(this), e, opt);
-            }).trigger({
+            }).add(wnd).trigger({
                 type: 'successJson.' + $.drop.nS,
                 drp: {
                     refer: el,
@@ -631,7 +630,7 @@
         _pasteDrop: function(opt, drop, aClass) {
             drop = $(drop);
             if (opt.dropn)
-                drop = $.existsN(drop.filter(opt.drop)) ? drop.filter(opt.drop) : drop.find(opt.drop);
+                drop = $.existsN(drop.filter(opt.drop)) ? drop.filter(opt.drop) : ($.existsN(drop.find(opt.drop)) ? drop.find(opt.drop) : drop);
 
             if (opt.place === 'inherit' && opt.placeInherit)
                 drop.appendTo($(opt.placeInherit).empty());
@@ -681,7 +680,7 @@
                 f();
             } catch (e) {
                 var method = f.toString().match(/\.\S*\(/);
-                returnMsg('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
+                throw 'need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method';
             }
             return this;
         },
@@ -727,7 +726,7 @@
         },
         _styleCreate: function(opt) {
             if (!D.theme[opt.theme])
-                return returnMsg('theme' + ' "' + opt.theme + '" ' + 'not available');
+                throw 'theme' + ' "' + opt.theme + '" ' + 'not available';
             var text = D.theme[opt.theme],
                     coms = D.theme[opt.theme].match(/.*,([^{]*)/gm);
             if (coms)
@@ -747,11 +746,11 @@
             if (!/_/.test(method))
                 return methods[ method ].apply(this, Array.prototype.slice.call(arguments, 1));
             else
-                $.error('Method ' + method + ' is private on $.drop');
+                throw 'Method ' + method + ' is private on $.drop';
         } else if ($.type(method) === 'object' || !method) {
             return methods.init.apply(this, arguments);
         } else {
-            $.error('Method ' + method + ' does not exist on $.drop');
+            throw 'Method ' + method + ' does not exist on $.drop';
         }
     };
     $.drop = function(m, opt) {
@@ -778,7 +777,7 @@
         else if ($.type(m) === 'object')
             return methods.open.call(null, m);
         else
-            return returnMsg('insufficient data');
+            throw 'insufficient data';
     };
     $.drop.nS = 'drop';
     $.drop.version = '1.0';
@@ -788,9 +787,9 @@
         href: null,
         hash: null,
         dataPrompt: null,
-        dropContent: '.drop-content-default',
-        dropHeader: '.drop-header-default',
-        dropFooter: '.drop-footer-default',
+        dropContent: '.drop-content',
+        dropHeader: '.drop-header',
+        dropFooter: '.drop-footer',
         placePaste: '.placePaste',
         contentHeader: null,
         contentFooter: null,
@@ -826,12 +825,12 @@
         afterG: $.noop,
         closeG: $.noop,
         closedG: $.noop,
-        pattern: '<div class="drop drop-default"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev"><</i>&#60;</button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default"></div><div class="drop-content-default"><div class="inside-padd placePaste"></div></div><div class="drop-footer-default"></div></div>',
-        patternNotify: '<div class="drop drop-notify"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default"></div><div class="drop-content-default"><div class="inside-padd placePaste"></div></div><div class="drop-footer-default"></div></div>',
-        patternConfirm: '<div class="drop drop-confirm"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default">Confirm</div><div class="drop-content-default"><div class="inside-padd"><div class="placePaste"></div><div class="drop-group-btns"><button type="button" class="drop-button-confirm" data-button-confirm>ok</button><button type="button" class="drop-btn-cancel" data-closed>cancel</button></div></div></div><div class="drop-footer-default"></div></div>',
-        patternPrompt: '<div class="drop drop-prompt"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default">Prompt</div><div class="drop-content-default"><form class="inside-padd"><div class="placePaste"></div><input type="text" name="promptInput"/><div class="drop-group-btns"><button data-button-prompt type="submit" class="drop-button-prompt">ok</button><button type="button" data-closed class="drop-btn-cancel">cancel</button></div></form></div><div class="drop-footer-default"></div></div>',
-        patternAlert: '<div class="drop drop-alert"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header-default">Alert</div><div class="drop-content-default"><div class="inside-padd"><div class="placePaste"></div><div class="drop-group-btns"><button type="button" class="drop-button-alert" data-button-alert>ok</button></div></div></div><div class="drop-footer-default"></div></div>',
-        defaultClassBtnDrop: 'drop-default',
+        pattern: '<div class="drop drop"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev"><</i>&#60;</button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header"></div><div class="drop-content"><div class="inside-padd placePaste"></div></div><div class="drop-footer"></div></div>',
+        patternNotify: '<div class="drop drop-notify"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header"></div><div class="drop-content"><div class="inside-padd placePaste"></div></div><div class="drop-footer"></div></div>',
+        patternConfirm: '<div class="drop drop-confirm"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header">Confirm</div><div class="drop-content"><div class="inside-padd"><div class="placePaste"></div><div class="drop-group-btns"><button type="button" class="drop-button-confirm" data-button-confirm>ok</button><button type="button" class="drop-btn-cancel" data-closed>cancel</button></div></div></div><div class="drop-footer"></div></div>',
+        patternPrompt: '<div class="drop drop-prompt"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header">Prompt</div><div class="drop-content"><form class="inside-padd"><div class="placePaste"></div><input type="text" name="promptInput"/><div class="drop-group-btns"><button data-button-prompt type="submit" class="drop-button-prompt">ok</button><button type="button" data-closed class="drop-btn-cancel">cancel</button></div></form></div><div class="drop-footer"></div></div>',
+        patternAlert: '<div class="drop drop-alert"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header">Alert</div><div class="drop-content"><div class="inside-padd"><div class="placePaste"></div><div class="drop-group-btns"><button type="button" class="drop-button-alert" data-button-alert>ok</button></div></div></div><div class="drop-footer"></div></div>',
+        defaultClassBtnDrop: 'drop-',
         confirmActionBtn: '[data-button-confirm]',
         promptActionBtn: '[data-button-prompt]',
         alertActionBtn: '[data-button-alert]',
@@ -899,19 +898,19 @@
                 $.drop(e.originalEvent.data);
         },
         theme: {
-            default: '.drop-header-default{background-color: #f8f8f8;padding: 0 55px 0 15px;font-size: 14px;}\n\
+            default: '.drop-header{background-color: #f8f8f8;padding: 0 55px 0 15px;font-size: 14px;}\n\
                     input, textarea{margin-bottom: 6px;}\n\
-                    input, textarea, .drop-content-default button{outline: none;font-family: Arial, Helvetica CY, Nimbus Sans L, sans-serif;line-height: 1.5;border: 1px solid #d8d8d8;padding: 4px 6px;}\n\
+                    input, textarea, .drop-content button{outline: none;font-family: Arial, Helvetica CY, Nimbus Sans L, sans-serif;line-height: 1.5;border: 1px solid #d8d8d8;padding: 4px 6px;}\n\
                     button{background-color: #fafafa;box-shadow: inset 0 1px #fefefe;color: #666;cursor: pointer;}\n\
-                    .drop-header-default.drop-no-empty, .drop-footer-default.drop-no-empty{padding-top: 6px;padding-bottom: 6px;}\n\
-                    .drop-header-default.drop-no-empty{border-bottom: 1px solid #d8d8d8;}\n\
-                    .drop-footer-default.drop-no-empty{border-top: 1px solid #d8d8d8;}\n\
-                    .drop-content-default .inside-padd{padding: 12px 28px 12px 10px;}\n\
-                    [[.drop-image .drop-content-default .inside-padd]], [[.drop-alert .drop-content-default .inside-padd]]{padding: 10px;}\n\
+                    .drop-header.drop-no-empty, .drop-footer.drop-no-empty{padding-top: 6px;padding-bottom: 6px;}\n\
+                    .drop-header.drop-no-empty{border-bottom: 1px solid #d8d8d8;}\n\
+                    .drop-footer.drop-no-empty{border-top: 1px solid #d8d8d8;}\n\
+                    .drop-content .inside-padd{padding: 12px 28px 12px 10px;}\n\
+                    [[.drop-image .drop-content .inside-padd]], [[.drop-alert .drop-content .inside-padd]]{padding: 10px;}\n\
                     [[.drop-alert .drop-group-btns]]{text-align: center;}\n\
-                    .drop-content-default button{margin-right: 4px;}{\n\
+                    .drop-content button{margin-right: 4px;}{\n\
                     button:focus, input:focus, textarea:focus{outline: #b3b3b3 solid 1px;}\n\
-                    .drop-footer-default{background-color: #d5d5d5;padding: 0 10px;}\n\
+                    .drop-footer{background-color: #d5d5d5;padding: 0 10px;}\n\
                     .drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;}\n\
                     .drop-prev,.drop-next{width: 35%;height: 100%;top: 0;}\n\
                     .drop-icon-prev, .drop-icon-next{width: 20px;height: 80px;line-height: 80px;}\n\
@@ -1017,14 +1016,14 @@
     doc.ready(function() {
         var loadingTimer, loadingFrame = 1,
                 loading = $('<div id="drop-loading"><div></div></div>').appendTo($('body'));
-        function _animate_loading() {
+        var _animate_loading = function() {
             if (!loading.is(':visible')) {
                 clearInterval(loadingTimer);
                 return;
             }
             $('div', loading).css('top', (loadingFrame * -40) + 'px');
             loadingFrame = (loadingFrame + 1) % 12;
-        }
+        };
 
         $.drop.showLoading = function() {
             clearInterval(loadingTimer);
@@ -1038,5 +1037,5 @@
         };
         $('[data-drop]').drop();
     });
-    wnd.on("message." + $.drop.nS, D.handleMessageWindow);
+    wnd.on('message.' + $.drop.nS, D.handleMessageWindow);
 })(jQuery, $(window), $(document));

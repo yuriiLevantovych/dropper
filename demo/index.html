@@ -7,13 +7,28 @@
         <script src="../source/drop.js"></script>
         <style>
             *{margin: 0;padding: 0;}
+            #inline{padding: 20px;}
         </style>
         <link rel="stylesheet" type="text/css" href="../source/style.css"/>
     </head>
     <body>
         <div>
-            <h3>Simple drop inline</h3>
-            <button type="button" data-start="(function(){return confirm('are you sure?');})" data-place-before-show="inherit" data-always="true" data-animate="true" data-notify="false" data-drop=".a1" data-href="popup_without_pattern.php" style="width: 200px;height: 150px;float: right;">click</button>
+            <h3>Simple inline</h3>
+            <a href="#" data-drop="#inline">inline</a>
+            <h3>Simple Ajax</h3>
+            <a href="with_pattern.php" data-drop>ajax</a>
+            <h3>Simple Ajax without pattern</h3>
+            <a href="without_pattern.php" data-drop="#ajax">ajax without pattern</a>
+            <div><i>with parametr data-drop</i></div>
+            <h3>Simple Iframe</h3>
+            <a href="iframe.html" data-drop>iframe</a>
+            <h3>Iframe with width and height</h3>
+            <a href="iframe.html" data-type="iframe" data-drop data-width="500" data-height="500">iframe</a>
+            <h3>Iframe from other domain</h3>
+            <a href="http://levantovych.pro100host.com/iframe.html" data-type="iframe" data-drop data-width="500" data-height="500">iframe</a>
+            
+
+            <button type="button" data-start="(function(){return confirm('are you sure?');})" data-place-before-show="inherit" data-always="true" data-animate="true" data-notify="false" data-drop=".a1" data-href="without_pattern.php" style="width: 200px;height: 150px;float: right;">click</button>
             <button data-type="iframe" data-hash="#sdfa" type="button" data-place-before-show="inherit" data-place-after-close="left top" data-animate="true" data-notify="false" data-drop data-href="http://levantovych.pro100host.com/iframe.html" data-width="800" data-height="800" style="width: 200px;height: 150px;float: right;">click</button>
             <button type="button" data-drop data-context="true" data-overlay="false" data-place-before-show="inherit" data-notify="true" data-href="notify.php" style="width: 200px;height: 150px;float: right;">click</button>
             <div class="drop drop-simple" style="width: 150px">
@@ -38,7 +53,6 @@
                     1234<br/>
                 </div>    
             </div>
-            <a data-drop=".asdf" data-prompt="true">click</a>
             <div class="drop drop-simple2" style="width: 150px">
                 <button type="button" data-closed>*</button>
                 <div class="drop-content-default">
@@ -79,14 +93,12 @@
                 </div>    
             </div>
         </div>
-        <div data-drop=".asdf">asdf</div>
         <a href="http://fc08.deviantart.net/fs70/f/2010/324/a/2/avatar_upd_big_size_by_merychess-d30zufu.jpg" rel="group" onClick="return false;" data-hash="#a">
             <img src="3.jpg" width="50"/>
         </a>
         <a data-drop=".asdf" data-hash="#b" data-place="inherit" data-overlay="false" data-close-active-click="true">
             <img src="3.jpg" width="50"/>
         </a>
-        <div class="drop asdf">asdf</div>
         <a href="6.jpg" rel="group" data-hash="#c" data-always="true">
             <img src="5.jpg" width="50"/>
         </a>
@@ -97,11 +109,14 @@
 //            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
             //$('[href]').data('theme', 'green')
             $(document).ready(function() {
-                $('[href]').drop({
+                $(window).on('successJson.drop', function(e) {
+                    console.log(e.drp)
+                });
+                $('[rel]').drop({
                     overlay: false,
                     place: 'global',
                     contentHeader: function(opt) {
-                        return ($.inArray(opt.href, $.drop.drp.galleries[opt.rel]) + 1) + ' картинка'
+                        return ($.inArray(opt.href, $.drop.drp.galleries[opt.rel]) + 1) + ' картинка';
                     },
                     animate: true,
                     start: function(opt, drop) {
@@ -115,5 +130,11 @@
                 });
             });
         </script>
+
+
+        <div id="inline">
+            <h3>Simple inline</h3>
+            <p>inline</p>
+        </div>
     </body>
 </html>
