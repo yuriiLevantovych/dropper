@@ -889,6 +889,10 @@
         height: null
     };
     $.drop.drp = {
+        handleMessageWindow: function(e) {
+            if (e.originalEvent.data)
+                $.drop({href: e.originalEvent.data});
+        },
         theme: {
             default: '.drop-header-default{background-color: #f8f8f8;padding: 0 55px 0 15px;font-size: 14px;}\n\
                     input, textarea{margin-bottom: 6px;}\n\
@@ -978,7 +982,7 @@
     };
     $.drop.next = function(opt) {
         return methods._checkMethod(function() {
-            methods._galleriesDecorator(opt, 1)
+            methods._galleriesDecorator(opt, 1);
         });
     };
     $.drop.prev = function(opt) {
@@ -997,16 +1001,14 @@
         });
     };
     $.drop.require = function() {
-        for (var i in arguments) {
+        for (var i in arguments)
             $.ajax({
                 url: D.urlOfMethods + '/' + arguments[i] + '.js',
                 dataType: 'script',
                 cache: true
             });
-        }
         return this;
     };
-
     doc.ready(function() {
         var loadingTimer, loadingFrame = 1,
                 loading = $('<div id="drop-loading"><div></div></div>').appendTo($('body'));
@@ -1031,4 +1033,5 @@
         };
         $('[data-drop]').drop();
     });
+    wnd.on("message." + $.drop.nS, D.handleMessageWindow);
 })(jQuery, $(window), $(document));
