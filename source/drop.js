@@ -132,6 +132,7 @@
                         datas: data
                     }
                 });
+                methods._show.call(el, drop, e, opt, hashChange);
                 return drop;
             };
             $.drop.showLoading();
@@ -141,7 +142,7 @@
                 img.onload = function() {
                     $.drop.hideLoading();
                     this.onload = this.onerror = null;
-                    methods._show.call(el, _update($(this), cLS), e, opt, hashChange);
+                    _update($(this), cLS)
                 };
                 img.onerror = function() {
                     this.onload = this.onerror = null;
@@ -160,7 +161,7 @@
                         if (opt.notify)
                             methods._pasteNotify.call(el, data, opt, hashChange, e, cLS);
                         else
-                            methods._show.call(el, _update(data, cLS), e, opt, hashChange);
+                            _update(data, cLS);
                     },
                     error: function() {
                         $.drop.hideLoading();
@@ -175,7 +176,7 @@
                 iframe.one('load.' + $.drop.nS, function() {
                     $.drop.hideLoading();
                 });
-                methods._show.call(el, _update(iframe, cLS), e, opt, hashChange);
+                _update(iframe, cLS);
             };
             if (opt.type === 'auto') {
                 if (opt.href.match(D.regImg))
