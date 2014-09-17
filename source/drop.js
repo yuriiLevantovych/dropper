@@ -53,7 +53,7 @@
                     D.galleryHashs._butRel.push(hash);
                 el.addClass('isDrop');
                 if (opt.context) {
-                    el.on('contextmenu.' + $.drop.nS, function(e) {
+                    el.on('contextmenu.' + $.drop.nS + ' ' + 'click.' + $.drop.nS, function(e) {
                         e.preventDefault();
                     });
                     el.on('mouseup.' + $.drop.nS, function(e) {
@@ -102,7 +102,7 @@
                     el.off(opt.triggerOn + '.' + $.drop.nS);
                 if (opt.triggerOff)
                     el.off(opt.triggerOff + '.' + $.drop.nS);
-                el.off('contextmenu.' + $.drop.nS).off('mouseup.' + $.drop.nS);
+                el.off('contextmenu.' + $.drop.nS).off('mouseup.' + $.drop.nS).off('click.' + $.drop.nS);
             });
         },
         _get: function(opt, e, hashChange, cLS) {
@@ -171,12 +171,11 @@
             };
             var _getIframe = function() {
                 opt.type = elSet.type = 'iframe';
-                var iframe = $('<iframe name="drop-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen' + (IE ? ' allowtransparency="true"' : '') + '></iframe>').attr('src', opt.href),
-                        drop = _update(iframe, cLS);
+                var iframe = $('<iframe name="drop-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen' + (IE ? ' allowtransparency="true"' : '') + '></iframe>');
                 iframe.one('load.' + $.drop.nS, function() {
                     $.drop.hideLoading();
-                    methods._show.call(el, drop, e, opt, hashChange);
                 });
+                methods._show.call(el, _update(iframe, cLS), e, opt, hashChange);
             };
             if (opt.type === 'auto') {
                 if (opt.href.match(D.regImg))
@@ -208,16 +207,16 @@
             }
 
             var cLS = opt.defaultClassBtnDrop + (+new Date());
+
             if (elSet || $.existsN(opt.drop))
                 elSet.dropn = opt.drop;
             $.extend(opt, elSet);
+            opt.href = opt.href || $this.attr('href');
+            opt.href = opt.href.length === 1 && opt.href === '#' ? null : opt.href;
             if (opt.href && opt.notify || opt.always) {
                 $('[data-rel="' + opt.drop + '"]').add($(opt.drop)).remove();
                 opt.drop = elSet.dropn ? elSet.dropn : null;
             }
-            opt.drop = opt.drop && $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + cLS;
-            if (!$.existsN($this) || opt.notify)
-                $this = methods._referCreate(opt.drop);
             if (opt.context) {
                 $.extend(opt, {place: 'global', limitSize: true, overlay: false});
                 if (e && e.pageX >= 0)
@@ -225,8 +224,9 @@
                 else
                     opt.placement = {'left': $this.offset().left, 'top': $this.offset().top};
             }
-
-            opt.href = opt.href || $this.attr('href');
+            opt.drop = opt.drop && $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + cLS;
+            if (!$.existsN($this) || opt.notify)
+                $this = methods._referCreate(opt.drop);
             opt.elrun = $this;
             opt.rel = $this.get(0).rel || opt.rel;
             if (opt.rel && D.galleries[opt.rel.replace(D.reg, '')])
@@ -241,7 +241,6 @@
                     $this.addClass('drop-filter');
                 }
             }
-
             $this.attr('data-drop', opt.drop).data('drop', opt.drop);
             var drop = $(elSet.dropn);
             var _confirmF = function() {
@@ -256,9 +255,8 @@
                 }
                 else if (opt.href && (!D.drops[hrefC] || opt.always || opt.notify))
                     methods._get.call($this, opt, e, hashChange, cLS);
-                else if ($.existsN(drop) || opt.href && D.drops[hrefC]) {
-                    methods._show.call($this, methods._pasteDrop(opt, $.existsN(drop) ? drop.addClass(D.wasCreateClass) : D.drops[hrefC], cLS), e, opt, hashChange);
-                }
+                else if ($.existsN(drop) || opt.href && D.drops[hrefC])
+                    methods._show.call($this, methods._pasteDrop(opt, $.existsN(drop) ? drop.addClass(D.wasCreateClass) : D.drops[hrefC].clone(), cLS), e, opt, hashChange);
                 else
                     throw 'insufficient data';
             };
@@ -310,6 +308,9 @@
             if (opt.place === 'center')
                 (forCenter = opt.forCenter = $('[data-rel="' + opt.drop + '"].drop-for-center')).css('z-index', overlays.length + 1104);
             drop.data('drp', opt).attr('data-rel', opt.rel).css('z-index', overlays.length + 1104).attr('data-elrun', opt.drop).addClass(D.pC + opt.place);
+            if (opt.context)
+                drop.addClass(D.pC + 'context');
+
             if (opt.rel)
                 methods._checkMethod(function() {
                     methods.galleries(drop, opt);
@@ -317,6 +318,7 @@
             methods._setHeightAddons(dropOver, forCenter);
             methods._pasteContent($this, drop, opt);
             methods._positionType(drop);
+
             var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
             if (opt.hash && !hashChange) {
                 D.scrollTop = wnd.scrollTop();
@@ -391,7 +393,6 @@
                     e.preventDefault();
                 });
             var dropWH = opt.type === 'iframe' ? drop.find('iframe') : drop;
-            dropWH.css({'width': '', 'height': ''});
             if (opt.width)
                 dropWH.css('width', opt.width);
             if (opt.height)
@@ -410,6 +411,7 @@
                     methods[opt.place].call(drop);
                 }, opt.place);
             $(forCenter).show();
+
             if (opt.elBefore)
                 eval(opt.elBefore).call($this, opt, drop, e);
             if (opt.before)
@@ -427,6 +429,8 @@
             });
             drop[opt.effectOn](opt.durationOn, function(e) {
                 var drop = $(this);
+                if (opt.type === 'iframe')
+                    dropWH.attr('src', opt.href);
                 $('html, body').css({'overflow': '', 'overflow-x': ''});
                 methods._setHeightAddons(dropOver, forCenter);
                 if (opt.context)
@@ -476,6 +480,8 @@
                 if (!(opt.notify || $.existsN(sel) || opt.place !== 'inherit' || opt.inheritClose || opt.overlay) && opt.elrun)
                     return false;
                 var _hide = function() {
+                    if (opt.type === 'iframe')
+                        drop.find('iframe').removeAttr('src');
                     var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
                     wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
                     doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS + ev);
@@ -490,12 +496,13 @@
                         methods.placeAfterClose(drop, opt.elrun, opt);
                     });
                     drop[opt.effectOff](opt.durationOff, function() {
+                        opt.style.remove();
                         $('html, body').css({'overflow': '', 'overflow-x': ''});
                         var $this = $(this);
                         $(opt.forCenter).hide();
                         $(opt.dropOver).fadeOut(opt.durationOff);
                         methods._resetStyleDrop.call($(this));
-                        $this.removeClass(D.pC + opt.place).removeClass(D.pC + opt.type);
+                        $this.removeClass(D.pC + opt.place).removeClass(D.pC + opt.type).removeClass(D.pC + 'context');
                         if (opt.closed)
                             opt.closed.call(opt.elrun, opt, $this, e);
                         if (opt.elClosed)
@@ -516,11 +523,11 @@
                             dC.destroy();
                         if (!$.exists(D.aDS))
                             $('body, html').css('height', '');
-                        opt.style.remove();
                         if ($this.hasClass(D.tempClass)) {
                             if (opt.tempClass) {
                                 $this.removeClass(opt.tempClass);
-                                opt.elrun.data('drop', null);
+                                if (!opt.elrun.data('dropn'))
+                                    opt.elrun.data('drop', null);
                             }
                             if ($(opt.elrun).hasClass(D.tempClass))
                                 $(opt.elrun).parent().remove();
@@ -922,6 +929,10 @@
                     .drop-prev{left: 5px;text-align: left;}\n\
                     .drop-icon-next{text-align: center;}\n\
                     .icon-times-drop{position: absolute;z-index:1;right:0;top: 0;cursor: pointer;width: 15px;height: 15px;}\n\
+                    .nav{list-style: none;}\n\
+                    .nav-vertical > li{display: block;border-top: 1px solid #aaa;padding: 5px 10px;}\n\
+                    .nav-vertical > li:first-child{border-top: 0;}\n\
+                    [[.drop-context .drop-content .inside-padd]]{padding: 0;}\n\
                     [drop][style*="width"] img{max-width: 100%;max-height: 100%;}\n\
                     [drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}'
         },
