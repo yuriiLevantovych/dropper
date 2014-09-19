@@ -1,11 +1,11 @@
 $.drop.methods.confirmPromptAlert = function(opt, hashChange, _confirmF, e, el) {
     var self = this,
             $ = jQuery;
-    var cLS = opt.defaultClassBtnDrop + (+new Date());
+    opt.tempClass = opt.defaultClassBtnDrop + (+new Date());
     if (opt.confirm) {
-        var confirmBtn = opt.elrun = self._referCreate('.' + cLS).data('confirm', true),
+        var confirmBtn = opt.elrun = self._referCreate('.' + opt.tempClass).data('confirm', true),
                 optC = $.extend({}, opt, confirmBtn.data()),
-                drop = self._pasteDrop(optC, opt.patternConfirm, cLS);
+                drop = self._pasteDrop(optC, opt.patternConfirm);
 
         self._show.call(confirmBtn, drop, e, optC, hashChange);
 
@@ -20,9 +20,9 @@ $.drop.methods.confirmPromptAlert = function(opt, hashChange, _confirmF, e, el) 
             pp.html(opt.confirmText);
     }
     else if (opt.alert) {
-        var alertBtn = opt.elrun = self._referCreate('.' + cLS).data('alert', true),
+        var alertBtn = opt.elrun = self._referCreate('.' + opt.tempClass).data('alert', true),
                 optC = $.extend({}, opt, alertBtn.data()),
-                drop = self._pasteDrop(optC, opt.patternAlert, cLS);
+                drop = self._pasteDrop(optC, opt.patternAlert);
 
         self._show.call(alertBtn, drop, e, optC, hashChange);
 
@@ -37,9 +37,9 @@ $.drop.methods.confirmPromptAlert = function(opt, hashChange, _confirmF, e, el) 
             pp.html(opt.alertText);
     }
     else if (opt.prompt) {
-        var promptBtn = opt.elrun = self._referCreate('.' + cLS).data({'prompt': true, 'promptInputValue': opt.promptInputValue}),
+        var promptBtn = opt.elrun = self._referCreate('.' + opt.tempClass).data({'prompt': true, 'promptInputValue': opt.promptInputValue}),
                 optP = $.extend({}, opt, promptBtn.data()),
-                drop = self._pasteDrop(optP, opt.patternPrompt, cLS);
+                drop = self._pasteDrop(optP, opt.patternPrompt);
 
         self._show.call(promptBtn, drop, e, optP, hashChange);
 

@@ -8,35 +8,122 @@
         <style>
             *{margin: 0;padding: 0;}
             #inline{padding: 20px;}
+            ol{margin-left: 30px;}
+            .list-example h3{display: inline;}
         </style>
         <link rel="stylesheet" type="text/css" href="../source/drop.css"/>
     </head>
     <body>
-        <h3>Simple inline</h3>
-        <a href="#" data-drop="#inline">inline</a>
-        <h3>Simple Ajax</h3>
-        <a href="with_pattern.php" data-drop>ajax</a>
-        <h3>Simple Ajax without pattern <i>(with parametr data-drop)</i></h3>
-        <a href="without_pattern.php" data-drop="#ajax">ajax without pattern</a>
-        <h3>Ajax with load always</h3>
-        <a href="with_pattern.php" data-drop data-always="true">ajax always</a>
-        <h3>Simple Iframe</h3>
-        <a href="iframe.html" data-drop data-type="iframe">iframe</a>
-        <h3>Iframe with width and height</h3>
-        <a href="iframe.html" data-drop data-type="iframe" data-width="500" data-height="500">iframe</a>
-        <h3>Iframe from other domain <i>(window.parent.postMessage)</i></h3>
-        <a href="http://levantovych.pro100host.com/iframe.html" data-type="iframe" data-drop data-width="500" data-height="500">iframe</a>
-        <h3>Simple notify inline</h3>
-        <a id="simpleNotify" href="" data-drop data-notify="true">notify</a>
-        <script>
-            $('#simpleNotify').data('datas', {answer: 'success', data: 'simple notify'});
-        </script>
-        <h3>Notify ajax <i>(always load)</i></h3>
-        <a href="notify.php" data-drop data-notify="true">notify</a>
-        <h3>Simple context inline <i>(click right button mouse)</i></h3>
-        <a href="" data-drop="#inline" data-context="true">context</a>
-        <h3>Context ajax <i>(click right button mouse)</i></h3>
-        <a href="context.php" data-drop data-context="true">context ajax</a>
+        <ol class="list-example">
+            <li>
+                <div><h3>Simple inline</h3></div>
+                <a href="#" data-drop="#inline">inline</a>
+            </li>
+            <li>
+                <div><h3>Simple Ajax</h3></div>
+                <a href="with_pattern.php" data-drop>ajax</a>
+            </li>
+            <li>
+                <div><h3>Simple Ajax without pattern</h3> <i>(with parametr data-drop)</i></div>
+                <a href="without_pattern.php" data-drop="#ajax">ajax without pattern</a>
+            </li>
+            <li>
+                <div><h3>Ajax with load always</h3></div>
+                <a href="with_pattern.php" data-drop data-always="true">ajax always</a>
+            </li>
+            <li>
+                <div><h3>Simple Iframe</h3></div>
+                <a href="iframe.html" data-drop data-type="iframe">iframe</a>
+                <div><h3>Iframe with width and height</h3></div>
+            </li>
+            <li>
+                <a href="iframe.html" data-drop data-type="iframe" data-width="500" data-height="500">iframe</a>
+                <div><h3>Iframe from other domain</h3> <i>(window.parent.postMessage)</i></div>
+            </li>
+            <li>
+                <a href="http://levantovych.pro100host.com/iframe.html" data-type="iframe" data-drop data-width="500" data-height="500">iframe</a>
+                <div><h3>Simple notify inline</h3></div>
+            </li>
+            <li>
+                <a id="simpleNotify" href="" data-drop data-notify="true">notify</a>
+                <script>
+                    $('#simpleNotify').data('datas', {answer: 'success', data: 'simple notify'});
+                </script>
+            </li>
+            <li>
+                <div><h3>Notify ajax</h3> <i>(always load)</i></div>
+                <a href="notify.php" data-drop data-notify="true">notify</a>
+            </li>
+            <li>
+                <div><h3>Simple context inline</h3> <i>(click right button mouse)</i></div>
+                <a href="" data-drop="#inline" data-context="true">context</a>
+            </li>
+            <li>
+                <div><h3>Context ajax</h3> <i>(click right button mouse)</i></div>
+                <a href="context.php" data-drop data-context="true">context ajax</a>
+            </li>
+            <li>
+                <div><h3>Parametr dropFilter</h3> <i>(closest('body').find('#inline'))</i></div>
+                <a href="#" data-drop data-drop-filter="closest(body).find(#inline)">drop filter</a>
+            </li>
+            <li>
+                <div><h3>Alert</h3></div>
+                <a href="#" data-drop data-alert="true">alert</a>
+            </li>
+            <li>
+                <div><h3>Alert with parametr drop</h3> (after click "ok" show drop inline)</div>
+                <a href="#" data-drop="#inline" data-alert="true">drop alert</a>
+            </li>
+            <li>
+                <div><h3>Confirm</h3></div>
+                <a href="#" data-drop data-confirm="true">confirm</a>
+            </li>
+            <li>
+                <div><h3>Confirm with parametr drop</h3> (after click "ok" show drop inline)</div>
+                <a href="#" data-drop="#inline" data-confirm="true">drop confirm</a>
+            </li>
+            <li>
+                <div><h3>Prompt</h3> (after you enter and click "ok" data paste in promptDrop.data('drp').dataPrompt)</div>
+                <a href="#" data-drop data-prompt="true">prompt</a>
+            </li>
+            <li>
+                <div><h3>Prompt with parametr drop</h3> (after you enter and click "ok" data paste in inlineDrop.data('drp').dataPrompt)</div>
+                <a href="#" data-drop="#inline" data-prompt="true">drop prompt</a>
+            </li>
+            <li>
+                <div><h3>Other place (global)</h3></div>
+                <a href="#" data-drop="#inline" data-place="global">global position</a>
+            </li>
+            <li>
+                <div><h3>Other place</h3> (inherit with parametr overlay: false)</div>
+                <a href="#" data-drop="#inline2" data-place="inherit" data-overlay="false">inherit position</a>
+                <div id="inline2" class="drop">
+                    <div><h3>Simple inline inherit</h3></div>
+                    <p>inline</p>
+                </div>
+            </li>
+            <li>
+                <div><h3>Other place</h3> (inherit with parametr closeActiveClick)</div>
+                <a href="#" data-drop="#inline2" data-place="inherit" data-overlay="false" data-close-active-click="true">inherit position</a>
+            </li>
+            <li>
+                <div><h3>Other place</h3> (inherit with parametr placeInherit and href)</div>
+                <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit">inherit position</a>
+                <div class="placeInherit"><i>PlaceInherit</i></div>
+            </li>
+            <li>
+                <div><h3>Other place</h3> (inherit with parametr placeInherit and methoPlaceInherit "append")</div>
+                <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit" data-method-place-inherit="append">inherit position</a>
+            </li>
+            <li>
+                <div><h3>Different content</h3> (header, content, footer)</div>
+                <a href="#" data-drop data-content-header="header" data-content-content="content" data-content-footer="footer">content</a>
+            </li>
+            <li>
+                <div><h3>Dropable</h3></div>
+                <a href="#" data-drop="#inline" data-droppable="true">droppable</a>
+            </li>
+        </ol>
         <br/>
         <br/>
         <br/>
@@ -113,11 +200,10 @@
         <a href="6.jpg" rel="group" data-hash="#c" data-always="true">
             <img src="5.jpg" width="50"/>
         </a>
-        <div class="placeInherit" style="width: 500px;height: 500px;position: relative;"></div>
         <script>
             $.drop.setUrlMethods('../source/methods');
             $.drop.require('droppable', 'global', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert');
-//            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
+            //            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
             //$('[href]').data('theme', 'green')
             $(document).ready(function() {
                 $(window).on('successJson.drop', function(e) {
@@ -144,7 +230,7 @@
 
 
         <div id="inline" class="drop">
-            <h3>Simple inline</h3>
+            <div><h3>Simple inline</h3></div>
             <p>inline</p>
         </div>
     </body>

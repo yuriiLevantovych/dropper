@@ -203,12 +203,16 @@
             opt = $.extend({}, DP, $.existsN($this) && $this.data('drp') ? $this.data('drp').genOpt : {}, opt);
             e = e ? e : window.event;
             if (opt.closeActiveClick && $this.hasClass(DP.activeClass)) {
-                methods.close.call($($this.data('drop')), 'element already open');
-                return $this;
+                if ($.exists($this.data('drop'))) {
+                    methods.close.call($($this.data('drop')), 'element already open');
+                    return $this;
+                }
+                else
+                    $this.removeClass(DP.activeClass);
             }
             if (elSet.tempClass && !elSet.dropn)
                 elSet.drop = opt.drop = null;
-            
+
             opt.tempClass = elSet.tempClass = opt.defaultClassBtnDrop + (+new Date());
 
             if (elSet || $.existsN(opt.drop))
@@ -229,7 +233,7 @@
                 else
                     opt.placement = {'left': $this.offset().left, 'top': $this.offset().top};
             }
-            
+
             opt.drop = opt.drop && $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + opt.tempClass;
 
             if (!$.existsN($this) || opt.notify)
@@ -243,7 +247,7 @@
                 if ($this.hasClass('drop-filter'))
                     elSet.dropn = opt.drop;
                 else {
-                    methods._filterSource($this, opt.dropFilter).addClass(opt.tempClass);
+                    methods._filterSource.call($this, opt.dropFilter).addClass(opt.tempClass);
                     elSet.dropn = opt.drop = '.' + opt.tempClass;
                     $this.addClass('drop-filter');
                 }
@@ -264,205 +268,161 @@
                     methods._get.call($this, opt, e, hashChange);
                 else if ($.existsN(drop) || opt.href && D.drops[hrefC])
                     methods._show.call($this, methods._pasteDrop(opt, $.existsN(drop) ? drop.addClass(D.wasCreateClass) : D.drops[hrefC].clone()), e, opt, hashChange);
+                else if (opt.contentHeader || opt.contentContent || opt.contentFooter)
+                    methods._show.call($this, methods._pasteDrop(opt, opt.pattern), e, opt, hashChange);
                 else
                     throw 'insufficient data';
             };
-            var _show = function() {
-                if ($this.is(':disabled') || opt.drop && opt.start && !eval(opt.start).call($this, opt, drop, e))
-                    return $this;
-                if (opt.prompt || opt.confirm || opt.alert)
-                    methods._checkMethod(function() {
-                        methods.confirmPromptAlert(opt, hashChange, _confirmF, e, $this);
-                    });
-                else
-                    _confirmF();
-            };
-            if (!opt.moreOne && $.exists(D.aDS))
-                return methods.close.call($(D.aDS), 'close more one element', _show);
-            return _show();
+
+            if ($this.is(':disabled') || opt.drop && opt.start && !eval(opt.start).call($this, opt, drop, e))
+                return $this;
+            if (opt.prompt || opt.confirm || opt.alert)
+                methods._checkMethod(function() {
+                    methods.confirmPromptAlert(opt, hashChange, _confirmF, e, $this);
+                });
+            else
+                _confirmF();
         },
         _show: function(drop, e, opt, hashChange) {
-            if (!$.existsN(drop))
-                return false;
-            var $this = this,
-                    elSet = $this.data();
-            e = e ? e : window.event;
-            //callbacks for element, options and global DP
-            opt.elBefore = elSet.elBefore;
-            opt.elAfter = elSet.elAfter;
-            opt.elClose = elSet.elClose;
-            opt.elClosed = elSet.elClosed;
-            //
-            opt.beforeG = DP.beforeG;
-            opt.afterG = DP.afterG;
-            opt.closeG = DP.closeG;
-            opt.closedG = DP.closedG;
-            var overlays = $('.drop-overlay').css('z-index', 1103),
-                    dropOver = null;
-            if (opt.overlay) {
-                if (!$.exists('[data-rel="' + opt.drop + '"].drop-overlay'))
-                    $('body').append('<div class="drop-overlay" data-rel="' + opt.drop + '"></div>');
-                (opt.dropOver = dropOver = $('[data-rel="' + opt.drop + '"].drop-overlay')).css({
-                    'height': '',
-                    'background-color': opt.overlayColor,
-                    'opacity': opt.overlayOpacity,
-                    'z-index': overlays.length + 1103
-                });
-            }
-
-            $('.drop-for-center').css('z-index', 1104);
-            var forCenter = null;
-            if (opt.place === 'center')
-                (forCenter = opt.forCenter = $('[data-rel="' + opt.drop + '"].drop-for-center')).css('z-index', overlays.length + 1104);
-            drop.data('drp', opt).attr('data-rel', opt.rel).css('z-index', overlays.length + 1104).attr('data-elrun', opt.drop).addClass(D.pC + opt.place);
-            if (opt.context)
-                drop.addClass(D.pC + 'context');
-
-            if (opt.rel)
-                methods._checkMethod(function() {
-                    methods.galleries(drop, opt);
-                });
-            methods._setHeightAddons(dropOver, forCenter);
-            methods._pasteContent($this, drop, opt);
-            methods._positionType(drop);
-
-            var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
-            if (opt.hash && !hashChange) {
-                D.scrollTop = wnd.scrollTop();
-                var wLH = window.location.hash;
-                wnd.off('hashchange.' + $.drop.nS);
-                var k = false;
-                if (opt.rel && !opt.moreOne && D.galleryHashs[opt.rel]) {
-                    D.galleryHashs[opt.rel].map(function(n, i) {
-                        if (wLH && wLH.indexOf(n) !== -1)
-                            k = n;
+            if (!opt.moreOne && $.exists(D.aDS))
+                methods.close.call($(D.aDS), 'close more one element', $.proxy(_show, this));
+            else
+                _show.call(this);
+            function _show() {
+                if (!$.existsN(drop))
+                    return false;
+                e = e ? e : window.event;
+                var $this = this,
+                        overlays = $('.drop-overlay').css('z-index', 1103),
+                        dropOver = null;
+                if (opt.overlay) {
+                    if (!$.exists('[data-rel="' + opt.drop + '"].drop-overlay'))
+                        $('body').append('<div class="drop-overlay" data-rel="' + opt.drop + '"></div>');
+                    (opt.dropOver = dropOver = $('[data-rel="' + opt.drop + '"].drop-overlay')).css({
+                        'height': '',
+                        'background-color': opt.overlayColor,
+                        'opacity': opt.overlayOpacity,
+                        'z-index': overlays.length + 1103
                     });
                 }
-                if (k)
-                    window.location.hash = wLH.replace(k, opt.hash);
-                else if (opt.hash.indexOf('#') !== -1 && (new RegExp(opt.hash + '#|' + opt.hash + '$').exec(wLH) === null))
-                    window.location.hash = wLH + opt.hash;
-                setTimeout(methods._setEventHash, 0);
-            }
-            if (opt.confirm) {
-                var focusConfirm = function() {
-                    $(opt.confirmActionBtn).focus();
-                };
-                setTimeout(focusConfirm, 0);
-                drop.click(focusConfirm);
-            }
-            wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function(e) {
-                methods.update.call(drop);
-            });
-            wnd.off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function(e) {
-                if (opt.place === 'center' && opt.centerOnScroll)
+
+                $('.drop-for-center').css('z-index', 1104);
+                var forCenter = null;
+                if (opt.place === 'center')
+                    (forCenter = opt.forCenter = $('[data-rel="' + opt.drop + '"].drop-for-center')).css('z-index', overlays.length + 1104);
+                drop.data('drp', opt).attr('data-rel', opt.rel).css('z-index', overlays.length + 1104).attr('data-elrun', opt.drop).addClass(D.pC + opt.place);
+                if (opt.context)
+                    drop.addClass(D.pC + 'context');
+
+                if (opt.rel)
+                    methods._checkMethod(function() {
+                        methods.galleries(drop, opt);
+                    });
+                methods._setHeightAddons(dropOver, forCenter);
+                methods._pasteContent($this, drop, opt);
+                methods._positionType(drop);
+
+                var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
+                if (opt.hash && !hashChange) {
+                    D.scrollTop = wnd.scrollTop();
+                    var wLH = window.location.hash;
+                    wnd.off('hashchange.' + $.drop.nS);
+                    var k = false;
+                    if (opt.rel && !opt.moreOne && D.galleryHashs[opt.rel]) {
+                        D.galleryHashs[opt.rel].map(function(n, i) {
+                            if (wLH && wLH.indexOf(n) !== -1)
+                                k = n;
+                        });
+                    }
+                    if (k)
+                        window.location.hash = wLH.replace(k, opt.hash);
+                    else if (opt.hash.indexOf('#') !== -1 && (new RegExp(opt.hash + '#|' + opt.hash + '$').exec(wLH) === null))
+                        window.location.hash = wLH + opt.hash;
+                    setTimeout(methods._setEventHash, 0);
+                }
+                if (opt.confirm) {
+                    var focusConfirm = function() {
+                        $(opt.confirmActionBtn).focus();
+                    };
+                    setTimeout(focusConfirm, 0);
+                    drop.click(focusConfirm);
+                }
+                wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function(e) {
+                    methods.update.call(drop);
+                });
+                wnd.off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function(e) {
+                    if (opt.place === 'center' && opt.centerOnScroll)
+                        methods._checkMethod(function() {
+                            methods[opt.place].call(drop);
+                        }, opt.place);
+                });
+                $(dropOver).stop().fadeIn(opt.durationOn / 2);
+                $(forCenter).add(dropOver).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
+                    if (opt.closeClick && $(e.target).is('.drop-overlay') || $(e.target).is('.drop-for-center'))
+                        methods.close.call($($(e.target).attr('data-rel')), e);
+                });
+                if (opt.prompt) {
+                    var input = drop.find(opt.promptInput).val(opt.promptInputValue);
+                    var focusInput = function() {
+                        input.focus();
+                    };
+                    setTimeout(focusInput, 0);
+                    drop.find('form').off('submit.' + $.drop.nS + ev).on('submit.' + $.drop.nS + ev, function(e) {
+                        e.preventDefault();
+                    });
+                    drop.click(focusInput);
+                }
+                opt.exit = $.type(opt.exit) === 'string' ? drop.find(opt.exit) : opt.exit;
+                if (opt.closeClick)
+                    opt.exit.show().off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
+                        e.stopPropagation();
+                        methods.close.call($(this).closest('[data-elrun]'), e);
+                    });
+                else
+                    opt.exit.hide();
+                doc.off('keyup.' + $.drop.nS);
+                if (opt.closeEsc)
+                    doc.on('keyup.' + $.drop.nS, function(e) {
+                        if (e.keyCode === 27)
+                            methods.close.call(null, e);
+                    });
+                $('html, body').css('height', '100%');
+                doc.off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
+                    if (opt.closeClick && !$.existsN($(e.target).closest('[data-elrun]')))
+                        methods.close.call(null, e);
+                });
+                if (opt.context)
+                    var collect = drop.add(dropOver).add(forCenter).on('contextmenu.' + $.drop.nS, function(e) {
+                        e.preventDefault();
+                    });
+                var dropWH = opt.type === 'iframe' ? drop.find('iframe') : drop;
+                if (opt.width)
+                    dropWH.css('width', opt.width);
+                if (opt.height)
+                    dropWH.css('height', opt.height);
+                $('style' + '[data-rel="' + opt.drop + '"]').remove();
+                opt.style = methods._styleCreate(opt);
+                if (opt.limitSize)
+                    methods._checkMethod(function() {
+                        methods.limitSize(drop);
+                    });
+                methods._checkMethod(function() {
+                    methods.placeBeforeShow(drop, $this, opt.place, opt.placeBeforeShow, e);
+                });
+                if (opt.place !== 'inherit')
                     methods._checkMethod(function() {
                         methods[opt.place].call(drop);
                     }, opt.place);
-            });
-            $(dropOver).stop().fadeIn(opt.durationOn / 2);
-            $(forCenter).add(dropOver).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
-                if (opt.closeClick && $(e.target).is('.drop-overlay') || $(e.target).is('.drop-for-center'))
-                    methods.close.call($($(e.target).attr('data-rel')), e);
-            });
-            if (opt.prompt) {
-                var input = drop.find(opt.promptInput).val(opt.promptInputValue);
-                var focusInput = function() {
-                    input.focus();
-                };
-                setTimeout(focusInput, 0);
-                drop.find('form').off('submit.' + $.drop.nS + ev).on('submit.' + $.drop.nS + ev, function(e) {
-                    e.preventDefault();
-                });
-                drop.click(focusInput);
-            }
-            opt.exit = $.type(opt.exit) === 'string' ? drop.find(opt.exit) : opt.exit;
-            if (opt.closeClick)
-                opt.exit.show().off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
-                    e.stopPropagation();
-                    methods.close.call($(this).closest('[data-elrun]'), e);
-                });
-            else
-                opt.exit.hide();
-            doc.off('keyup.' + $.drop.nS);
-            if (opt.closeEsc)
-                doc.on('keyup.' + $.drop.nS, function(e) {
-                    if (e.keyCode === 27)
-                        methods.close.call(null, e);
-                });
-            $('html, body').css('height', '100%');
-            doc.off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
-                if (opt.closeClick && !$.existsN($(e.target).closest('[data-elrun]')))
-                    methods.close.call(null, e);
-            });
-            if (opt.context)
-                var collect = drop.add(dropOver).add(forCenter).on('contextmenu.' + $.drop.nS, function(e) {
-                    e.preventDefault();
-                });
-            var dropWH = opt.type === 'iframe' ? drop.find('iframe') : drop;
-            if (opt.width)
-                dropWH.css('width', opt.width);
-            if (opt.height)
-                dropWH.css('height', opt.height);
-            $('style' + '[data-rel="' + opt.drop + '"]').remove();
-            opt.style = methods._styleCreate(opt);
-            if (opt.limitSize)
-                methods._checkMethod(function() {
-                    methods.limitSize(drop);
-                });
-            methods._checkMethod(function() {
-                methods.placeBeforeShow(drop, $this, opt.place, opt.placeBeforeShow, e);
-            });
-            if (opt.place !== 'inherit')
-                methods._checkMethod(function() {
-                    methods[opt.place].call(drop);
-                }, opt.place);
-            $(forCenter).show();
+                $(forCenter).show();
 
-            if (opt.elBefore)
-                eval(opt.elBefore).call($this, opt, drop, e);
-            if (opt.before)
-                opt.before.call($this, opt, drop, e);
-            if (opt.beforeG)
-                opt.beforeG.call($this, opt, drop, e);
-            drop.add(doc).trigger({
-                type: 'before.' + $.drop.nS,
-                drp: {
-                    event: e,
-                    refer: $this,
-                    drop: drop,
-                    options: opt
-                }
-            });
-            drop[opt.effectOn](opt.durationOn, function(e) {
-                var drop = $(this);
-                if (opt.type === 'iframe')
-                    dropWH.attr('src', opt.href);
-                $('html, body').css({'overflow': '', 'overflow-x': ''});
-                methods._setHeightAddons(dropOver, forCenter);
-                if (opt.context)
-                    collect.off('contextmenu.' + $.drop.nS);
-                var inDrop = opt.type === 'iframe' ? drop.find('iframe').contents().find('[data-drop]') : drop.find('[data-drop]');
-                if ($.existsN(inDrop))
-                    methods.init.call(inDrop);
-                drop.add($this).addClass(DP.activeClass);
-                if (opt.notify && !isNaN(opt.timeclosenotify))
-                    setTimeout(function() {
-                        methods.close.call(drop, 'close notify setTimeout');
-                    }, opt.timeclosenotify);
-                if (opt.droppable && opt.place !== 'inherit')
-                    methods._checkMethod(function() {
-                        methods.droppable(drop);
-                    });
-                var cB = opt.elAfter;
-                if (cB)
-                    eval(cB).call($this, opt, drop, e);
-                if (opt.after)
-                    opt.after.call($this, opt, drop, e);
-                if (opt.afterG)
-                    opt.afterG.call($this, opt, drop, e);
+                if (opt.elBefore)
+                    eval(opt.elBefore).call($this, opt, drop, e);
+                if (opt.before)
+                    opt.before.call($this, opt, drop, e);
+                if (opt.beforeG)
+                    opt.beforeG.call($this, opt, drop, e);
                 drop.add(doc).trigger({
-                    type: 'after.' + $.drop.nS,
+                    type: 'before.' + $.drop.nS,
                     drp: {
                         event: e,
                         refer: $this,
@@ -470,15 +430,53 @@
                         options: opt
                     }
                 });
-            });
+                drop[opt.effectOn](opt.durationOn, function(e) {
+                    var drop = $(this);
+                    if (opt.type === 'iframe')
+                        dropWH.attr('src', opt.href);
+                    $('html, body').css({'overflow': '', 'overflow-x': ''});
+                    methods._setHeightAddons(dropOver, forCenter);
+                    if (opt.context)
+                        collect.off('contextmenu.' + $.drop.nS);
+                    var inDrop = opt.type === 'iframe' ? drop.find('iframe').contents().find('[data-drop]') : drop.find('[data-drop]');
+                    if ($.existsN(inDrop))
+                        methods.init.call(inDrop);
+                    drop.add($this).addClass(DP.activeClass);
+                    if (opt.notify && !isNaN(opt.timeclosenotify))
+                        setTimeout(function() {
+                            methods.close.call(drop, 'close notify setTimeout');
+                        }, opt.timeclosenotify);
+                    if (opt.droppable && opt.place !== 'inherit')
+                        methods._checkMethod(function() {
+                            methods.droppable(drop);
+                        });
+                    var cB = opt.elAfter;
+                    if (cB)
+                        eval(cB).call($this, opt, drop, e);
+                    if (opt.after)
+                        opt.after.call($this, opt, drop, e);
+                    if (opt.afterG)
+                        opt.afterG.call($this, opt, drop, e);
+                    drop.add(doc).trigger({
+                        type: 'after.' + $.drop.nS,
+                        drp: {
+                            event: e,
+                            refer: $this,
+                            drop: drop,
+                            options: opt
+                        }
+                    });
+                });
+            }
             return this;
         },
         close: function(e, f, hashChange) {
             var sel = this,
                     drop = $.existsN(sel) ? sel : $('[data-elrun].' + DP.activeClass);
-            drop.each(function() {
+            var closeLength = drop.length;
+            drop.each(function(i) {
                 var drop = $(this),
-                        opt = drop.data('drp');
+                        opt = $.extend({}, drop.data('drp'));
 
                 if (!opt)
                     return false;
@@ -502,12 +500,12 @@
                     methods._checkMethod(function() {
                         methods.placeAfterClose(drop, opt.elrun, opt);
                     });
+                    $(opt.dropOver).fadeOut(opt.durationOff);
                     drop[opt.effectOff](opt.durationOff, function() {
                         opt.style.remove();
                         $('html, body').css({'overflow': '', 'overflow-x': ''});
                         var $this = $(this);
                         $(opt.forCenter).hide();
-                        $(opt.dropOver).fadeOut(opt.durationOff);
                         methods._resetStyleDrop.call($(this));
                         $this.removeClass(D.pC + opt.place).removeClass(D.pC + opt.type).removeClass(D.pC + 'context');
                         if (opt.closed)
@@ -529,7 +527,7 @@
                         if (dC)
                             dC.destroy();
                         if (!$.exists(D.aDS))
-                            $('body, html').css('height', '');
+                            $('html, body').css('height', '');
                         if ($this.hasClass(D.tempClass)) {
                             if (opt.tempClass) {
                                 $this.removeClass(opt.tempClass);
@@ -544,7 +542,8 @@
                                 $this.appendTo($('body'));
                             $(opt.dropOver).add($(opt.forCenter)).remove();
                         }
-                        if ($.isFunction(f))
+                        $this.data('drp', null);
+                        if (i === closeLength - 1 && $.isFunction(f))
                             f();
                     });
                 };
@@ -576,6 +575,8 @@
         update: function() {
             var drop = this,
                     drp = drop.data('drp');
+            if (!drp)
+                return false;
             if (drp.limitSize)
                 methods._checkMethod(function() {
                     methods.limitSize(drop);
@@ -595,8 +596,10 @@
                             dropV = drop.is(':visible'),
                             w = dropV ? drop.outerWidth() : drop.actual('outerWidth'),
                             h = dropV ? drop.outerHeight() : drop.actual('outerHeight'),
-                            top = Math.floor((wnd.height() - h) / 2) + wnd.scrollTop(),
-                            left = Math.floor((wnd.width() - w) / 2) + wnd.scrollLeft();
+                            wndT = wnd.scrollTop(),
+                            wndL = wnd.scrollLeft(),
+                            top = Math.floor((wnd.height() - h) / 2) + wndT,
+                            left = Math.floor((wnd.width() - w) / 2) + wndL;
                     drop[method]({
                         'top': top > 0 ? top : 0,
                         'left': left > 0 ? left : 0
@@ -648,7 +651,7 @@
                 drop = $.existsN(drop.filter(opt.drop)) ? drop.filter(opt.drop) : ($.existsN(drop.find(opt.drop)) ? drop.find(opt.drop) : drop);
 
             if (opt.place === 'inherit' && opt.placeInherit)
-                drop.appendTo($(opt.placeInherit).empty());
+                $(opt.placeInherit)[opt.methodPlaceInherit](drop)
             else if (opt.place === 'global')
                 drop.appendTo($('body'));
             else if (opt.place === 'center')
@@ -704,10 +707,11 @@
                 });
             return this;
         },
-        _filterSource: function(btn, s) {
-            var href = s.split(').'),
+        _filterSource: function(s) {
+            var btn = this,
+                    href = s.split(').'),
                     regS, regM = '';
-            $.each(href, function(i, v) {
+            $.map(href, function(v) {
                 regS = (v[v.length - 1] !== ')' ? v + ')' : v).match(/\(.*\)/);
                 regM = regS['input'].replace(regS[0], '');
                 regS = regS[0].substring(1, regS[0].length - 1);
@@ -800,7 +804,7 @@
         href: null,
         hash: null,
         dataPrompt: null,
-        dropContent: '.drop-content',
+        dropContent: '.drop-content .placePaste',
         dropHeader: '.drop-header',
         dropFooter: '.drop-footer',
         placePaste: '.placePaste',
@@ -808,6 +812,7 @@
         contentFooter: null,
         contentContent: null,
         placeInherit: null,
+        methodPlaceInherit: 'html',
         dropFilter: null,
         message: {
             success: function(text) {
@@ -894,7 +899,7 @@
         closeEsc: true,
         closeActiveClick: false,
         cycle: true,
-        limitSize: false,
+        limitSize: true,
         droppable: false,
         droppableLimit: true,
         inheritClose: false,
@@ -906,7 +911,8 @@
         theme: 'default',
         type: 'auto',
         width: null,
-        height: null
+        height: null,
+        rel: null
     };
     $.drop.drp = {
         handleMessageWindow: function(e) {

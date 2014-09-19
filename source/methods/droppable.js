@@ -4,11 +4,8 @@ $.drop.methods.droppable = function(drop) {
             doc = $(document);
     return (drop || this).each(function() {
         var drop = $(this);
-        drop.off('close.' + $.drop.nS).on('close.' + $.drop.nS, function() {
-            var drop = $(this),
-                    drp = drop.data('drp');
-            if (drp.droppableIn)
-                drp.positionDroppableIn = {'left': drop.css('left'), 'top': drop.css('top')};
+        drop.on('close.' + $.drop.nS, function() {
+            $(this).off('mousedown.' + $.drop.nS);
         });
         drop.find('img').off('dragstart.' + $.drop.nS).on('dragstart.' + $.drop.nS, function(e) {
             e.preventDefault();
@@ -43,8 +40,10 @@ $.drop.methods.droppable = function(drop) {
                 if (drp.droppableLimit) {
                     l = l < 0 ? 0 : l;
                     t = t < 0 ? 0 : t;
-                    l = l + w < wndW ? l : wndW - w;
-                    t = t + h < wndH ? t : wndH - h;
+                    l = l + w < wndW + wnd.scrollLeft() ? l : wndW - w;
+                    t = t + h < wndH + wnd.scrollTop() ? t : wndH - h + wnd.scrollTop();
+                    l = l < wnd.scrollLeft() ? wnd.scrollLeft() : l;
+                    t = t < wnd.scrollTop() ? wnd.scrollTop() : t;
                 }
                 drop.css({
                     'left': l,
