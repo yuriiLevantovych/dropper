@@ -22,17 +22,11 @@ $.drop.methods.global = function(start) {
         if (!drop.is(':visible'))
             drop.css({top: 'auto', bottom: 'auto', left: 'auto', right: 'auto'});
 
-        if ($.type(drp.placement) === 'object') {
-            if (drp.placement.left + dropW > wnd.width())
-                drp.placement.left -= dropW;
-            if (drp.placement.top + dropH > wnd.height()) {
-                drp.placement.top -= dropH;
-            }
+        if ($.type(drp.placement) === 'object')
             drop[method](drp.placement, {
                 duration: drp.durationOn,
                 queue: false
             });
-        }
         else {
             var pmt = drp.placement.toLowerCase().split(' ');
             if (pmt[1] === 'top')

@@ -38,7 +38,7 @@ $.drop.methods._heightContent = function(drop) {
                             placement = drp.placement;
                     if ($.type(placement) === 'object') {
                         if (placement.top !== undefined)
-                            mayHeight = wnd.height() - placement.top - footerHeader - (dropH - dropHm);
+                            mayHeight = wnd.height() - placement.top + wnd.scrollTop() - footerHeader - (dropH - dropHm);
                         if (placement.bottom !== undefined)
                             mayHeight = placement.bottom - footerHeader - (dropH - dropHm);
                     }

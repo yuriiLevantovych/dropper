@@ -105,7 +105,7 @@
                 el.off('contextmenu.' + $.drop.nS).off('mouseup.' + $.drop.nS).off('click.' + $.drop.nS);
             });
         },
-        _get: function(opt, e, hashChange, cLS) {
+        _get: function(opt, e, hashChange) {
             var hrefC = opt.href.replace(D.reg, '');
             if (D.curAjax[hrefC]) {
                 D.curAjax[hrefC].abort();
@@ -113,11 +113,11 @@
             }
             var el = this,
                     elSet = el.data();
-            var _update = function(data, cLS) {
+            var _update = function(data) {
                 if (opt.dropn)
-                    var drop = methods._pasteDrop(opt, data, cLS);
+                    var drop = methods._pasteDrop(opt, data);
                 else
-                    drop = methods._pasteDrop(opt, opt.pattern, cLS);
+                    drop = methods._pasteDrop(opt, opt.pattern);
                 if (!opt.dropn)
                     drop.find($(opt.placePaste)).html(data);
                 drop.addClass(D.pC + opt.type);
@@ -142,7 +142,7 @@
                 img.onload = function() {
                     $.drop.hideLoading();
                     this.onload = this.onerror = null;
-                    _update($(this), cLS)
+                    _update($(this));
                 };
                 img.onerror = function() {
                     this.onload = this.onerror = null;
@@ -159,9 +159,9 @@
                     success: function(data) {
                         $.drop.hideLoading();
                         if (opt.notify)
-                            methods._pasteNotify.call(el, data, opt, hashChange, e, cLS);
+                            methods._pasteNotify.call(el, data, opt, hashChange, e);
                         else
-                            _update(data, cLS);
+                            _update(data);
                     },
                     error: function() {
                         $.drop.hideLoading();
@@ -176,7 +176,7 @@
                 iframe.one('load.' + $.drop.nS, function() {
                     $.drop.hideLoading();
                 });
-                _update(iframe, cLS);
+                _update(iframe);
             };
             if (opt.type === 'auto') {
                 if (opt.href.match(D.regImg))
@@ -206,15 +206,18 @@
                 methods.close.call($($this.data('drop')), 'element already open');
                 return $this;
             }
+            if (elSet.tempClass && !elSet.dropn)
+                elSet.drop = opt.drop = null;
+            opt.tempClass = elSet.tempClass = opt.defaultClassBtnDrop + (+new Date());
 
-            var cLS = opt.defaultClassBtnDrop + (+new Date());
-
-            if (elSet || $.existsN(opt.drop))
+            if ($.existsN(opt.drop))
                 elSet.dropn = opt.drop;
+
             $.extend(opt, elSet);
-            opt.href = opt.href || $this.attr('href');
-            opt.href = opt.href.length === 1 && opt.href === '#' ? null : opt.href;
-            if (opt.href && opt.notify || opt.always) {
+
+            var href = opt.href || $this.attr('href');
+            opt.href = href.length === 1 && href === '#' ? null : href;
+            if (opt.href && (opt.notify || opt.always)) {
                 $('[data-rel="' + opt.drop + '"]').add($(opt.drop)).remove();
                 opt.drop = elSet.dropn ? elSet.dropn : null;
             }
@@ -225,7 +228,9 @@
                 else
                     opt.placement = {'left': $this.offset().left, 'top': $this.offset().top};
             }
-            opt.drop = opt.drop && $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + cLS;
+
+            opt.drop = opt.drop && $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + opt.tempClass;
+
             if (!$.existsN($this) || opt.notify)
                 $this = methods._referCreate(opt.drop);
             opt.elrun = $this;
@@ -237,8 +242,8 @@
                 if ($this.hasClass('drop-filter'))
                     elSet.dropn = opt.drop;
                 else {
-                    methods._filterSource($this, opt.dropFilter).addClass(cLS);
-                    elSet.dropn = opt.drop = '.' + cLS;
+                    methods._filterSource($this, opt.dropFilter).addClass(opt.tempClass);
+                    elSet.dropn = opt.drop = '.' + opt.tempClass;
                     $this.addClass('drop-filter');
                 }
             }
@@ -246,18 +251,18 @@
             var drop = $(elSet.dropn);
             var _confirmF = function() {
                 if (opt.notify && opt.datas)
-                    methods._pasteNotify.call($this, opt.datas, opt, hashChange, e, cLS);
+                    methods._pasteNotify.call($this, opt.datas, opt, hashChange, e);
                 else if (opt.dropFilter)
                     methods._show.call($this, drop, e, opt, hashChange);
                 else if (opt.html) {
-                    drop = methods._pasteDrop(opt, opt.pattern, cLS);
+                    drop = methods._pasteDrop(opt, opt.pattern);
                     drop.find($(opt.placePaste)).html(opt.html);
                     methods._show.call($this, drop, e, opt, hashChange);
                 }
                 else if (opt.href && (!D.drops[hrefC] || opt.always || opt.notify))
-                    methods._get.call($this, opt, e, hashChange, cLS);
+                    methods._get.call($this, opt, e, hashChange);
                 else if ($.existsN(drop) || opt.href && D.drops[hrefC])
-                    methods._show.call($this, methods._pasteDrop(opt, $.existsN(drop) ? drop.addClass(D.wasCreateClass) : D.drops[hrefC].clone(), cLS), e, opt, hashChange);
+                    methods._show.call($this, methods._pasteDrop(opt, $.existsN(drop) ? drop.addClass(D.wasCreateClass) : D.drops[hrefC].clone()), e, opt, hashChange);
                 else
                     throw 'insufficient data';
             };
@@ -589,8 +594,8 @@
                             dropV = drop.is(':visible'),
                             w = dropV ? drop.outerWidth() : drop.actual('outerWidth'),
                             h = dropV ? drop.outerHeight() : drop.actual('outerHeight'),
-                            top = Math.floor((wnd.height() - h) / 2) + (drp.centerOnScroll ? wnd.scrollTop() : 0),
-                            left = Math.floor((wnd.width() - w) / 2) + (drp.centerOnScroll ? wnd.scrollLeft() : 0);
+                            top = Math.floor((wnd.height() - h) / 2) + wnd.scrollTop(),
+                            left = Math.floor((wnd.width() - w) / 2) + wnd.scrollLeft();
                     drop[method]({
                         'top': top > 0 ? top : 0,
                         'left': left > 0 ? left : 0
@@ -616,11 +621,11 @@
                 'position': ''
             });
         },
-        _pasteNotify: function(datas, opt, hashChange, e, cLS) {
+        _pasteNotify: function(datas, opt, hashChange, e) {
             if (!$.isFunction(opt.handleNotify))
                 return false;
             var el = this,
-                    drop = methods._pasteDrop(opt, opt.patternNotify, cLS);
+                    drop = methods._pasteDrop(opt, opt.patternNotify);
 
             el.off('successJson.' + $.drop.nS).on('successJson.' + $.drop.nS, function(e) {
                 e.stopPropagation();
@@ -636,7 +641,7 @@
             });
             return methods._show.call(el, drop, e, opt, hashChange);
         },
-        _pasteDrop: function(opt, drop, aClass) {
+        _pasteDrop: function(opt, drop) {
             drop = $(drop);
             if (opt.dropn)
                 drop = $.existsN(drop.filter(opt.drop)) ? drop.filter(opt.drop) : ($.existsN(drop.find(opt.drop)) ? drop.find(opt.drop) : drop);
@@ -648,11 +653,9 @@
             else if (opt.place === 'center')
                 drop.appendTo($('<div class="drop-for-center" data-rel="' + opt.drop + '"></div>').appendTo($('body')));
 
-            drop.addClass(aClass).attr('data-elrun', opt.drop);
-            if (aClass) {
-                opt.tempClass = aClass;
+            drop.addClass(opt.tempClass).attr('data-elrun', opt.drop);
+            if (opt.tempClass)
                 drop.addClass(D.tempClass);
-            }
 
             return drop;
         },
@@ -931,7 +934,8 @@
                     .drop-icon-next{text-align: center;}\n\
                     .icon-times-drop{position: absolute;z-index:1;right:0;top: 0;cursor: pointer;width: 15px;height: 15px;}\n\
                     .nav{list-style: none;}\n\
-                    .nav-vertical > li{display: block;border-top: 1px solid #aaa;padding: 5px 10px;}\n\
+                    .nav-vertical > li{display: block;border-top: 1px solid #ebebeb;padding: 8px 35px 8px 15px;}\n\
+                    .nav-vertical > li > a{text-decoration: none;}\n\
                     .nav-vertical > li:first-child{border-top: 0;}\n\
                     [[.drop-context .drop-content .inside-padd]]{padding: 0;}\n\
                     [drop][style*="width"] img{max-width: 100%;max-height: 100%;}\n\
