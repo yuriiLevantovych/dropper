@@ -811,13 +811,16 @@
         dropFilter: null,
         message: {
             success: function(text) {
-                return '<div class= "drop-msg"><div class="drop-success"><span class="drop-icon_info"></span><div class="drop-text-el">' + text + '</div></div></div>';
+                return '<div class= "drop-msg"><div class="drop-success"><span class="drop-icon-notify"></span><div class="drop-text-el">' + text + '</div></div></div>';
+            },
+            warning: function(text) {
+                return '<div class= "drop-msg"><div class="drop-warning"><span class="drop-icon-notify"></span><div class="drop-text-el">' + text + '</div></div></div>';
             },
             error: function(text) {
-                return '<div class="drop-msg"><div class="drop-error"><span class="drop-icon_info"></span><div class="drop-text-el">' + text + '</div></div></div>';
+                return '<div class="drop-msg"><div class="drop-error"><span class="drop-icon-notify"></span><div class="drop-text-el">' + text + '</div></div></div>';
             },
             info: function(text) {
-                return '<div class="drop-msg"><div class="drop-info"><span class="drop-icon_info"></span><div class="drop-text-el">' + text + '</div></div></div>';
+                return '<div class="drop-msg"><div class="drop-info"><span class="drop-icon-notify"></span><div class="drop-text-el">' + text + '</div></div></div>';
             }
         },
         trigger: 'click',
@@ -938,6 +941,11 @@
                     .nav-vertical > li{display: block;border-top: 1px solid #ebebeb;padding: 8px 35px 8px 15px;}\n\
                     .nav-vertical > li > a{text-decoration: none;}\n\
                     .nav-vertical > li:first-child{border-top: 0;}\n\
+                    .drop-msg > div{border-width: 1px;border-style: solid;padding: 10px;}\n\
+                    .drop-success{background-color: #dff0d8;border-color: #d6e9c6;color: #3c763d;}\n\
+                    .drop-warning{background-color: #fcf8e3;border-color: #faebcc;color: #8a6d3b;}\n\
+                    .drop-error{background-color: #f2dede;border-color: #ebccd1;color: #a94442;}\n\
+                    .drop-info{background-color: #d9edf7;border-color: #bce8f1;color: #31708f;}\n\
                     [[.drop-context .drop-content .inside-padd]]{padding: 0;}\n\
                     [drop][style*="width"] img{max-width: 100%;max-height: 100%;}\n\
                     [drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}'
