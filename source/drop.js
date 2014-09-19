@@ -208,9 +208,10 @@
             }
             if (elSet.tempClass && !elSet.dropn)
                 elSet.drop = opt.drop = null;
+            
             opt.tempClass = elSet.tempClass = opt.defaultClassBtnDrop + (+new Date());
 
-            if ($.existsN(opt.drop))
+            if (elSet || $.existsN(opt.drop))
                 elSet.dropn = opt.drop;
 
             $.extend(opt, elSet);
@@ -228,7 +229,7 @@
                 else
                     opt.placement = {'left': $this.offset().left, 'top': $this.offset().top};
             }
-
+            
             opt.drop = opt.drop && $.type(opt.drop) === 'string' && !opt.notify ? opt.drop : '.' + opt.tempClass;
 
             if (!$.existsN($this) || opt.notify)
