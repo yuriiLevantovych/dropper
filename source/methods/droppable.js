@@ -10,6 +10,7 @@ $.drop.methods.droppable = function(drop) {
         drop.find('img').off('dragstart.' + $.drop.nS).on('dragstart.' + $.drop.nS, function(e) {
             e.preventDefault();
         });
+        wnd.off('scroll.droppable' + $.drop.nS);
         drop.off('mousedown.' + $.drop.nS).on('mousedown.' + $.drop.nS, function(e) {
             var drop = $(this),
                     drp = drop.data('drp');
@@ -25,6 +26,17 @@ $.drop.methods.droppable = function(drop) {
             doc.on('mouseup.' + $.drop.nS, function(e) {
                 drop.css('cursor', '');
                 doc.off('selectstart.' + $.drop.nS + ' mousemove.' + $.drop.nS + ' mouseup.' + $.drop.nS);
+                if (drp.droppableFixed) {
+                    $.drop.drp.scrollTopD = wnd.scrollTop();
+                    drp.top = parseInt(drop.css('top'));
+                    wnd.on('scroll.droppable' + $.drop.nS, function(e) {
+                        var n = wnd.scrollTop(),
+                                top = drp.top - $.drop.drp.scrollTopD + n;
+                        drop.css('top', top);
+                        drp.top = top;
+                        $.drop.drp.scrollTopD = n;
+                    });
+                }
             });
             var left = e.pageX - drop.offset().left,
                     top = e.pageY - drop.offset().top;

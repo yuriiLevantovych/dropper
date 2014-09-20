@@ -268,7 +268,7 @@
                     methods._get.call($this, opt, e, hashChange);
                 else if ($.existsN(drop) || opt.href && D.drops[hrefC])
                     methods._show.call($this, methods._pasteDrop(opt, $.existsN(drop) ? drop.addClass(D.wasCreateClass) : D.drops[hrefC].clone()), e, opt, hashChange);
-                else if (opt.contentHeader || opt.contentContent || opt.contentFooter)
+                else if (opt.header || opt.content || opt.footer)
                     methods._show.call($this, methods._pasteDrop(opt, opt.pattern), e, opt, hashChange);
                 else
                     throw 'insufficient data';
@@ -373,13 +373,15 @@
                     drop.click(focusInput);
                 }
                 opt.exit = $.type(opt.exit) === 'string' ? drop.find(opt.exit) : opt.exit;
-                if (opt.closeClick)
-                    opt.exit.show().off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
-                        e.stopPropagation();
-                        methods.close.call($(this).closest('[data-elrun]'), e);
-                    });
-                else
-                    opt.exit.hide();
+                if ($.existsN(opt.exit)) {
+                    if (opt.closeClick)
+                        opt.exit.show().off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
+                            e.stopPropagation();
+                            methods.close.call($(this).closest('[data-elrun]'), e);
+                        });
+                    else
+                        opt.exit.hide();
+                }
                 doc.off('keyup.' + $.drop.nS);
                 if (opt.closeEsc)
                     doc.on('keyup.' + $.drop.nS, function(e) {
@@ -591,18 +593,24 @@
             return this.each(function() {
                 var drop = $(this),
                         drp = drop.data('drp');
-                if (drp && !drp.droppableIn) {
+                if (!drp)
+                    return false;
+                if (!drp.droppableIn) {
                     var method = drp.animate && !start ? 'animate' : 'css',
                             dropV = drop.is(':visible'),
                             w = dropV ? drop.outerWidth() : drop.actual('outerWidth'),
                             h = dropV ? drop.outerHeight() : drop.actual('outerHeight'),
                             wndT = wnd.scrollTop(),
                             wndL = wnd.scrollLeft(),
-                            top = Math.floor((wnd.height() - h) / 2) + wndT,
-                            left = Math.floor((wnd.width() - w) / 2) + wndL;
+                            top = Math.floor((wnd.height() - h) / 2),
+                            left = Math.floor((wnd.width() - w) / 2);
+                    top = top > 0 ? top + wndT : wndT;
+                    left = left > 0 ? left + wndL : wndL;
+                    if (top + h > doc.height() || left + w > doc.width())
+                        return false;
                     drop[method]({
-                        'top': top > 0 ? top : 0,
-                        'left': left > 0 ? left : 0
+                        'top': top,
+                        'left': left
                     }, {
                         duration: drp.durationOn,
                         queue: false
@@ -651,7 +659,7 @@
                 drop = $.existsN(drop.filter(opt.drop)) ? drop.filter(opt.drop) : ($.existsN(drop.find(opt.drop)) ? drop.find(opt.drop) : drop);
 
             if (opt.place === 'inherit' && opt.placeInherit)
-                $(opt.placeInherit)[opt.methodPlaceInherit](drop)
+                $(opt.placeInherit)[opt.methodPlaceInherit](drop);
             else if (opt.place === 'global')
                 drop.appendTo($('body'));
             else if (opt.place === 'center')
@@ -683,9 +691,9 @@
                     place.append(content);
                 _checkCont(place);
             };
-            _pasteContent(opt.contentHeader, opt.dropHeader);
-            _pasteContent(opt.contentContent, opt.dropContent);
-            _pasteContent(opt.contentFooter, opt.dropFooter);
+            _pasteContent(opt.header, opt.dropHeader);
+            _pasteContent(opt.content, opt.dropContent);
+            _pasteContent(opt.footer, opt.dropFooter);
             return this;
         },
         _setHeightAddons: function(dropOver, forCenter) {
@@ -804,13 +812,13 @@
         href: null,
         hash: null,
         dataPrompt: null,
-        dropContent: '.drop-content .placePaste',
+        dropContent: '.drop-content',
         dropHeader: '.drop-header',
         dropFooter: '.drop-footer',
         placePaste: '.placePaste',
-        contentHeader: null,
-        contentFooter: null,
-        contentContent: null,
+        header: null,
+        footer: null,
+        content: null,
         placeInherit: null,
         methodPlaceInherit: 'html',
         dropFilter: null,
@@ -899,9 +907,10 @@
         closeEsc: true,
         closeActiveClick: false,
         cycle: true,
-        limitSize: true,
+        limitSize: false,
         droppable: false,
-        droppableLimit: true,
+        droppableLimit: false,
+        droppableFixed: false,
         inheritClose: false,
         keyNavigate: true,
         context: false,
@@ -920,24 +929,24 @@
                 $.drop(e.originalEvent.data);
         },
         theme: {
-            default: '.drop-header{background-color: #f8f8f8;padding: 0 55px 0 15px;font-size: 14px;}\n\
+            default: '.drop-header{background-color: #f8f8f8;padding: 0 55px 0 12px;font-size: 14px;}\n\
                     input, textarea{margin-bottom: 6px;}\n\
                     input, textarea, .drop-content button{outline: none;font-family: Arial, Helvetica CY, Nimbus Sans L, sans-serif;line-height: 1.5;border: 1px solid #d8d8d8;padding: 4px 6px;}\n\
                     button{background-color: #fafafa;box-shadow: inset 0 1px #fefefe;color: #666;cursor: pointer;}\n\
-                    .drop-header.drop-no-empty, .drop-footer.drop-no-empty{padding-top: 6px;padding-bottom: 6px;}\n\
+                    .drop-header.drop-no-empty, .drop-footer.drop-no-empty{padding-top: 6px;padding-bottom: 7px;}\n\
                     .drop-header.drop-no-empty{border-bottom: 1px solid #d8d8d8;}\n\
                     .drop-footer.drop-no-empty{border-top: 1px solid #d8d8d8;}\n\
-                    .drop-content .inside-padd{padding: 12px 28px 12px 10px;}\n\
+                    .drop-content .inside-padd{padding: 12px 28px 12px 12px;}\n\
                     [[.drop-image .drop-content .inside-padd]], [[.drop-alert .drop-content .inside-padd]]{padding: 10px;}\n\
                     [[.drop-alert .drop-group-btns]]{text-align: center;}\n\
                     .drop-content button{margin-right: 4px;}{\n\
                     button:focus, input:focus, textarea:focus{outline: #b3b3b3 solid 1px;}\n\
-                    .drop-footer{background-color: #d5d5d5;padding: 0 10px;}\n\
+                    .drop-footer{background-color: #d5d5d5;padding: 0 12px;}\n\
                     .drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;}\n\
                     .drop-prev,.drop-next{width: 35%;height: 100%;top: 0;}\n\
                     .drop-icon-prev, .drop-icon-next{width: 20px;height: 80px;line-height: 80px;}\n\
                     .drop-icon-prev, .drop-icon-next, .drop-icon-close{font-family: "Trebuchet MS", "Helvetica CY", sans-serif;font-size: 21px;color: #999;background-color: #fff;display: inline-block;text-align: center;//display: inline;zoom: 1;}\n\
-                    .drop-icon-close{line-height: 20px;width: 20px;height: 20px;}\n\
+                    .drop-icon-close{line-height: 17px;width: 19px;height: 19px;}\n\
                     .drop-close{right: 5px;top: 4px;z-index: 1;}\n\
                     .drop-next{right: 5px;text-align: right;}\n\
                     .drop-prev{left: 5px;text-align: left;}\n\
@@ -971,7 +980,6 @@
         wasCreateClass: 'drop-was-create',
         wLH: null,
         wLHN: null,
-        curDrop: null,
         scrollTop: null,
         emptyClass: 'drop-empty',
         noEmptyClass: 'drop-no-empty',

@@ -34,20 +34,32 @@
             <li>
                 <div><h3>Simple Iframe</h3></div>
                 <a href="iframe.html" data-drop data-type="iframe">iframe</a>
+            </li>
+            <li>
                 <div><h3>Iframe with width and height</h3></div>
-            </li>
-            <li>
                 <a href="iframe.html" data-drop data-type="iframe" data-width="500" data-height="500">iframe</a>
+            </li>
+            <li>
                 <div><h3>Iframe from other domain</h3> <i>(window.parent.postMessage)</i></div>
-            </li>
-            <li>
                 <a href="http://levantovych.pro100host.com/iframe.html" data-type="iframe" data-drop data-width="500" data-height="500">iframe</a>
-                <div><h3>Simple notify inline</h3></div>
             </li>
             <li>
-                <a id="simpleNotify" href="" data-drop data-notify="true">notify</a>
+                <div><h3>Simple notify inline</h3></div>
+                <a id="simpleNotify1" href="" data-drop data-notify="true">notify success</a>
                 <script>
-                    $('#simpleNotify').data('datas', {answer: 'success', data: 'simple notify'});
+                    $('#simpleNotify1').data('datas', {answer: 'success', data: 'simple notify success'});
+                </script>
+                <a id="simpleNotify2" href="" data-drop data-notify="true">notify info</a>
+                <script>
+                    $('#simpleNotify2').data('datas', {answer: 'info', data: 'simple notify info'});
+                </script>
+                <a id="simpleNotify3" href="" data-drop data-notify="true">notify warning</a>
+                <script>
+                    $('#simpleNotify3').data('datas', {answer: 'warning', data: 'simple notify warning'});
+                </script>
+                <a id="simpleNotify4" href="" data-drop data-notify="true">notify error</a>
+                <script>
+                    $('#simpleNotify4').data('datas', {answer: 'error', data: 'simple notify error'});
                 </script>
             </li>
             <li>
@@ -117,13 +129,32 @@
             </li>
             <li>
                 <div><h3>Different content</h3> (header, content, footer)</div>
-                <a href="#" data-drop data-content-header="header" data-content-content="content" data-content-footer="footer">content</a>
+                <a href="#" data-drop data-header="header" data-content="content" data-footer="footer">content</a>
             </li>
             <li>
                 <div><h3>Dropable</h3></div>
                 <a href="#" data-drop="#inline" data-droppable="true">droppable</a>
             </li>
+            <li>
+                <div><h3>Dropable</h3> (with parametr droppableLimit)</div>
+                <a href="#" data-drop="#inline" data-droppable="true" data-droppable-limit="true">droppableLimit</a>
+            </li>
+            <li>
+                <div><h3>Dropable</h3> (with parametr droppableFixed)</div>
+                <a href="#" data-drop="#inline" data-droppable="true" data-droppable-limit="true" data-droppable-fixed="true">droppableFixed</a>
+            </li>
+            <li>
+                <div><h3></h3></div>
+                <a href="#" data-drop></a>
+            </li>
         </ol>
+        <h2>Place</h2>
+        <h2>Themes</h2>
+        <h2>Gallery</h2>
+        <h2>Methods</h2>
+        <h2>Methods API</h2>
+        <h2>Methods Extend</h2>
+        <h2>Callbacks</h2>
         <br/>
         <br/>
         <br/>
