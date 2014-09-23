@@ -198,17 +198,17 @@
             return el;
         },
         open: function(opt, e, hashChange) {
-            var $this = this,
+            var $this = $.existsN($this) ? $this : $([]),
                     elSet = $.existsN($this) ? $this.data() : {};
-            opt = $.extend({}, DP, $.existsN($this) && $this.data('drp') ? $this.data('drp').genOpt : {}, opt);
+            opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp.genOpt : {}, opt);
             e = e ? e : window.event;
-            if (opt.closeActiveClick && $this.hasClass(DP.activeClass)) {
-                if ($.exists($this.data('drop'))) {
-                    methods.close.call($($this.data('drop')), 'element already open');
+            if (opt.closeActiveClick && $this.hasClass(D.activeClass)) {
+                if ($.exists(elSet.drop)) {
+                    methods.close.call($(elSet.drop), 'element already open');
                     return $this;
                 }
                 else
-                    $this.removeClass(DP.activeClass);
+                    $this.removeClass(D.activeClass);
             }
             if (elSet.tempClass && !elSet.dropn)
                 elSet.drop = opt.drop = null;
@@ -221,7 +221,7 @@
             $.extend(opt, elSet);
 
             var href = opt.href || $this.attr('href');
-            opt.href = href.length === 1 && href === '#' ? null : href;
+            opt.href = href && href.length === 1 && href === '#' ? null : href;
             if (opt.href && (opt.notify || opt.always)) {
                 $('[data-rel="' + opt.drop + '"]').add($(opt.drop)).remove();
                 opt.drop = elSet.dropn ? elSet.dropn : null;
@@ -273,15 +273,19 @@
                 else
                     throw 'insufficient data';
             };
-
-            if ($this.is(':disabled') || opt.drop && opt.start && !eval(opt.start).call($this, opt, drop, e))
-                return $this;
-            if (opt.prompt || opt.confirm || opt.alert)
-                methods._checkMethod(function() {
-                    methods.confirmPromptAlert(opt, hashChange, _confirmF, e, $this);
-                });
-            else
-                _confirmF();
+            var _show = function() {
+                if ($this.is(':disabled') || opt.drop && opt.start && !eval(opt.start).call($this, opt, drop, e))
+                    return $this;
+                if (opt.prompt || opt.confirm || opt.alert)
+                    methods._checkMethod(function() {
+                        methods.confirmPromptAlert(opt, hashChange, _confirmF, e, $this);
+                    });
+                else
+                    _confirmF();
+            };
+            if (!opt.moreOne && $.exists(D.aDS))
+                return methods.close.call($(D.aDS), 'close more one element', _show);
+            return _show();
         },
         _show: function(drop, e, opt, hashChange) {
             if (!opt.moreOne && $.exists(D.aDS))
@@ -443,7 +447,7 @@
                     var inDrop = opt.type === 'iframe' ? drop.find('iframe').contents().find('[data-drop]') : drop.find('[data-drop]');
                     if ($.existsN(inDrop))
                         methods.init.call(inDrop);
-                    drop.add($this).addClass(DP.activeClass);
+                    drop.add($this).addClass(D.activeClass);
                     if (opt.notify && !isNaN(opt.timeclosenotify))
                         setTimeout(function() {
                             methods.close.call(drop, 'close notify setTimeout');
@@ -474,7 +478,7 @@
         },
         close: function(e, f, hashChange) {
             var sel = this,
-                    drop = $.existsN(sel) ? sel : $('[data-elrun].' + DP.activeClass);
+                    drop = $.existsN(sel) ? sel : $('[data-elrun].' + D.activeClass);
             var closeLength = drop.length;
             drop.each(function(i) {
                 var drop = $(this),
@@ -492,7 +496,7 @@
                     var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
                     wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
                     doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS + ev);
-                    opt.elrun.add(drop).removeClass(DP.activeClass);
+                    opt.elrun.add(drop).removeClass(D.activeClass);
                     if (opt.hash && !hashChange) {
                         D.scrollTop = wnd.scrollTop();
                         wnd.off('hashchange.' + $.drop.nS);
@@ -807,7 +811,6 @@
     $.drop.nS = 'drop';
     $.drop.version = '1.0';
     $.drop.dP = {
-        activeClass: 'drop-active',
         drop: null,
         href: null,
         hash: null,
@@ -850,6 +853,14 @@
         placeBeforeShow: 'center center',
         placeAfterClose: 'center center',
         start: null,
+        elBefore: $.noop,
+        elAfter: $.noop,
+        elClose: $.noop,
+        elClosed: $.noop,
+        before: $.noop,
+        after: $.noop,
+        close: $.noop,
+        closed: $.noop,
         beforeG: $.noop,
         afterG: $.noop,
         closeG: $.noop,
@@ -924,6 +935,7 @@
         rel: null
     };
     $.drop.drp = {
+        activeClass: 'drop-active',
         handleMessageWindow: function(e) {
             if (e.originalEvent.data)
                 $.drop(e.originalEvent.data);
@@ -996,10 +1008,6 @@
         $.extend(D.theme, options);
         return this;
     };
-    $.drop.setMethods = function(ms) {
-        $.extend(methods, ms);
-        return this;
-    };
     $.drop.methods = methods;
     $.drop.setUrlMethods = function(url) {
         D.urlOfMethods = url;
@@ -1020,7 +1028,7 @@
         return this;
     };
     $.drop.update = function(el) {
-        return (el ? $(el) : $('[data-elrun].' + DP.activeClass)).each(function() {
+        return (el ? $(el) : $('[data-elrun].' + D.activeClass)).each(function() {
             methods.update.call($(this));
         });
     };

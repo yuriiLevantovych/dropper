@@ -6,7 +6,7 @@ $.drop.methods._cIGalleries = function(rel) {
 $.drop.methods._galleriesDecorator = function(rel, btn, i) {
     var self = this,
             $ = jQuery;
-    return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.drop.dP.activeClass).each(function() {
+    return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.drop.drp.activeClass).each(function() {
         var $this = $(this),
                 drp = $this.data('drp');
         self._checkMethod(function() {
