@@ -32,12 +32,12 @@
             return this.each(function() {
                 var el = methods.destroy.call($(this)),
                         opt = $.extend({}, set, el.data());
-                el.data('drp', $.extend({}, set, {genOpt: $.extend({}, opt)}));
+                el.data('drp', opt);
                 var rel = this.rel || opt.rel,
                         hash = el.data('hash');
                 if (rel) {
                     rel = rel.replace(D.reg, '');
-                    var href = el.data('href') || el.attr('href');
+                    var href = el.attr('href') || opt.href;
                     if (href) {
                         if (!D.galleries[rel])
                             D.galleries[rel] = [];
@@ -82,9 +82,8 @@
                 if (/#/.test(opt.hash) && !D.hashs[opt.hash])
                     D.hashs[opt.hash] = el;
             }).each(function() {
-                var opt = $.extend({}, $(this).data('drp').genOpt);
-                if (window.location.hash.indexOf(opt.hash) !== -1)
-                    methods.open.call($(this), opt, null);
+                if (window.location.hash.indexOf($(this).data('drp').hash) !== -1)
+                    methods.open.call($(this));
             });
         },
         destroy: function(el) {
@@ -92,8 +91,6 @@
                 var el = $(this),
                         opt = $(el).data('drp');
                 el.removeClass('isDrop').removeData('drp');
-                if (opt)
-                    opt = opt.genOpt;
                 if (!opt)
                     return;
                 if (opt.trigger)
@@ -198,9 +195,9 @@
             return el;
         },
         open: function(opt, e, hashChange) {
-            var $this = $.existsN($this) ? $this : $([]),
+            var $this = $.existsN(this) ? this : $([]),
                     elSet = $.existsN($this) ? $this.data() : {};
-            opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp.genOpt : {}, opt);
+            opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp : {}, opt);
             e = e ? e : window.event;
             if (opt.closeActiveClick && $this.hasClass(D.activeClass)) {
                 if ($.exists(elSet.drop)) {
@@ -220,7 +217,7 @@
 
             $.extend(opt, elSet);
 
-            var href = opt.href || $this.attr('href');
+            var href = $this.attr('href') || opt.href;
             opt.href = href && href.length === 1 && href === '#' ? null : href;
             if (opt.href && (opt.notify || opt.always)) {
                 $('[data-rel="' + opt.drop + '"]').add($(opt.drop)).remove();
@@ -273,7 +270,7 @@
                 else
                     throw 'insufficient data';
             };
-            var _show = function() {
+            function _show() {
                 if ($this.is(':disabled') || opt.drop && opt.start && !eval(opt.start).call($this, opt, drop, e))
                     return $this;
                 if (opt.prompt || opt.confirm || opt.alert)
@@ -282,7 +279,8 @@
                     });
                 else
                     _confirmF();
-            };
+            }
+            ;
             if (!opt.moreOne && $.exists(D.aDS))
                 return methods.close.call($(D.aDS), 'close more one element', _show);
             return _show();
@@ -449,7 +447,7 @@
                         methods.init.call(inDrop);
                     drop.add($this).addClass(D.activeClass);
                     if (opt.notify && !isNaN(opt.timeclosenotify))
-                        setTimeout(function() {
+                        D.notifyTimeout[opt.drop] = setTimeout(function() {
                             methods.close.call(drop, 'close notify setTimeout');
                         }, opt.timeclosenotify);
                     if (opt.droppable && opt.place !== 'inherit')
@@ -491,12 +489,16 @@
                 if (!(opt.notify || $.existsN(sel) || opt.place !== 'inherit' || opt.inheritClose || opt.overlay) && opt.elrun)
                     return false;
                 var _hide = function() {
+                    if (opt.notify && D.notifyTimeout[opt.drop]) {
+                        clearTimeout(D.notifyTimeout[opt.drop]);
+                        delete D.notifyTimeout[opt.drop];
+                    }
                     if (opt.type === 'iframe')
                         drop.find('iframe').removeAttr('src');
                     var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
                     wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
                     doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS + ev);
-                    opt.elrun.add(drop).removeClass(D.activeClass);
+                    drop.add(opt.elrun).removeClass(D.activeClass);
                     if (opt.hash && !hashChange) {
                         D.scrollTop = wnd.scrollTop();
                         wnd.off('hashchange.' + $.drop.nS);
@@ -652,7 +654,7 @@
                     refer: el,
                     drop: drop,
                     options: opt,
-                    datas: datas || el.data('datas')
+                    datas: el.data('datas') || datas
                 }
             });
             return methods._show.call(el, drop, e, opt, hashChange);
@@ -704,12 +706,12 @@
             $(forCenter).add(dropOver).css('height', '').css('height', doc.height());
         },
         _checkMethod: function(f, nm) {
-            try {
-                f();
-            } catch (e) {
-                var method = f.toString().match(/\.\S*\(/);
-                throw 'need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method';
-            }
+            //try {
+            f();
+//            } catch (e) {
+//                var method = f.toString().match(/\.\S*\(/);
+//                throw 'need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method';
+//            }
             return this;
         },
         _positionType: function(drop) {
@@ -743,7 +745,7 @@
                 D.wLHN = window.location.hash;
                 for (var i in D.hashs) {
                     if (D.wLH.indexOf(i) === -1 && D.wLHN.indexOf(i) !== -1)
-                        methods.open.call(D.hashs[i], D.hashs[i].data('drp').genOpt, e, true);
+                        methods.open.call(D.hashs[i], null, e, true);
                     else
                         methods.close.call($(D.hashs[i].data('drop')).add(D.hashs[i].data('dropConfirmPromptAlert')), e, null, true);
                 }
@@ -996,7 +998,8 @@
         emptyClass: 'drop-empty',
         noEmptyClass: 'drop-no-empty',
         pC: 'drop-',
-        urlOfMethods: 'methods'
+        urlOfMethods: 'methods',
+        notifyTimeout: {}
     };
     var D = $.drop.drp,
             DP = $.drop.dP;
