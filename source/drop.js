@@ -34,16 +34,18 @@
                         opt = $.extend({}, set, el.data());
                 el.data('drp', opt);
                 var rel = this.rel || opt.rel,
-                        hash = el.data('hash');
+                        ahref = $.trim(el.attr('href')),
+                        hash = ahref.indexOf('#') === 0 && ahref !== '#' ? ahref : (el.data('hash') || opt.hash);
                 if (rel) {
                     rel = rel.replace(D.reg, '');
-                    var href = el.attr('href') || opt.href;
+                    var href = ahref || opt.href;
+                    href = href && $.trim(href) === '#' ? null : href;
                     if (href) {
                         if (!D.galleries[rel])
                             D.galleries[rel] = [];
                         if (!D.galleryHashs[rel] && hash)
                             D.galleryHashs[rel] = [];
-                        if (D.galleries[rel].indexOf(href) === -1 && href.match(D.regImg))
+                        if ($.inArray(href, D.galleries[rel]) === -1 && href.match(D.regImg))
                             D.galleries[rel].push(href);
                         if (hash)
                             D.galleryHashs[rel].push(hash);
@@ -218,12 +220,20 @@
             $.extend(opt, elSet);
 
             var href = $this.attr('href') || opt.href;
-            opt.href = href && href.length === 1 && href === '#' ? null : href;
+            opt.href = href && $.trim(href) === '#' ? null : href;
+            var hrefC = opt.href ? opt.href.replace(D.reg, '') : null;
+            opt.rel = $this.attr('rel') || opt.rel;
+
+            if (opt.rel && D.galleries[opt.rel.replace(D.reg, '')])
+                opt.rel = opt.rel.replace(D.reg, '');
+            if (opt.rel && D.gallerieOpt[opt.rel])
+                $.extend(opt, D.gallerieOpt[opt.rel]['genOpt'], D.gallerieOpt[opt.rel][hrefC]);
             if (opt.href && (opt.notify || opt.always)) {
                 $('[data-rel="' + opt.drop + '"]').add($(opt.drop)).remove();
                 opt.drop = elSet.dropn ? elSet.dropn : null;
             }
             if (opt.context) {
+                alert(1)
                 $.extend(opt, {place: 'global', limitSize: true, overlay: false});
                 if (e && e.pageX >= 0)
                     opt.placement = {'left': parseInt(e.pageX), 'top': parseInt(e.pageY)};
@@ -236,10 +246,6 @@
             if (!$.existsN($this) || opt.notify)
                 $this = methods._referCreate(opt.drop);
             opt.elrun = $this;
-            opt.rel = $this.get(0).rel || opt.rel;
-            if (opt.rel && D.galleries[opt.rel.replace(D.reg, '')])
-                opt.rel = opt.rel.replace(D.reg, '');
-            var hrefC = opt.href ? opt.href.replace(D.reg, '') : null;
             if (opt.dropFilter) {
                 if ($this.hasClass('drop-filter'))
                     elSet.dropn = opt.drop;
@@ -503,6 +509,7 @@
                         D.scrollTop = wnd.scrollTop();
                         wnd.off('hashchange.' + $.drop.nS);
                         window.location.hash = window.location.hash.replace(opt.hash, '');
+                        wnd.scrollTop(D.scrollTop);
                         setTimeout(methods._setEventHash, 0);
                     }
                     methods._checkMethod(function() {
@@ -706,12 +713,14 @@
             $(forCenter).add(dropOver).css('height', '').css('height', doc.height());
         },
         _checkMethod: function(f, nm) {
-            //try {
-            f();
-//            } catch (e) {
-//                var method = f.toString().match(/\.\S*\(/);
-//                throw 'need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method';
-//            }
+            try {
+                f();
+            } catch (e) {
+                if (window.console) {
+                    var method = f.toString().match(/\.\S*\(/);
+                    console.log('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
+                }
+            }
             return this;
         },
         _positionType: function(drop) {
@@ -778,37 +787,60 @@
                 return methods[ method ].apply(this, Array.prototype.slice.call(arguments, 1));
             else
                 throw 'Method ' + method + ' is private on $.drop';
-        } else if ($.type(method) === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            throw 'Method ' + method + ' does not exist on $.drop';
         }
+        else if ($.type(method) === 'object' || !method)
+            return methods.init.apply(this, arguments);
+        else
+            throw 'Method ' + method + ' does not exist on $.drop';
     };
     $.drop = function(m, opt) {
         if (!opt)
             opt = {};
+        var set;
         if ($.existsN(m))
-            return methods.open.call(null, $.extend({'drop': m}, opt));
+            set = {'drop': m};
         else if ($.type(m) === 'array' || $.type(m) === 'string' && m.match(D.regImg)) {
             if ($.type(m) === 'array') {
-                opt.rel = opt.rel ? opt.rel : 'rel' + (+new Date());
-                if (!D.galleries[opt.rel])
-                    D.galleries[opt.rel] = [];
-                m.map(function(n) {
-                    if (D.galleries[opt.rel].indexOf(n) === -1 && n.match(D.regImg))
-                        D.galleries[opt.rel].push(n);
-                });
-                return methods.open.call(null, $.extend(opt, {href: D.galleries[opt.rel][0]}));
+                if (m.length > 1) {
+                    opt.rel = opt.rel ? opt.rel : 'rel' + (+new Date());
+                    if (!D.gallerieOpt[opt.rel])
+                        D.gallerieOpt[opt.rel] = {};
+                    D.gallerieOpt[opt.rel]['genOpt'] = $.extend({}, opt);
+                    if (!D.galleries[opt.rel])
+                        D.galleries[opt.rel] = [];
+                    m.map(function(n) {
+                        if ($.type(n) === 'string' && $.inArray(n, D.galleries[opt.rel]) === -1 && n.match(D.regImg))
+                            D.galleries[opt.rel].push(n);
+                        else if ($.type(n) === 'object' && n.href && $.inArray(n.href, D.galleries[opt.rel]) === -1 && n.href.match(D.regImg)) {
+                            D.gallerieOpt[opt.rel][n.href.replace(D.reg, '')] = n;
+                            D.galleries[opt.rel].push(n.href);
+                        }
+                        else
+                            return;
+                    });
+                    if (D.galleries[opt.rel][0])
+                        set = {href: D.galleries[opt.rel][0]};
+                    else
+                        throw 'insufficient data';
+                }
+                else if ($.type(m[0]) === 'object')
+                    set = m[0];
+                else if ($.type(m[0]) === 'string')
+                    if (m[0].match(D.regImg))
+                        set = {href: m[0]};
+                    else
+                        set = {html: m[0]};
             }
             else if ($.type(m) === 'string' && m.match(D.regImg))
-                return methods.open.call(null, $.extend(opt, {href: m}));
+                set = {href: m};
         }
         else if ($.type(m) === 'string')
-            return methods.open.call(null, $.extend(opt, {'html': m}));
+            set = {'html': m};
         else if ($.type(m) === 'object')
-            return methods.open.call(null, m);
+            set = m;
         else
             throw 'insufficient data';
+        return methods.open.call(null, $.extend(opt, set));
     };
     $.drop.nS = 'drop';
     $.drop.version = '1.0';
@@ -816,7 +848,6 @@
         drop: null,
         href: null,
         hash: null,
-        dataPrompt: null,
         dropContent: '.drop-content',
         dropHeader: '.drop-header',
         dropFooter: '.drop-footer',
@@ -876,6 +907,7 @@
         confirmActionBtn: '[data-button-confirm]',
         promptActionBtn: '[data-button-prompt]',
         alertActionBtn: '[data-button-alert]',
+        dataPrompt: null,
         promptInput: '[name="promptInput"]',
         promptInputValue: null,
         exit: '[data-closed]',
@@ -985,6 +1017,7 @@
         hashs: {},
         drops: {},
         galleries: {},
+        gallerieOpt: {},
         galleryHashs: {
             _butRel: []
         },

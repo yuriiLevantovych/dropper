@@ -21,8 +21,10 @@ $.drop.methods.galleries = function(drop, opt, btn, i) {
             self = this;
     if (!relA)
         return false;
-    var relL = relA.length,
-            relP = $.inArray(opt.href, relA),
+    var relL = relA.length;
+    if (relL <= 1)
+        return self;
+    var relP = $.inArray(opt.href, relA),
             prev = $.type(opt.prev) === 'string' ? drop.find(opt.prev) : opt.prev,
             next = $.type(opt.next) === 'string' ? drop.find(opt.next) : opt.next;
     prev.add(next).hide().attr('disabled', 'disabled');
@@ -43,7 +45,7 @@ $.drop.methods.galleries = function(drop, opt, btn, i) {
         }
         var $next = $('[data-href="' + relA[i] + '"], [href="' + relA[i] + '"]').filter(':last');
         self._cIGalleries(opt.rel);
-        self.open.call($next, $.extend($next.data('drp'), {href: relA[i], drop: null, rel: opt.rel}), e);
+        self.open.call($next, $.extend($next.data('drp'), {href: relA[i], rel: opt.rel}), e);
     };
     var _getnext = function(i) {
         relP += i;
