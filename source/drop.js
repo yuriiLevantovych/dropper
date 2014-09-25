@@ -373,7 +373,7 @@
                         elFocus = opt.promptInput;
                     elFocus = drop.find(elFocus);
                     if (opt.prompt) {
-                        elFocus.val(opt.promptInputValue)
+                        elFocus.val(opt.promptInputValue);
                         drop.find('form').off('submit.' + $.drop.nS + ev).on('submit.' + $.drop.nS + ev, function(e) {
                             e.preventDefault();
                         });
