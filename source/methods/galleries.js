@@ -16,11 +16,11 @@ $.drop.methods._galleriesDecorator = function(rel, btn, i) {
 };
 $.drop.methods.galleries = function(drop, opt, btn, i) {
     var $ = jQuery,
-            doc = $(document);
-    var relA = $.drop.drp.galleries[opt.rel],
-            self = this;
+            doc = $(document),
+            self = this,
+            relA = $.drop.drp.galleries[opt.rel];
     if (!relA)
-        return false;
+        return self;
     var relL = relA.length;
     if (relL <= 1)
         return self;

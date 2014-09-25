@@ -201,14 +201,16 @@
                     elSet = $.existsN($this) ? $this.data() : {};
             opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp : {}, opt);
             e = e ? e : window.event;
-            if (opt.closeActiveClick && $this.hasClass(D.activeClass)) {
-                if ($.exists(elSet.drop)) {
-                    methods.close.call($(elSet.drop), 'element already open');
-                    return $this;
-                }
-                else
-                    $this.removeClass(D.activeClass);
+            
+            var drop = $(elSet.drop);
+            if (opt.closeActiveClick && $.existsN(drop) && $this.hasClass(D.activeClass)) {
+                $this.removeClass(D.activeClass);
+                methods.close.call(drop, 'element already open');
+                return $this;
             }
+            else if (drop.data('drp'))
+                drop.removeClass(drop.data('drp').tempClass);
+
             if (elSet.tempClass && !elSet.dropn)
                 elSet.drop = opt.drop = null;
 
@@ -246,8 +248,10 @@
                 $this = methods._referCreate(opt.drop);
             opt.elrun = $this;
             if (opt.dropFilter) {
-                if ($this.hasClass('drop-filter'))
+                if ($this.hasClass('drop-filter')) {
+                    opt.tempClass = null;
                     elSet.dropn = opt.drop;
+                }
                 else {
                     methods._filterSource.call($this, opt.dropFilter).addClass(opt.tempClass);
                     elSet.dropn = opt.drop = '.' + opt.tempClass;
@@ -255,12 +259,12 @@
                 }
             }
             $this.attr('data-drop', opt.drop).data('drop', opt.drop);
-            var drop = $(elSet.dropn);
+            drop = $(elSet.dropn);
             var _confirmF = function() {
                 if (opt.notify && opt.datas)
                     methods._pasteNotify.call($this, opt.datas, opt, hashChange, e);
                 else if (opt.dropFilter)
-                    methods._show.call($this, drop, e, opt, hashChange);
+                    methods._show.call($this, methods._pasteDrop(opt, drop.addClass(D.wasCreateClass)), e, opt, hashChange);
                 else if (opt.html) {
                     drop = methods._pasteDrop(opt, opt.pattern);
                     drop.find($(opt.placePaste)).html(opt.html);
@@ -420,7 +424,7 @@
                         methods.limitSize(drop);
                     });
                 methods._checkMethod(function() {
-                    methods.placeBeforeShow(drop, $this, opt.place, opt.placeBeforeShow, e);
+                    methods.placeBeforeShow(drop, $this, opt);
                 });
                 if (opt.place !== 'inherit')
                     methods._checkMethod(function() {
@@ -491,7 +495,7 @@
                 var drop = $(this),
                         opt = $.extend({}, drop.data('drp'));
 
-                if (!opt)
+                if (!drop.data('drp'))
                     return false;
                 if (hashChange && opt.hash && window.location.hash.indexOf(opt.hash) !== -1)
                     return false;
@@ -547,7 +551,8 @@
                         if (!$.exists(D.aDS))
                             $('html, body').css('height', '');
 
-                        $this.removeClass(opt.tempClass);
+                        if (!opt.dropFilter)
+                            $this.removeClass(opt.tempClass);
                         if (!opt.elrun.data('dropn'))
                             opt.elrun.data('drop', null);
                         if ($(opt.elrun).hasClass(D.tempClass))
@@ -710,14 +715,14 @@
             $(forCenter).add(dropOver).css('height', '').css('height', doc.height());
         },
         _checkMethod: function(f, nm) {
-            //try {
-            f();
-//            } catch (e) {
-//                if (window.console) {
-//                    var method = f.toString().match(/\.\S*\(/);
-//                    console.log('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
-//                }
-//            }
+            try {
+                f();
+            } catch (e) {
+                if (window.console) {
+                    var method = f.toString().match(/\.\S*\(/);
+                    console.log('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
+                }
+            }
             return this;
         },
         _positionType: function(drop) {
@@ -953,7 +958,7 @@
         droppable: false,
         droppableLimit: false,
         droppableFixed: false,
-        inheritClose: false,
+        inheritClose: true,
         keyNavigate: true,
         context: false,
         centerOnScroll: false,

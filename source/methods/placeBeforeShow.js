@@ -1,4 +1,4 @@
-$.drop.methods.placeBeforeShow = function(drop, $this, place, placeBeforeShow, e) {
+$.drop.methods.placeBeforeShow = function(drop, $this, opt) {
     var self = this,
             $ = jQuery,
             wnd = $(window);
@@ -7,14 +7,14 @@ $.drop.methods.placeBeforeShow = function(drop, $this, place, placeBeforeShow, e
         $('body').css('overflow', 'hidden');
     $('body').css('overflow-x', 'hidden');
 
-    if (place === 'inherit')
+    if (opt.place === 'inherit')
         return false;
-    var pmt = placeBeforeShow.toLowerCase().split(' '),
+    var pmt = opt.placeBeforeShow.toLowerCase().split(' '),
             t = -drop.actual('outerHeight'),
             l = -drop.actual('outerWidth');
     if (pmt[0] === 'center' || pmt[1] === 'center') {
         self._checkMethod(function() {
-            self[place].call(drop, true);
+            self[opt.place].call(drop, true);
         });
         t = drop.css('top');
         l = drop.css('left');

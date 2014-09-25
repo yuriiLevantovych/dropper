@@ -1,6 +1,5 @@
 $.drop.methods.global = function(start) {
-    var $ = jQuery,
-            wnd = $(window);
+    var $ = jQuery;
     return this.each(function() {
         var drop = $(this),
                 drp = drop.data('drp');

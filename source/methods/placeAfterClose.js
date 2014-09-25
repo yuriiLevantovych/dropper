@@ -4,6 +4,8 @@ $.drop.methods.placeAfterClose = function(drop, $this, opt) {
     if (!this._isScrollable($('body').get(0)))
         $('body').css('overflow', 'hidden');
     $('body').css('overflow-x', 'hidden');
+    if (!opt)
+        return this;
     var method = opt.animate ? 'animate' : 'css',
             pmt = opt.placeAfterClose.toLowerCase().split(' '),
             t = -drop.actual('outerHeight'),
