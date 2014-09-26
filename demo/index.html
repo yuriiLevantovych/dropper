@@ -7,12 +7,15 @@
         <script src="../source/drop.js"></script>
         <style>
             *{margin: 0;padding: 0;}
+            body{font-size: 13px;}
             #inline{padding: 20px;}
             ol{margin-left: 30px;}
             .list-example h3{display: inline;}
             table{border-collapse: collapse;border-spacing: 0;}
-            table th{text-align: left;}
-            table th, table td{padding: 3px 15 0 4px;}
+            table th{text-align: left;font-weight: normal;}
+            table thead th{font-weight: bold;padding-top: 10px;padding-bottom: 5px;}
+            table th[colspan]{background-color: #f8f7f6;}
+            table th, table td{padding: 3px 15 0 4px;vertical-align: top;padding: 5px 10px 5px 8px;border-bottom: 1px solid #ccc;}
             code, pre {
                 font-family: Consolas, Monaco, "Andale Mono", "Courier New", monospace;
                 font-size: 14px;
