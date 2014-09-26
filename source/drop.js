@@ -201,7 +201,7 @@
                     elSet = $.existsN($this) ? $this.data() : {};
             opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp : {}, opt);
             e = e ? e : window.event;
-            
+
             var drop = $(elSet.drop);
             if (opt.closeActiveClick && $.existsN(drop) && $this.hasClass(D.activeClass)) {
                 $this.removeClass(D.activeClass);
@@ -247,13 +247,13 @@
             if (!$.existsN($this) || opt.notify)
                 $this = methods._referCreate(opt.drop);
             opt.elrun = $this;
-            if (opt.dropFilter) {
+            if (opt.filter) {
                 if ($this.hasClass('drop-filter')) {
                     opt.tempClass = null;
                     elSet.dropn = opt.drop;
                 }
                 else {
-                    methods._filterSource.call($this, opt.dropFilter).addClass(opt.tempClass);
+                    methods._filterSource.call($this, opt.filter).addClass(opt.tempClass);
                     elSet.dropn = opt.drop = '.' + opt.tempClass;
                     $this.addClass('drop-filter');
                 }
@@ -263,7 +263,7 @@
             var _confirmF = function() {
                 if (opt.notify && opt.datas)
                     methods._pasteNotify.call($this, opt.datas, opt, hashChange, e);
-                else if (opt.dropFilter)
+                else if (opt.filter)
                     methods._show.call($this, methods._pasteDrop(opt, drop.addClass(D.wasCreateClass)), e, opt, hashChange);
                 else if (opt.html) {
                     drop = methods._pasteDrop(opt, opt.pattern);
@@ -545,13 +545,13 @@
                                 options: opt
                             }
                         });
-                        var dC = $this.find($(opt.dropContent)).data('jsp');
+                        var dC = $this.find($(opt.placeContent)).data('jsp');
                         if (dC)
                             dC.destroy();
                         if (!$.exists(D.aDS))
                             $('html, body').css('height', '');
 
-                        if (!opt.dropFilter)
+                        if (!opt.filter)
                             $this.removeClass(opt.tempClass);
                         if (!opt.elrun.data('dropn'))
                             opt.elrun.data('drop', null);
@@ -706,9 +706,9 @@
                     place.append(content);
                 _checkCont(place);
             };
-            _pasteContent(opt.header, opt.dropHeader);
-            _pasteContent(opt.content, opt.dropContent);
-            _pasteContent(opt.footer, opt.dropFooter);
+            _pasteContent(opt.header, opt.placeHeader);
+            _pasteContent(opt.content, opt.placeContent);
+            _pasteContent(opt.footer, opt.placeFooter);
             return this;
         },
         _setHeightAddons: function(dropOver, forCenter) {
@@ -850,16 +850,16 @@
         drop: null,
         href: null,
         hash: null,
-        dropContent: '.drop-content',
-        dropHeader: '.drop-header',
-        dropFooter: '.drop-footer',
+        placeContent: '.drop-content',
+        placeHeader: '.drop-header',
+        placeFooter: '.drop-footer',
         placePaste: '.placePaste',
         header: null,
         footer: null,
         content: null,
         placeInherit: null,
         methodPlaceInherit: 'html',
-        dropFilter: null,
+        filter: null,
         message: {
             success: function(text) {
                 return '<div class= "drop-msg"><div class="drop-success"><span class="drop-icon-notify"></span><div class="drop-text-el">' + text + '</div></div></div>';
@@ -1046,7 +1046,18 @@
         $.extend(D.theme, options);
         return this;
     };
-    $.drop.methods = methods;
+    $.drop.setMethod = function(n, v) {
+        var nm = {};
+        nm[n] = v;
+        $.extend(methods, nm);
+    };
+    $.drop.getMethods = function() {
+        var public = {};
+        for (var i in methods)
+            if (!/_/.test(i))
+                public[i] = methods[i];
+        return public;
+    };
     $.drop.setUrlMethods = function(url) {
         D.urlOfMethods = url;
         return this;

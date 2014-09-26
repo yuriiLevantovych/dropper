@@ -91,8 +91,8 @@
                 <a href="context.php" data-drop data-context="true">context ajax</a>
             </li>
             <li>
-                <div><h3>Parametr dropFilter</h3> <i>(closest('body').find('#inline'))</i></div>
-                <a href="#" data-drop data-drop-filter="closest(body).find(#inline)">drop filter</a>
+                <div><h3>Parametr filter</h3> <i>(closest('body').find('#inline'))</i></div>
+                <a href="#" data-drop data-filter="closest(body).find(#inline)">drop filter</a>
             </li>
             <li>
                 <div><h3>Alert</h3></div>
@@ -200,19 +200,19 @@
                     <td>null</td>
                 </tr>
                 <tr>
-                    <td>dropContent</td>
+                    <td>placeContent</td>
                     <td>-</td>
                     <td>string</td>
                     <td>.drop-content</td>
                 </tr>
                 <tr>
-                    <td>dropHeader</td>
+                    <td>placeHeader</td>
                     <td>-</td>
                     <td>string</td>
                     <td>.drop-header</td>
                 </tr>
                 <tr>
-                    <td>dropFooter</td>
+                    <td>placeFooter</td>
                     <td>-</td>
                     <td>string</td>
                     <td>.drop-footer</td>
@@ -254,7 +254,7 @@
                     <td>html</td>
                 </tr>
                 <tr>
-                    <td>dropFilter</td>
+                    <td>filter</td>
                     <td>-</td>
                     <td>null</td>
                     <td>null</td>
@@ -814,6 +814,20 @@
                     <td>update</td>
                     <td>
                         <code>$.drop.update()</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td>setMethod</td>
+                    <td>
+                        <code>$.drop.setMethod(name, value)</code>
+                        <div>extend Default methods</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>getMethods</td>
+                    <td>
+                        <code>$.drop.getMethods()</code>
+                        <div>return only public methods</div>
                     </td>
                 </tr>
                 <tr>

@@ -1,4 +1,4 @@
-$.drop.methods.confirmPromptAlert = function(opt, hashChange, _confirmF, e, el) {
+$.drop.setMethod('confirmPromptAlert', function(opt, hashChange, _confirmF, e, el) {
     var self = this,
             $ = jQuery;
     opt.tempClass = opt.defaultClassBtnDrop + (+new Date());
@@ -65,4 +65,4 @@ $.drop.methods.confirmPromptAlert = function(opt, hashChange, _confirmF, e, el) 
     }
     el.data('dropConfirmPromptAlert', drop);
     return this;
-};
+});

@@ -1,9 +1,9 @@
-$.drop.methods._cIGalleries = function(rel) {
+$.drop.setMethod('_cIGalleries', function(rel) {
     var $ = jQuery;
     clearInterval($.drop.drp.autoPlayInterval[rel]);
     delete $.drop.drp.autoPlayInterval[rel];
-};
-$.drop.methods._galleriesDecorator = function(rel, btn, i) {
+});
+$.drop.setMethod('_galleriesDecorator', function(rel, btn, i) {
     var self = this,
             $ = jQuery;
     return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.drop.drp.activeClass).each(function() {
@@ -13,8 +13,8 @@ $.drop.methods._galleriesDecorator = function(rel, btn, i) {
             self.galleries($this, drp, btn, i);
         });
     });
-};
-$.drop.methods.galleries = function(drop, opt, btn, i) {
+});
+$.drop.setMethod('galleries', function(drop, opt, btn, i) {
     var $ = jQuery,
             doc = $(document),
             self = this,
@@ -94,4 +94,4 @@ $.drop.methods.galleries = function(drop, opt, btn, i) {
             });
         });
     return self;
-};
+});

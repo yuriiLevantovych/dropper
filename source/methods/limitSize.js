@@ -1,4 +1,4 @@
-$.drop.methods._heightContent = function(drop) {
+$.drop.setMethod('_heightContent', function(drop) {
     var $ = jQuery,
             wnd = $(window);
     return (drop || this).each(function() {
@@ -14,11 +14,11 @@ $.drop.methods._heightContent = function(drop) {
                 forCenter.show();
         }
 
-        if (drp.dropContent) {
-            var el = drop.find($(drp.dropContent)).filter(':visible');
+        if (drp.placeContent) {
+            var el = drop.find($(drp.placeContent)).filter(':visible');
             if (el.data('jsp'))
                 el.data('jsp').destroy();
-            el = drop.find($(drp.dropContent)).filter(':visible').css({'height': ''});
+            el = drop.find($(drp.placeContent)).filter(':visible').css({'height': ''});
             if ($.existsN(el)) {
                 var refer = drp.elrun,
                         api = false,
@@ -32,7 +32,7 @@ $.drop.methods._heightContent = function(drop) {
                     el.css('overflow', 'auto');
                 var dropH = drop.outerHeight(),
                         dropHm = drop.height(),
-                        footerHeader = drop.find($(drp.dropHeader)).outerHeight() + drop.find($(drp.dropFooter)).outerHeight();
+                        footerHeader = drop.find($(drp.placeHeader)).outerHeight() + drop.find($(drp.placeFooter)).outerHeight();
                 if (drp.place === 'global') {
                     var mayHeight = 0,
                             placement = drp.placement;
@@ -69,8 +69,8 @@ $.drop.methods._heightContent = function(drop) {
                 forCenter.hide();
         }
     });
-};
-$.drop.methods.limitSize = function(drop) {
+});
+$.drop.setMethod('limitSize', function(drop) {
     var self = this,
             $ = jQuery,
             wnd = $(window);
@@ -88,11 +88,11 @@ $.drop.methods.limitSize = function(drop) {
                 'width': '',
                 'height': ''
             });
-            if (drp.dropContent) {
-                var el = drop.find($(drp.dropContent)).filter(':visible');
+            if (drp.placeContent) {
+                var el = drop.find($(drp.placeContent)).filter(':visible');
                 if (el.data('jsp'))
                     el.data('jsp').destroy();
-                drop.find($(drp.dropContent)).filter(':visible').css({'height': ''});
+                drop.find($(drp.placeContent)).filter(':visible').css({'height': ''});
             }
             var wndW = wnd.width(),
                     wndH = wnd.height(),
@@ -114,4 +114,4 @@ $.drop.methods.limitSize = function(drop) {
             self._heightContent(drop);
         });
     });
-};
+});

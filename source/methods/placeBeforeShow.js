@@ -1,4 +1,4 @@
-$.drop.methods.placeBeforeShow = function(drop, $this, opt) {
+$.drop.setMethod('placeBeforeShow', function(drop, $this, opt) {
     var self = this,
             $ = jQuery,
             wnd = $(window);
@@ -42,4 +42,4 @@ $.drop.methods.placeBeforeShow = function(drop, $this, opt) {
             'top': $this.offset().top
         });
     return this;
-};
+});

@@ -1,4 +1,4 @@
-$.drop.methods.placeAfterClose = function(drop, $this, opt) {
+$.drop.setMethod('placeAfterClose', function(drop, $this, opt) {
     var $ = jQuery,
             wnd = $(window);
     if (!this._isScrollable($('body').get(0)))
@@ -49,4 +49,4 @@ $.drop.methods.placeAfterClose = function(drop, $this, opt) {
             duration: opt.durationOff
         });
     return this;
-};
+});

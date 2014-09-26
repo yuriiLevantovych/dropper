@@ -1,4 +1,4 @@
-$.drop.methods.droppable = function(drop) {
+$.drop.setMethod('droppable', function(drop) {
     var $ = jQuery,
             wnd = $(window),
             doc = $(document);
@@ -64,4 +64,4 @@ $.drop.methods.droppable = function(drop) {
             });
         });
     });
-};
+});

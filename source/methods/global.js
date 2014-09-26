@@ -1,4 +1,4 @@
-$.drop.methods.global = function(start) {
+$.drop.setMethod('global', function(start) {
     var $ = jQuery;
     return this.each(function() {
         var drop = $(this),
@@ -53,4 +53,4 @@ $.drop.methods.global = function(start) {
             });
         }
     });
-};
+});
