@@ -120,7 +120,7 @@
             </li>
             <li>
                 <div><h3>Different content</h3> (header, content, footer)</div>
-                <a href="#" data-drop data-header="header" data-content="content" data-footer="footer">content</a>
+                <a href="#" data-drop data-header="365435" data-content="content" data-footer="footer">content</a>
             </li>
         </ol>
         <ol>
@@ -894,7 +894,7 @@
                 </tr>
             </tbody>
         </table>
-        <h2>Methods Extend</h2>
+        <h2 data-drop=".i">Methods Extend</h2>
         <br/>
         <br/>
         <br/>
@@ -922,7 +922,7 @@
                 $('[rel]').drop({
                     overlay: false,
                     place: 'global',
-                    contentHeader: function(opt) {
+                    header: function(opt) {
                         return ($.inArray(opt.href, $.drop.drp.galleries[opt.rel]) + 1) + ' картинка';
                     },
                     animate: true,
@@ -942,6 +942,13 @@
         <div id="inline" class="drop">
             <div><h3>Simple inline</h3></div>
             <p>inline</p>
+            <button data-closed>exit</button>
+        </div>
+        <div class="i drop">
+            privet
+            <button data-closed>x</button>
+            dsadasd
+            <br />
         </div>
     </body>
 </html>
