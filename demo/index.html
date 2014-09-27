@@ -98,6 +98,33 @@
                 <a href="#" data-drop data-filter="closest(body).find(#inline)">drop filter</a>
             </li>
             <li>
+                <div><h3>Other place</h3> (inherit with parametr overlay: false)</div>
+                <a href="#" data-drop="#inline2" data-place="inherit" data-overlay="false">inherit position</a>
+                <div id="inline2" class="drop">
+                    <div><h3>Simple inline inherit</h3></div>
+                    <p>inline</p>
+                </div>
+            </li>
+            <li>
+                <div><h3>Other place</h3> (inherit with parametr closeActiveClick)</div>
+                <a href="#" data-drop="#inline2" data-place="inherit" data-overlay="false" data-close-active-click="true">inherit position</a>
+            </li>
+            <li>
+                <div><h3>Other place</h3> (inherit with parametr placeInherit and href)</div>
+                <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit">inherit position</a>
+                <div class="placeInherit"><i>PlaceInherit</i></div>
+            </li>
+            <li>
+                <div><h3>Other place</h3> (inherit with parametr placeInherit and methoPlaceInherit "append")</div>
+                <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit" data-method-place-inherit="append">inherit position</a>
+            </li>
+            <li>
+                <div><h3>Different content</h3> (header, content, footer)</div>
+                <a href="#" data-drop data-header="header" data-content="content" data-footer="footer">content</a>
+            </li>
+        </ol>
+        <ol>
+            <li>
                 <div><h3>Alert</h3></div>
                 <a href="#" data-drop data-alert="true">alert</a>
             </li>
@@ -126,31 +153,6 @@
                 <a href="#" data-drop="#inline" data-place="global" data-overlay="false">global position</a>
             </li>
             <li>
-                <div><h3>Other place</h3> (inherit with parametr overlay: false)</div>
-                <a href="#" data-drop="#inline2" data-place="inherit" data-overlay="false">inherit position</a>
-                <div id="inline2" class="drop">
-                    <div><h3>Simple inline inherit</h3></div>
-                    <p>inline</p>
-                </div>
-            </li>
-            <li>
-                <div><h3>Other place</h3> (inherit with parametr closeActiveClick)</div>
-                <a href="#" data-drop="#inline2" data-place="inherit" data-overlay="false" data-close-active-click="true">inherit position</a>
-            </li>
-            <li>
-                <div><h3>Other place</h3> (inherit with parametr placeInherit and href)</div>
-                <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit">inherit position</a>
-                <div class="placeInherit"><i>PlaceInherit</i></div>
-            </li>
-            <li>
-                <div><h3>Other place</h3> (inherit with parametr placeInherit and methoPlaceInherit "append")</div>
-                <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit" data-method-place-inherit="append">inherit position</a>
-            </li>
-            <li>
-                <div><h3>Different content</h3> (header, content, footer)</div>
-                <a href="#" data-drop data-header="header" data-content="content" data-footer="footer">content</a>
-            </li>
-            <li>
                 <div><h3>Dropable</h3></div>
                 <a href="#" data-drop="#inline" data-droppable="true">droppable</a>
             </li>
@@ -161,10 +163,6 @@
             <li>
                 <div><h3>Dropable</h3> (with parametr droppableFixed)</div>
                 <a href="#" data-drop="#inline" data-droppable="true" data-droppable-limit="true" data-droppable-fixed="true">droppableFixed</a>
-            </li>
-            <li>
-                <div><h3></h3></div>
-                <a href="#" data-drop></a>
             </li>
         </ol>
         <h2>Options</h2>
@@ -762,7 +760,7 @@
         <h2>Themes</h2>
         <h2>Gallery</h2>
         <h2>Droppable</h2>
-        
+
         <h2>Methods</h2>
         <h2>API Properties && Methods</h2>
         <table>
