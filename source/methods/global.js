@@ -11,8 +11,8 @@ $.drop.setMethod('global', function(start) {
                 l = 0,
                 $thisW = $this.width(),
                 $thisH = $this.height(),
-                dropW = +drop.actual('width'),
-                dropH = +drop.actual('height'),
+                dropW = +drop.actual('outerWidth'),
+                dropH = +drop.actual('outerHeight'),
                 offTop = $this.offset().top,
                 offLeft = $this.offset().left,
                 $thisT = 0,
@@ -29,13 +29,13 @@ $.drop.setMethod('global', function(start) {
         else {
             var pmt = drp.placement.toLowerCase().split(' ');
             if (pmt[1] === 'top')
-                t = -drop.actual('outerHeight');
+                t = -dropH;
             if (pmt[1] === 'bottom')
                 t = $thisH;
             if (pmt[0] === 'left')
                 l = 0;
             if (pmt[0] === 'right')
-                l = -dropW - $thisW;
+                l = -dropW + $thisW;
             if (pmt[0] === 'center')
                 l = -dropW / 2 + $thisW / 2;
             if (pmt[1] === 'center')

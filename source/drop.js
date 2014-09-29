@@ -214,7 +214,7 @@
             if (elSet.tempClass && !elSet.dropn)
                 elSet.drop = opt.drop = null;
 
-            opt.tempClass = elSet.tempClass = opt.defaultClassBtnDrop + (+new Date());
+            opt.tempClass = elSet.tempClass = 'drop-' + (+new Date());
 
             if (elSet || $.existsN(opt.drop))
                 elSet.dropn = opt.drop;
@@ -467,9 +467,8 @@
                         methods._checkMethod(function() {
                             methods.droppable(drop);
                         });
-                    var cB = opt.elAfter;
-                    if (cB)
-                        eval(cB).call($this, opt, drop, e);
+                    if (opt.elAfter)
+                        eval(opt.elAfter).call($this, opt, drop, e);
                     if (opt.after)
                         opt.after.call($this, opt, drop, e);
                     if (opt.afterG)
@@ -887,25 +886,24 @@
         position: 'absolute',
         placeBeforeShow: 'center center',
         placeAfterClose: 'center center',
-        start: null,
-        elBefore: $.noop,
-        elAfter: $.noop,
-        elClose: $.noop,
-        elClosed: $.noop,
-        before: $.noop,
-        after: $.noop,
-        close: $.noop,
-        closed: $.noop,
-        beforeG: $.noop,
-        afterG: $.noop,
-        closeG: $.noop,
-        closedG: $.noop,
-        pattern: '<div class="drop drop"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev"><</i>&#60;</button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header"></div><div class="drop-content"><div class="inside-padd placePaste"></div></div><div class="drop-footer"></div></div>',
+        start: $.noop(),
+        elBefore: $.noop(),
+        elAfter: $.noop(),
+        elClose: $.noop(),
+        elClosed: $.noop(),
+        before: $.noop(),
+        after: $.noop(),
+        close: $.noop(),
+        closed: $.noop(),
+        beforeG: $.noop(),
+        afterG: $.noop(),
+        closeG: $.noop(),
+        closedG: $.noop(),
+        pattern: '<div class="drop drop-simple"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev"><</i>&#60;</button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header"></div><div class="drop-content"><div class="inside-padd placePaste"></div></div><div class="drop-footer"></div></div>',
         patternNotify: '<div class="drop drop-notify"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header"></div><div class="drop-content"><div class="inside-padd placePaste"></div></div><div class="drop-footer"></div></div>',
         patternConfirm: '<div class="drop drop-confirm"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header">Confirm</div><div class="drop-content"><div class="inside-padd"><div class="placePaste"></div><div class="drop-group-btns"><button type="button" class="drop-button-confirm" data-button-confirm>ok</button><button type="button" class="drop-btn-cancel" data-closed>cancel</button></div></div></div><div class="drop-footer"></div></div>',
         patternPrompt: '<div class="drop drop-prompt"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header">Prompt</div><div class="drop-content"><form class="inside-padd"><div class="placePaste"></div><input type="text" name="promptInput"/><div class="drop-group-btns"><button data-button-prompt type="submit" class="drop-button-prompt">ok</button><button type="button" data-closed class="drop-btn-cancel">cancel</button></div></form></div><div class="drop-footer"></div></div>',
         patternAlert: '<div class="drop drop-alert"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header">Alert</div><div class="drop-content"><div class="inside-padd"><div class="placePaste"></div><div class="drop-group-btns"><button type="button" class="drop-button-alert" data-button-alert>ok</button></div></div></div><div class="drop-footer"></div></div>',
-        defaultClassBtnDrop: 'drop-',
         confirmActionBtn: '[data-button-confirm]',
         promptActionBtn: '[data-button-prompt]',
         alertActionBtn: '[data-button-alert]',
@@ -1000,7 +998,7 @@
                     .drop-prev{left: 5px;text-align: left;}\n\
                     .drop-icon-next{text-align: center;}\n\
                     .icon-times-drop{position: absolute;z-index:1;right:0;top: 0;cursor: pointer;width: 15px;height: 15px;}\n\
-                    .nav{list-style: none;}\n\
+                    .nav{list-style: none;margin-left: 0;}\n\
                     .nav-vertical > li{display: block;border-top: 1px solid #ebebeb;padding: 8px 35px 8px 15px;}\n\
                     .nav-vertical > li > a{text-decoration: none;}\n\
                     .nav-vertical > li:first-child{border-top: 0;}\n\
