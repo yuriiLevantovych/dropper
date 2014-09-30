@@ -7,7 +7,8 @@
         <script src="../source/drop.js"></script>
         <style>
             *{margin: 0;padding: 0;}
-            body{font-size: 13px;font-family: Arial, Helvetica CY, Nimbus Sans L, sans-serif;line-height: 1.5;}
+            body{font-family: Arial, Helvetica CY, Nimbus Sans L, sans-serif;line-height: 1.5;}
+            body, table{font-size: 13px;}
             h1{margin: 40px 0 20px;}
             h2{margin: 20px 0 10px;}
             .container{width: 1170px;margin: auto;}
@@ -28,6 +29,11 @@
                 -moz-border-radius: 5px;
                 border-radius: 5px;
             }
+            [class*="items"]{font-size: 0;list-style: none;overflow: hidden;}
+            [class*="items"] li{float: left;}
+            .items-gallery{margin-left: -10px;}
+            .items-gallery li{width: 60px;height: 60px;margin-left: 10px;}
+            .items-gallery img{max-width: 100%;}
         </style>
         <link rel="stylesheet" type="text/css" href="../source/drop.css"/>
     </head>
@@ -57,57 +63,29 @@
                     <a href="with_pattern.php" data-drop data-always="true">ajax always</a>
                 </li>
                 <li>
-                    <div><h3>Simple Iframe</h3></div>
+                    <div><h3>Simple Iframe</h3> <a href="#inheritDetail">detail about iframe</a></div>
                     <a href="iframe.html" data-drop data-type="iframe">iframe</a>
-                </li>
-                <li>
-                    <div><h3>Iframe with parameters width and height</h3></div>
-                    <a href="iframe.html" data-drop data-type="iframe" data-width="500" data-height="500">iframe</a>
-                </li>
-                <li>
-                    <div><h3>Iframe from other domain</h3> <i>(window.parent.postMessage for opening inside "drop")</i></div>
-                    <a href="http://levantovych.pro100host.com/iframe.html" data-type="iframe" data-drop data-width="500" data-height="500">iframe</a>
                 </li>
                 <li>
                     <div><h3>Simple notify inline</h3></div>
                     <ul>
                         <li>
-                            <a id="simpleNotify1" href="" data-drop data-notify="true">notify success</a>
-                            <script>
-                                $('#simpleNotify1').data('datas', {answer: 'success', data: 'simple notify success'});
-                            </script>
+                            <a href="#" data-drop data-notify="true" data-datas="{answer: 'success', data: 'simple notify success'}">notify success</a>
                         </li>
                         <li>
-                            <a id="simpleNotify2" href="" data-drop data-notify="true">notify info</a>
-                            <script>
-                                $('#simpleNotify2').data('datas', {answer: 'info', data: 'simple notify info'});
-                            </script>
+                            <a href="#" data-drop data-notify="true" data-datas="{answer: 'info', data: 'simple notify info'}">notify info</a>
                         </li>
                         <li>
-                            <a id="simpleNotify3" href="" data-drop data-notify="true">notify warning</a>
-                            <script>
-                                $('#simpleNotify3').data('datas', {answer: 'warning', data: 'simple notify warning'});
-                            </script>
+                            <a href="#" data-drop data-notify="true" data-datas="{answer: 'warning', data: 'simple notify warning'}">notify warning</a>
                         </li>
                         <li>
-                            <a id="simpleNotify4" href="" data-drop data-notify="true">notify error</a>
-                            <script>
-                                $('#simpleNotify4').data('datas', {answer: 'error', data: 'simple notify error'});
-                            </script>
+                            <a href="#" data-drop data-notify="true" data-datas="{answer: 'error', data: 'simple notify error'}">notify error</a>
                         </li>
                     </ul>
                 </li>
                 <li>
                     <div><h3>Notify ajax</h3> <i>(constantly load)</i></div>
                     <a href="notify.php" data-drop data-notify="true">notify</a>
-                </li>
-                <li>
-                    <div><h3>Simple context inline</h3> <i>(click right button mouse)</i></div>
-                    <a href="" data-drop="#inline" data-context="true">context</a>
-                </li>
-                <li>
-                    <div><h3>Context ajax</h3> <i>(click right button mouse)</i></div>
-                    <a href="context.php" data-drop data-context="true">context ajax</a>
                 </li>
                 <li>
                     <div><h3>Parametr filter</h3> <i>(closest('body').find('#inline'))</i></div>
@@ -123,13 +101,14 @@
                 </li>
                 <li>
                     <div><h3>Different content</h3> (header, content, footer) <a href="#inheritDetail">detail about content</a></div>
-                    <a href="#" data-drop data-header="365435" data-content="content" data-footer="footer">content</a>
+                    <a href="#" data-drop data-header="header" data-content="content" data-footer="footer">content</a>
                 </li>
             </ol>
             <h2>Demos with extends methods</h2>
+            <p><b>Additional methos need connect</b> <a href="#inheritDetail">detail about connect methods</a></p>
             <ol class="list-example">
                 <li>
-                    <div><h3>Alert Confirm Prompt</h3></div>
+                    <div><h3>Alert Confirm Prompt</h3> <i>require <b>confirmPromptAlert</b> method</i></div>
                     <ul>
                         <li>
                             <div><h4>Alert</h4> <a href="#inheritDetail">detail about alert</a></div>
@@ -146,16 +125,42 @@
                     </ul>
                 </li>
                 <li>
-                    <div><h3>Parametr place with value (global)</h3></div>
+                    <div><h3>Parametr place with value (global)</h3> <i>require <b>global</b> method</i> <a href="#inheritDetail">detail about  <b>place: global</b></a></div>
                     <a href="#" data-drop="#inline" data-place="global" data-overlay="false">global position</a>
                 </li>
                 <li>
-                    <div><h3>Dropable</h3></div>
+                    <div><h3>Dropable</h3> <i>require <b>droppable</b> method</i> <a href="#inheritDetail">detail about  <b>droppable: true</b></a></div>
                     <a href="#" data-drop="#inline" data-droppable="true">droppable</a>
                 </li>
                 <li>
-                    <div><h3>Dropable</h3></div>
-                    <a href="#" data-drop="#inline" data-droppable="true">droppable</a>
+                    <div><h3>Simple context inline</h3> <i>(click right button mouse)  require <b>global</b> method</i> <a href="#inheritDetail">detail about  <b>context: true</b></a></div>
+                    <a href="#" data-drop="#inline" data-context="true">context</a>
+                </li>
+                <li>
+                    <div><h3>Limit size popup && scroll Content</h3> <i>require <b>limitSize</b> method</i> <a href="#inheritDetail">detail about  <b>limitSize: true</b></a></div>
+                    <a href="#" data-drop data-limit-size="true" data-content="Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>">limit size and scroll content</a>
+                </li>
+                <li>
+                    <div><h3>Place before show</h3> <i>(must set parametr <b>animate: true</b>) require <b>placeBeforeShow</b> method</i> <a href="#inheritDetail">detail about  <b>placeBeforeShow</b></a></div>
+                    <a href="#" data-drop="#inline" data-place-before-show="left top" data-animate="true">left top place before show</a>
+                </li>
+                <li>
+                    <div><h3>Place after close</h3> <i>(must set parametr <b>animate: true</b>) require <b>placeAfterClose</b> method</i> <a href="#inheritDetail">detail about  <b>placeAfterClose</b></a></div>
+                    <a href="#" data-drop="#inline" data-place-after-close="right bottom" data-animate="true">right bottom place after close</a>
+                </li>
+                <li>
+                    <div><h3>Gallery</h3> <i>(must set parametr <b>rel: 'name of group'</b>) require <b>gallery</b> method</i> <a href="#inheritDetail">detail about  <b>gallery</b></a></div>
+                    <ul class="items-gallery">
+                        <li>
+                            <a href="1.jpg" data-drop rel="group"><img src="1.jpg"/></a>
+                        </li>
+                        <li>
+                            <a href="2.jpg" data-drop rel="group"><img src="2.jpg"/></a>
+                        </li>
+                        <li>
+                            <a href="3.jpg" data-drop rel="group"><img src="3.jpg"/></a>
+                        </li>
+                    </ul>
                 </li>
             </ol>
             <h2>Options</h2>
@@ -188,16 +193,58 @@
                         <td>null</td>
                     </tr>
                     <tr>
+                        <td>ajax</td>
+                        <td>-</td>
+                        <td>object</td>
+                        <td><pre><code>{<br/>&nbsp;&nbsp;type: 'post',<br/>&nbsp;&nbsp;dataType: null<br/>}</code></pre></td>
+                    </tr>
+                    <tr>
+                        <td>always</td>
+                        <td>-</td>
+                        <td>boolean</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
                         <td>hash</td>
                         <td>-</td>
                         <td>string</td>
                         <td>null</td>
                     </tr>
                     <tr>
-                        <td>dataPrompt</td>
+                        <td>type</td>
                         <td>-</td>
-                        <td>object</td>
+                        <td>string <i>(auto, image, iframe, ajax)</i></td>
+                        <td>auto</td>
+                    </tr>
+                    <tr>
+                        <td>width</td>
+                        <td>-</td>
+                        <td>number, string</td>
                         <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>height</td>
+                        <td>-</td>
+                        <td>number, string</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>place</td>
+                        <td>-</td>
+                        <td>string <i>(center, inherit, noinherit)</i></td>
+                        <td>center</td>
+                    </tr>
+                    <tr>
+                        <td>placement</td>
+                        <td>-</td>
+                        <td>string, object. String - <i>(left top, left bottom, left center, right top, right bottom, right center, center center)</i> or object with properies left, right, top, bottom with number or string values</td>
+                        <td>left bottom</td>
+                    </tr>
+                    <tr>
+                        <td>position</td>
+                        <td>-</td>
+                        <td>string <i>(absolute, relative, fixed, static, inherit)</i></td>
+                        <td>absolute</td>
                     </tr>
                     <tr>
                         <td>placeContent</td>
@@ -262,10 +309,10 @@
                         <td>null</td>
                     </tr>
                     <tr>
-                        <td>message</td>
+                        <td>context</td>
                         <td>-</td>
-                        <td>object</td>
-                        <td><pre><code>success: function(text) {<br/>&nbsp;&nbsp;return '&lt;div class= "drop-msg"&gt;&lt;div class="drop-success"&gt;&lt;span class="drop-icon-notify">&lt;/span&gt;&lt;div class="drop-text-el"&gt;' + text + '&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;';<br/>},<br/>warning: function(text) {<br/>&nbsp;&nbsp;return '&lt;div class= "drop-msg"&gt;&lt;div class="drop-warning"&gt;&lt;span class="drop-icon-notify"&gt;&lt;/span&gt;&lt;div class="drop-text-el"&gt;' + text + '&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;';<br/>},<br/>error: function(text) {<br/>&nbsp;&nbsp;return '&lt;div class="drop-msg"&gt;&lt;div class="drop-error"&gt;&lt;span class="drop-icon-notify"&gt;&lt;/span&gt;&lt;div class="drop-text-el"&gt;' + text + '&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;';<br/>},<br/>info: function(text) {<br/>&nbsp;&nbsp;return '&lt;div class="drop-msg"&gt;&lt;div class="drop-info"&gt;&lt;span class="drop-icon-notify"&gt;&lt;/span&gt;&lt;div class="drop-text-el"&gt;' + text + '&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;';<br/>}</code></pre></td>
+                        <td>boolean</td>
+                        <td>false</td>
                     </tr>
                     <tr>
                         <td>trigger</td>
@@ -298,16 +345,16 @@
                         <td>fadeOut</td>
                     </tr>
                     <tr>
-                        <td>place</td>
+                        <td>durationOn</td>
                         <td>-</td>
-                        <td>string <i>(center, inherit, noinherit)</i></td>
-                        <td>center</td>
+                        <td>integer</td>
+                        <td>300</td>
                     </tr>
                     <tr>
-                        <td>placement</td>
+                        <td>durationOff</td>
                         <td>-</td>
-                        <td>string, object. String - <i>(left top, left bottom, left center, right top, right bottom, right center, center center)</i> or object with properies left, right, top, bottom with number or string values</td>
-                        <td>left bottom</td>
+                        <td>integer</td>
+                        <td>200</td>
                     </tr>
                     <tr>
                         <td>overlay</td>
@@ -328,10 +375,34 @@
                         <td>0.6</td>
                     </tr>
                     <tr>
-                        <td>position</td>
+                        <td>notify</td>
                         <td>-</td>
-                        <td>string <i>(absolute, relative, fixed, static, inherit)</i></td>
-                        <td>absolute</td>
+                        <td>boolean</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>timeclosenotify</td>
+                        <td>-</td>
+                        <td>integer</td>
+                        <td>3000</td>
+                    </tr>
+                    <tr>
+                        <td>datas</td>
+                        <td>-</td>
+                        <td>object</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>handleNotify</td>
+                        <td>-</td>
+                        <td>function</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>message</td>
+                        <td>-</td>
+                        <td>object</td>
+                        <td><pre><code>success: function(text) {<br/>&nbsp;&nbsp;return '&lt;div class= "drop-msg"&gt;&lt;div class="drop-success"&gt;&lt;span class="drop-icon-notify">&lt;/span&gt;&lt;div class="drop-text-el"&gt;' + text + '&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;';<br/>},<br/>warning: function(text) {<br/>&nbsp;&nbsp;return '&lt;div class= "drop-msg"&gt;&lt;div class="drop-warning"&gt;&lt;span class="drop-icon-notify"&gt;&lt;/span&gt;&lt;div class="drop-text-el"&gt;' + text + '&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;';<br/>},<br/>error: function(text) {<br/>&nbsp;&nbsp;return '&lt;div class="drop-msg"&gt;&lt;div class="drop-error"&gt;&lt;span class="drop-icon-notify"&gt;&lt;/span&gt;&lt;div class="drop-text-el"&gt;' + text + '&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;';<br/>},<br/>info: function(text) {<br/>&nbsp;&nbsp;return '&lt;div class="drop-msg"&gt;&lt;div class="drop-info"&gt;&lt;span class="drop-icon-notify"&gt;&lt;/span&gt;&lt;div class="drop-text-el"&gt;' + text + '&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;';<br/>}</code></pre></td>
                     </tr>
                     <tr>
                         <td>placeBeforeShow</td>
@@ -349,79 +420,79 @@
                         <td>start</td>
                         <td>-</td>
                         <td>name or code of function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>elBefore</td>
                         <td>-</td>
                         <td>name or code of function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>elAfter</td>
                         <td>-</td>
                         <td>name or code of function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>elClose</td>
                         <td>-</td>
                         <td>name or code of function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>elClosed</td>
                         <td>-</td>
                         <td>name or code of function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>before</td>
                         <td>-</td>
                         <td>function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>after</td>
                         <td>-</td>
                         <td>function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>close</td>
                         <td>-</td>
                         <td>function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>closed</td>
                         <td>-</td>
                         <td>function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>beforeG</td>
                         <td>-</td>
                         <td>function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>afterG</td>
                         <td>-</td>
                         <td>function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>closeG</td>
                         <td>-</td>
                         <td>function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>closedG</td>
                         <td>-</td>
                         <td>function</td>
-                        <td>$.noop()</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>pattern</td>
@@ -464,22 +535,58 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>confirmActionBtn</td>
+                        <td>alert</td>
                         <td>-</td>
-                        <td>string <i>selector</i></td>
-                        <td>[data-button-confirm]</td>
+                        <td>boolean</td>
+                        <td>false</td>
                     </tr>
                     <tr>
-                        <td>promptActionBtn</td>
+                        <td>alertText</td>
                         <td>-</td>
-                        <td>string <i>selector</i></td>
-                        <td>[data-button-prompt]</td>
+                        <td>string</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>alertActionBtn</td>
                         <td>-</td>
                         <td>string <i>selector</i></td>
                         <td>[data-button-alert]</td>
+                    </tr>
+                    <tr>
+                        <td>confirm</td>
+                        <td>-</td>
+                        <td>boolean</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>confirmText</td>
+                        <td>-</td>
+                        <td>string</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>confirmActionBtn</td>
+                        <td>-</td>
+                        <td>string <i>selector</i></td>
+                        <td>[data-button-confirm]</td>
+                    </tr>
+                    <tr>
+                        <td>prompt</td>
+                        <td>-</td>
+                        <td>boolean</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>promptText</td>
+                        <td>-</td>
+                        <td>string</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>promptActionBtn</td>
+                        <td>-</td>
+                        <td>string <i>selector</i></td>
+                        <td>[data-button-prompt]</td>
                     </tr>
                     <tr>
                         <td>promptInput</td>
@@ -491,6 +598,12 @@
                         <td>promptInputValue</td>
                         <td>-</td>
                         <td>string, number</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>dataPrompt</td>
+                        <td>-</td>
+                        <td>object</td>
                         <td>null</td>
                     </tr>
                     <tr>
@@ -510,96 +623,6 @@
                         <td>-</td>
                         <td>string <i>selector</i> or jQuery Object</td>
                         <td>.drop-prev</td>
-                    </tr>
-                    <tr>
-                        <td>ajax</td>
-                        <td>-</td>
-                        <td>object</td>
-                        <td><pre><code>{<br/>&nbsp;&nbsp;type: 'post',<br/>&nbsp;&nbsp;dataType: null<br/>}</code></pre></td>
-                    </tr>
-                    <tr>
-                        <td>jScrollPane</td>
-                        <td>-</td>
-                        <td>object</td>
-                        <td><pre><code>{<br/>&nbsp;&nbsp;animateScroll: true,<br/>&nbsp;&nbsp;showArrows: true<br/>}</code></pre></td>
-                    </tr>
-                    <tr>
-                        <td>durationOn</td>
-                        <td>-</td>
-                        <td>integer</td>
-                        <td>300</td>
-                    </tr>
-                    <tr>
-                        <td>durationOff</td>
-                        <td>-</td>
-                        <td>integer</td>
-                        <td>200</td>
-                    </tr>
-                    <tr>
-                        <td>timeclosenotify</td>
-                        <td>-</td>
-                        <td>integer</td>
-                        <td>3000</td>
-                    </tr>
-                    <tr>
-                        <td>notify</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
-                        <td>datas</td>
-                        <td>-</td>
-                        <td>object</td>
-                        <td>null</td>
-                    </tr>
-                    <tr>
-                        <td>handleNotify</td>
-                        <td>-</td>
-                        <td>function</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>confirm</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
-                        <td>confirmText</td>
-                        <td>-</td>
-                        <td>string</td>
-                        <td>null</td>
-                    </tr>
-                    <tr>
-                        <td>prompt</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
-                        <td>promptText</td>
-                        <td>-</td>
-                        <td>string</td>
-                        <td>null</td>
-                    </tr>
-                    <tr>
-                        <td>alert</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
-                        <td>alertText</td>
-                        <td>-</td>
-                        <td>string</td>
-                        <td>null</td>
-                    </tr>
-                    <tr>
-                        <td>always</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
                     </tr>
                     <tr>
                         <td>animate</td>
@@ -632,6 +655,12 @@
                         <td>false</td>
                     </tr>
                     <tr>
+                        <td>inheritClose</td>
+                        <td>-</td>
+                        <td>boolean</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
                         <td>cycle</td>
                         <td>-</td>
                         <td>boolean</td>
@@ -642,6 +671,18 @@
                         <td>-</td>
                         <td>boolean</td>
                         <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>centerOnScroll</td>
+                        <td>-</td>
+                        <td>boolean</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>jScrollPane</td>
+                        <td>-</td>
+                        <td>object</td>
+                        <td><pre><code>{<br/>&nbsp;&nbsp;animateScroll: true,<br/>&nbsp;&nbsp;showArrows: true<br/>}</code></pre></td>
                     </tr>
                     <tr>
                         <td>droppable</td>
@@ -662,28 +703,10 @@
                         <td>false</td>
                     </tr>
                     <tr>
-                        <td>inheritClose</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
                         <td>keyNavigate</td>
                         <td>-</td>
                         <td>boolean</td>
                         <td>true</td>
-                    </tr>
-                    <tr>
-                        <td>context</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
-                        <td>centerOnScroll</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
                     </tr>
                     <tr>
                         <td>autoPlay</td>
@@ -698,101 +721,19 @@
                         <td>2000</td>
                     </tr>
                     <tr>
-                        <td>theme</td>
-                        <td>-</td>
-                        <td>string</td>
-                        <td>default</td>
-                    </tr>
-                    <tr>
-                        <td>type</td>
-                        <td>-</td>
-                        <td>string <i>(auto, image, iframe, ajax)</i></td>
-                        <td>auto</td>
-                    </tr>
-                    <tr>
-                        <td>width</td>
-                        <td>-</td>
-                        <td>number, string</td>
-                        <td>null</td>
-                    </tr>
-                    <tr>
-                        <td>height</td>
-                        <td>-</td>
-                        <td>number, string</td>
-                        <td>null</td>
-                    </tr>
-                    <tr>
                         <td>rel</td>
                         <td>-</td>
                         <td>string</td>
                         <td>null</td>
                     </tr>
+                    <tr>
+                        <td>theme</td>
+                        <td>-</td>
+                        <td>string</td>
+                        <td>default</td>
+                    </tr>
                 </tbody>
             </table>
-
-            <h2>Place</h2>
-            <h3>Inherit</h3>
-            <ul>
-                <li>
-                    <div><h3>Parametr place with value inherit</h3> (inherit with parametr closeActiveClick)</div>
-                    <a href="#" data-drop="#inline2" data-place="inherit" data-overlay="false" data-close-active-click="true">inherit position</a>
-                </li>
-                <li>
-                    <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and href)</div>
-                    <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit">inherit position</a>
-                    <div class="placeInherit"><i>PlaceInherit</i></div>
-                </li>
-                <li>
-                    <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and methoPlaceInherit "append")</div>
-                    <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit" data-method-place-inherit="append">inherit position</a>
-                </li>
-            </ul>
-            <h2>Place before show</h2>
-            <h2>Place after close</h2>
-            <h2>Position && size</h2>
-            <br/>
-            <h2>Scroll Content && limit size popup</h2>
-            centerOnScroll jScrollPane limitSize
-            <br/><br/>        
-            <h2>Position && size</h2>
-            <br/><br/>
-            <h2>Close</h2>
-            closeClick closeEsc closeActiveClick moreOne
-            <br/><br/>
-            <h2>Ajax</h2>
-            always ajax type
-            <br/><br/>
-            <h2>Effect</h2>
-            effectOn effectOff
-            <br/><br/>
-            <h2>Callbacks</h2>
-            start
-            <br/><br/>
-            <h2>Custom Events</h2>
-            <h2>Content</h2>
-            header footer content placeInherit
-            <br/><br/>
-            <h2>Notify</h2>
-            handleNotify datas timeclosenotify message
-            <br/><br/>
-            <h2>Alert</h2>
-            <h2>Prompt</h2>
-            <h2>Confirm</h2>
-            <h2>Themes</h2>
-            <h2>Gallery</h2>
-            <h2>Droppable</h2>
-            <ul>
-                <li>
-                    <div><h3>Dropable</h3> (with parametr droppableLimit)</div>
-                    <a href="#" data-drop="#inline" data-droppable="true" data-droppable-limit="true">droppableLimit</a>
-                </li>
-                <li>
-                    <div><h3>Dropable</h3> (with parametr droppableFixed)</div>
-                    <a href="#" data-drop="#inline" data-droppable="true" data-droppable-limit="true" data-droppable-fixed="true">droppableFixed</a>
-                </li>
-            </ul>
-
-            <h2>Methods</h2>
             <h2>API Properties && Methods</h2>
             <table>
                 <thead>
@@ -825,125 +766,222 @@
                         <th colspan="2">Methods</th>
                     </tr>
                     <tr>
-                        <td>$.drop</td>
+                        <td>open</td>
                         <td>
-                            <code>$.drop()</code>
+                            <code>$.drop([various type], [options])</code>
+                            <br/>
+                            <br/>
+                            <p>
+                                First parameter can be in various types, examples:<br/>
+                                <code>$.drop([<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : '1.jpg', header : 'Title first image'},<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : '2.jpg', header : 'Title second image'}<br/>]);</code> - array containing objects
+                                <br/>
+                                <code>$.drop( {href : '1.jpg', title : 'Lorem lipsum'} );</code> - single object
+                                <br/>
+                                <code>$.drop( ['1.jpg', '2.jpg'] );</code> - array containing links as strings
+                                <br/>
+                                <code>$.drop( '1.jpg' );</code> - string as source link 
+                                <br/>
+                                <code>$.drop( [jQuery object] );</code> 
+                                <br/>
+                                <code>$.drop( '&lt;h1&gt;Lorem lipsum&lt;/h1&gt;' );</code>
+                            </p>
                         </td>
                     </tr>
                     <tr>
                         <td>close</td>
                         <td>
-                            <code>$.drop.close()</code>
+                            <code>$.drop.close([selector|jQuery object])</code>
+                            <p>if call without parameters closing all opened popups</p>
                         </td>
                     </tr>
                     <tr>
                         <td>cancel</td>
                         <td>
                             <code>$.drop.cancel()</code>
+                            <p>Cancel loading image or abort ajax request</p>
                         </td>
                     </tr>
                     <tr>
                         <td>update</td>
                         <td>
-                            <code>$.drop.update()</code>
+                            <code>$.drop.update([selector|jQuery object])</code>
+                            <p>if call without parameters updated (reposition, size) all opened popups</p>
                         </td>
                     </tr>
                     <tr>
                         <td>setMethod</td>
                         <td>
                             <code>$.drop.setMethod(name, value)</code>
-                            <div>extend Default methods</div>
+                            <p>extend Default methods</p>
                         </td>
                     </tr>
                     <tr>
                         <td>getMethods</td>
                         <td>
                             <code>$.drop.getMethods()</code>
-                            <div>return only public methods</div>
+                            <p>return only public methods</p>
                         </td>
                     </tr>
                     <tr>
                         <td>setParameters</td>
                         <td>
                             <code>$.drop.setParameters()</code>
-                            <div>extend Default parameters</div>
+                            <p>extend Default parameters</p>
                         </td>
                     </tr>
                     <tr>
                         <td>setThemes</td>
                         <td>
                             <code>$.drop.setThemes()</code>
+                            <p></p>
                         </td>
                     </tr>
                     <tr>
                         <td>setUrlMethods</td>
                         <td>
                             <code>$.drop.setUrlMethods()</code>
+                            <p></p>
                         </td>
                     </tr>
                     <tr>
                         <td>next</td>
                         <td>
                             <code>$.drop.next()</code>
+                            <p></p>
                         </td>
                     </tr>
                     <tr>
                         <td>prev</td>
                         <td>
                             <code>$.drop.prev()</code>
+                            <p></p>
                         </td>
                     </tr>
                     <tr>
                         <td>jumpto</td>
                         <td>
                             <code>$.drop.jumpto()</code>
+                            <p></p>
                         </td>
                     </tr>
                     <tr>
                         <td>play</td>
                         <td>
                             <code>$.drop.play()</code>
+                            <p></p>
                         </td>
                     </tr>
                     <tr>
                         <td>showLoading</td>
                         <td>
                             <code>$.drop.showLoading()</code>
+                            <p></p>
                         </td>
                     </tr>
                     <tr>
                         <td>hideLoading</td>
                         <td>
                             <code>$.drop.hideLoading()</code>
+                            <p></p>
                         </td>
                     </tr>
                     <tr>
                         <td>require</td>
                         <td>
                             <code>$.drop.require()</code>
+                            <p></p>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <h2>Methods Extend</h2>
+            <h2>Extends Methods</h2>
+            <ul>
+                <li>confirmPromptAlert</li>
+                <li>droppable</li>
+                <li>gallery</li>
+                <li>global</li>
+                <li>limitSize</li>
+                <li>placeAfterClose</li>
+                <li>placeBeforeShow</li>
+            </ul>
+
+            <h2>Description of functionality</h2>
+            <h3>Iframe</h3>
+            <ul>
+                <li>
+                    <div><h3>Iframe with parameters width and height</h3></div>
+                    <a href="iframe.html" data-drop data-type="iframe" data-width="500" data-height="500">iframe</a>
+                </li>
+                <li>
+                    <div><h3>Iframe from other domain</h3> <i>(window.parent.postMessage for opening inside "drop")</i></div>
+                    <a href="http://levantovych.pro100host.com/iframe.html" data-type="iframe" data-drop data-width="500" data-height="500">iframe</a>
+                </li>
+            </ul>
+            <h3>Place</h3>
+            <h4>Inherit</h4>
+            <ul>
+                <li>
+                    <div><h3>Parametr place with value inherit</h3> (inherit with parametr closeActiveClick)</div>
+                    <a href="#" data-drop="#inline2" data-place="inherit" data-overlay="false" data-close-active-click="true">inherit position</a>
+                </li>
+                <li>
+                    <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and href)</div>
+                    <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit">inherit position</a>
+                    <div class="placeInherit"><i>PlaceInherit</i></div>
+                </li>
+                <li>
+                    <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and methoPlaceInherit "append")</div>
+                    <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit" data-method-place-inherit="append">inherit position</a>
+                </li>
+            </ul>
+            <h3>Place before show</h3>
+            <h3>Place after close</h3>
+            <h3>Position && size</h3>
             <br/>
-            <br/>
-            <br/>
-            <button type="button" data-start="(function(){return confirm('are you sure?');})" data-place-before-show="inherit" data-always="true" data-animate="true" data-notify="false" data-drop="#ajax" data-href="without_pattern.php" style="width: 200px;height: 150px;float: right;">click</button>
-            <button data-type="iframe" data-hash="#sdfa" type="button" data-animate="true" data-notify="false" data-drop data-href="http://levantovych.pro100host.com/iframe.html" data-width="800" data-height="800" style="width: 200px;height: 150px;float: right;">click</button>
-            <button type="button" data-drop data-context="true" data-overlay="false" data-place-before-show="inherit" data-notify="true" data-href="notify.php" style="width: 200px;height: 150px;float: right;">click</button>
-            <a href="http://fc08.deviantart.net/fs70/f/2010/324/a/2/avatar_upd_big_size_by_merychess-d30zufu.jpg" rel="group" onClick="return false;" data-hash="#a">
-                <img src="3.jpg" width="50"/>
-            </a>
-            <a data-drop=".asdf" data-hash="#b" data-place="inherit" data-overlay="false" data-close-active-click="true">
-                <img src="3.jpg" width="50"/>
-            </a>
-            <a href="6.jpg" rel="group" data-hash="#c" data-always="true">
-                <img src="5.jpg" width="50"/>
-            </a>
+            <h3>Scroll Content && limit size popup</h3>
+            centerOnScroll jScrollPane limitSize
+            <br/><br/>        
+            <h3>Position && size</h3>
+            <br/><br/>
+            <h3>Close</h3>
+            closeClick closeEsc closeActiveClick moreOne
+            <br/><br/>
+            <h3>Ajax</h3>
+            always ajax type
+            <br/><br/>
+            <h3>Effect</h3>
+            effectOn effectOff
+            <br/><br/>
+            <h3>Callbacks</h3>
+            start
+            <br/><br/>
+            <h3>Custom Events</h3>
+            <h3>Content</h3>
+            header footer content placeInherit
+            <br/><br/>
+            <h3>Notify</h3>
+            handleNotify datas timeclosenotify message
+            <br/><br/>
+            <h3>Alert</h3>
+            <h3>Prompt</h3>
+            <h3>Confirm</h3>
+            <h3>Themes</h3>
+            <h3>Gallery</h3>
+            <h3>Droppable</h3>
+            <ul>
+                <li>
+                    <div><h3>Dropable</h3> (with parametr droppableLimit)</div>
+                    <a href="#" data-drop="#inline" data-droppable="true" data-droppable-limit="true">droppableLimit</a>
+                </li>
+                <li>
+                    <div><h3>Dropable</h3> (with parametr droppableFixed)</div>
+                    <a href="#" data-drop="#inline" data-droppable="true" data-droppable-limit="true" data-droppable-fixed="true">droppableFixed</a>
+                </li>
+            </ul>
+
             <script>
                 $.drop.setUrlMethods('../source/methods');
-                $.drop.require('droppable', 'global', 'limitSize', 'galleries', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert');
+                //$.drop.require('droppable', 'global', 'limitSize', 'gallery', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert');
                 //            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
                 //$('[href]').data('theme', 'green')
                 $(document).ready(function() {
@@ -954,7 +992,7 @@
                         overlay: false,
                         place: 'global',
                         header: function(opt) {
-                            return ($.inArray(opt.href, $.drop.drp.galleries[opt.rel]) + 1) + ' картинка';
+                            return ($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка';
                         },
                         animate: true,
                         start: function(opt, drop) {

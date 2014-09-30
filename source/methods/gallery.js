@@ -1,24 +1,24 @@
-$.drop.setMethod('_cIGalleries', function(rel) {
+$.drop.setMethod('_cIGallery', function(rel) {
     var $ = jQuery;
     clearInterval($.drop.drp.autoPlayInterval[rel]);
     delete $.drop.drp.autoPlayInterval[rel];
 });
-$.drop.setMethod('_galleriesDecorator', function(rel, btn, i) {
+$.drop.setMethod('_galleryDecorator', function(rel, btn, i) {
     var self = this,
             $ = jQuery;
     return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.drop.drp.activeClass).each(function() {
         var $this = $(this),
                 drp = $this.data('drp');
         self._checkMethod(function() {
-            self.galleries($this, drp, btn, i);
+            self.gallery($this, drp, btn, i);
         });
     });
 });
-$.drop.setMethod('galleries', function(drop, opt, btn, i) {
+$.drop.setMethod('gallery', function(drop, opt, btn, i) {
     var $ = jQuery,
             doc = $(document),
             self = this,
-            relA = $.drop.drp.galleries[opt.rel];
+            relA = $.drop.drp.gallery[opt.rel];
     if (!relA)
         return self;
     var relL = relA.length;
@@ -43,8 +43,8 @@ $.drop.setMethod('galleries', function(drop, opt, btn, i) {
             relP -= 1;
             return false;
         }
-        var $next = $('[data-href="' + relA[i] + '"], [href="' + relA[i] + '"]').filter(':last');
-        self._cIGalleries(opt.rel);
+        var $next = $('[data-href="' + relA[i] + '"], [href="' + relA[i] + '"]').filter('[rel="' + opt.rel + '"]');
+        self._cIGallery(opt.rel);
         self.open.call($next, $.extend($next.data('drp'), {href: relA[i], rel: opt.rel}), e);
     };
     var _getnext = function(i) {
@@ -60,7 +60,7 @@ $.drop.setMethod('galleries', function(drop, opt, btn, i) {
     prev.add(next).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
         e.stopPropagation();
         relP = $.inArray(opt.href, relA);
-        self._cIGalleries(opt.rel);
+        self._cIGallery(opt.rel);
         _goto(_getnext($(this).is(opt.prev) ? -1 : 1), e);
     });
     if (i !== undefined && i !== null && relP !== i && relA[i])
@@ -69,15 +69,15 @@ $.drop.setMethod('galleries', function(drop, opt, btn, i) {
         _goto(_getnext(btn === 1 ? 1 : -1), null);
     if (opt.autoPlay) {
         if ($.drop.drp.autoPlayInterval[opt.rel])
-            self._cIGalleries(opt.rel);
+            self._cIGallery(opt.rel);
         else
             $.drop.drp.autoPlayInterval[opt.rel] = setInterval(function() {
-                self._cIGalleries(opt.rel);
+                self._cIGallery(opt.rel);
                 _goto(_getnext(1));
             }, opt.autoPlaySpeed);
     }
     drop.off('close.' + $.drop.nS).on('close.' + $.drop.nS, function() {
-        self._cIGalleries($(this).data('drp').rel);
+        self._cIGallery($(this).data('drp').rel);
     });
     if (opt.rel && opt.keyNavigate)
         drop.off('after.' + $.drop.nS).on('after.' + $.drop.nS, function() {

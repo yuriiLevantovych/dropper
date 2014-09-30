@@ -3,12 +3,13 @@ $.drop.setMethod('placeBeforeShow', function(drop, $this, opt) {
             $ = jQuery,
             wnd = $(window);
 
+    if (opt.place === 'inherit')
+        return false;
+
     if (!self._isScrollable($('body').get(0)))
         $('body').css('overflow', 'hidden');
     $('body').css('overflow-x', 'hidden');
 
-    if (opt.place === 'inherit')
-        return false;
     var pmt = opt.placeBeforeShow.toLowerCase().split(' '),
             t = -drop.actual('outerHeight'),
             l = -drop.actual('outerWidth');
@@ -34,7 +35,7 @@ $.drop.setMethod('placeBeforeShow', function(drop, $this, opt) {
             t = wnd.height();
     }
     drop.css({
-        'left': l, 'top': t
+        'left': l + wnd.scrollLeft(), 'top': t + wnd.scrollTop()
     });
     if (pmt[0] === 'inherit')
         drop.css({

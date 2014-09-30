@@ -33,23 +33,20 @@
                 var el = methods.destroy.call($(this)),
                         opt = $.extend({}, set, el.data());
                 el.data('drp', opt);
-                var rel = this.rel || opt.rel,
-                        ahref = $.trim(el.attr('href')),
+                var ahref = $.trim(el.attr('href')),
                         href = $.trim(ahref || opt.href);
                 opt.href = href && href.indexOf('#') === 0 ? null : href;
                 opt.hash = ahref.indexOf('#') === 0 && ahref !== '#' ? ahref : opt.hash;
-                if (rel) {
-                    rel = rel.replace(D.reg, '');
-                    if (opt.href) {
-                        if (!D.galleries[rel])
-                            D.galleries[rel] = [];
-                        if (!D.galleryHashs[rel] && opt.hash)
-                            D.galleryHashs[rel] = [];
-                        if ($.inArray(opt.href, D.galleries[rel]) === -1 && opt.href.match(D.regImg))
-                            D.galleries[rel].push(opt.href);
-                        if (opt.hash)
-                            D.galleryHashs[rel].push(opt.hash);
-                    }
+                opt.rel = this.rel || opt.rel
+                if (opt.rel && opt.href) {
+                    if (!D.gallery[opt.rel])
+                        D.gallery[opt.rel] = [];
+                    if (!D.galleryHashs[opt.rel] && opt.hash)
+                        D.galleryHashs[opt.rel] = [];
+                    if ($.inArray(opt.href, D.gallery[opt.rel]) === -1 && opt.href.match(D.regImg))
+                        D.gallery[opt.rel].push(opt.href);
+                    if (opt.hash)
+                        D.galleryHashs[opt.rel].push(opt.hash);
                 }
                 else if (opt.hash && $.inArray(opt.hash, D.galleryHashs._butRel) === -1)
                     D.galleryHashs._butRel.push(opt.hash);
@@ -223,13 +220,13 @@
 
             var href = $this.attr('href') || opt.href;
             opt.href = href && $.trim(href).indexOf('#') === 0 ? null : href;
-            var hrefC = opt.href ? opt.href.replace(D.reg, '') : null;
-            opt.rel = $this.attr('rel') || opt.rel;
+            var hrefC = opt.href ? opt.href.replace(D.reg, '') : null,
+                    rel = $this.attr('rel') || opt.rel;
 
-            if (opt.rel && D.galleries[opt.rel.replace(D.reg, '')])
-                opt.rel = opt.rel.replace(D.reg, '');
-            if (opt.rel && D.gallerieOpt[opt.rel])
-                $.extend(opt, D.gallerieOpt[opt.rel]['genOpt'], D.gallerieOpt[opt.rel][hrefC]);
+            if (rel && D.gallery[rel])
+                opt.rel = rel;
+            if (opt.rel && D.galleryOpt[opt.rel])
+                $.extend(opt, D.galleryOpt[opt.rel]['genOpt'], D.galleryOpt[opt.rel][hrefC]);
             if (opt.href && (opt.notify || opt.always)) {
                 $('[data-rel="' + opt.drop + '"]').add($(opt.drop)).remove();
                 opt.drop = elSet.dropn ? elSet.dropn : null;
@@ -249,8 +246,8 @@
             opt.elrun = $this;
             if (opt.filter) {
                 if ($this.hasClass('drop-filter')) {
-                    opt.tempClass = null;
                     elSet.dropn = opt.drop;
+                    opt.tempClass = null;
                 }
                 else {
                     methods._filterSource.call($this, opt.filter).addClass(opt.tempClass);
@@ -327,7 +324,7 @@
 
                 if (opt.rel)
                     methods._checkMethod(function() {
-                        methods.galleries(drop, opt);
+                        methods.gallery(drop, opt);
                     });
                 methods._setHeightAddons(dropOver, forCenter);
                 methods._pasteContent($this, drop, opt);
@@ -340,7 +337,7 @@
                             k = false;
                     wnd.off('hashchange.' + $.drop.nS);
                     if (opt.rel && !opt.moreOne && D.galleryHashs[opt.rel]) {
-                        D.galleryHashs[opt.rel].map(function(n, i) {
+                        D.galleryHashs[opt.rel].map(function(n) {
                             if (wLH && wLH.indexOf(n) !== -1)
                                 k = n;
                         });
@@ -364,8 +361,8 @@
                 $(dropOver).stop().fadeIn(opt.durationOn / 2);
                 $(forCenter).add(dropOver).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
                     e.stopPropagation();
-                    if (opt.closeClick && $(e.target).is('.drop-overlay') || $(e.target).is('.drop-for-center'))
-                        methods.close.call($($(e.target).attr('data-rel')).filter('.' + opt.tempClass), e);
+                    if (opt.closeClick && ($(e.target).is('.drop-overlay') || $(e.target).is('.drop-for-center')))
+                        methods.close.call($($(e.target).attr('data-rel')), e);
                 });
                 if (opt.alert || opt.confirm || opt.prompt) {
                     var elFocus;
@@ -423,9 +420,8 @@
                     methods._checkMethod(function() {
                         methods.limitSize(drop);
                     });
-                methods._checkMethod(function() {
+                if (methods.placeBeforeShow)
                     methods.placeBeforeShow(drop, $this, opt);
-                });
                 if (opt.place !== 'inherit')
                     methods._checkMethod(function() {
                         methods[opt.place].call(drop);
@@ -518,9 +514,8 @@
                         wnd.scrollTop(D.scrollTop);
                         setTimeout(methods._setEventHash, 0);
                     }
-                    methods._checkMethod(function() {
+                    if (methods.placeAfterClose)
                         methods.placeAfterClose(drop, opt.elrun, opt);
-                    });
                     $(opt.dropOver).fadeOut(opt.durationOff);
                     drop[opt.effectOff](opt.durationOff, function() {
                         opt.style.remove();
@@ -700,13 +695,11 @@
                 if (!content)
                     return false;
                 place.empty();
-                content = $.type(content) === 'function' ? content.call(place, opt, drop, $this) : content;
-                if (content)
-                    place.append(content);
+                $.type(content) === 'function' ? content.call(place, opt, drop, $this) : place.html(content);
                 _checkCont(place);
             };
             _pasteContent(opt.header, opt.placeHeader);
-            _pasteContent(opt.content, opt.placeContent);
+            _pasteContent(opt.content, opt.placePaste);
             _pasteContent(opt.footer, opt.placeFooter);
             return this;
         },
@@ -804,23 +797,23 @@
             if ($.type(m) === 'array') {
                 if (m.length > 1) {
                     opt.rel = opt.rel ? opt.rel : 'rel' + (+new Date());
-                    if (!D.gallerieOpt[opt.rel])
-                        D.gallerieOpt[opt.rel] = {};
-                    D.gallerieOpt[opt.rel]['genOpt'] = $.extend({}, opt);
-                    if (!D.galleries[opt.rel])
-                        D.galleries[opt.rel] = [];
+                    if (!D.galleryOpt[opt.rel])
+                        D.galleryOpt[opt.rel] = {};
+                    D.galleryOpt[opt.rel]['genOpt'] = $.extend({}, opt);
+                    if (!D.gallery[opt.rel])
+                        D.gallery[opt.rel] = [];
                     m.map(function(n) {
-                        if ($.type(n) === 'string' && $.inArray(n, D.galleries[opt.rel]) === -1 && n.match(D.regImg))
-                            D.galleries[opt.rel].push(n);
-                        else if ($.type(n) === 'object' && n.href && $.inArray(n.href, D.galleries[opt.rel]) === -1 && n.href.match(D.regImg)) {
-                            D.gallerieOpt[opt.rel][n.href.replace(D.reg, '')] = n;
-                            D.galleries[opt.rel].push(n.href);
+                        if ($.type(n) === 'string' && $.inArray(n, D.gallery[opt.rel]) === -1 && n.match(D.regImg))
+                            D.gallery[opt.rel].push(n);
+                        else if ($.type(n) === 'object' && n.href && $.inArray(n.href, D.gallery[opt.rel]) === -1 && n.href.match(D.regImg)) {
+                            D.galleryOpt[opt.rel][n.href.replace(D.reg, '')] = n;
+                            D.gallery[opt.rel].push(n.href);
                         }
                         else
                             return;
                     });
-                    if (D.galleries[opt.rel][0])
-                        set = {href: D.galleries[opt.rel][0]};
+                    if (D.gallery[opt.rel][0])
+                        set = {href: D.gallery[opt.rel][0]};
                     else
                         throw 'insufficient data';
                 }
@@ -886,19 +879,19 @@
         position: 'absolute',
         placeBeforeShow: 'center center',
         placeAfterClose: 'center center',
-        start: $.noop(),
-        elBefore: $.noop(),
-        elAfter: $.noop(),
-        elClose: $.noop(),
-        elClosed: $.noop(),
-        before: $.noop(),
-        after: $.noop(),
-        close: $.noop(),
-        closed: $.noop(),
-        beforeG: $.noop(),
-        afterG: $.noop(),
-        closeG: $.noop(),
-        closedG: $.noop(),
+        start: null,
+        elBefore: null,
+        elAfter: null,
+        elClose: null,
+        elClosed: null,
+        before: null,
+        after: null,
+        close: null,
+        closed: null,
+        beforeG: null,
+        afterG: null,
+        closeG: null,
+        closedG: null,
         pattern: '<div class="drop drop-simple"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev"><</i>&#60;</button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header"></div><div class="drop-content"><div class="inside-padd placePaste"></div></div><div class="drop-footer"></div></div>',
         patternNotify: '<div class="drop drop-notify"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header"></div><div class="drop-content"><div class="inside-padd placePaste"></div></div><div class="drop-footer"></div></div>',
         patternConfirm: '<div class="drop drop-confirm"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header">Confirm</div><div class="drop-content"><div class="inside-padd"><div class="placePaste"></div><div class="drop-group-btns"><button type="button" class="drop-button-confirm" data-button-confirm>ok</button><button type="button" class="drop-btn-cancel" data-closed>cancel</button></div></div></div><div class="drop-footer"></div></div>',
@@ -928,9 +921,11 @@
         datas: null,
         handleNotify: function(e, opt) {
             e = e.drp;
+            if (e && e.datas && $.type(e.datas) === 'string')
+                e.datas = eval("(" + e.datas + ")");
             if (!e || !e.datas)
                 var text = 'Object notify is empty';
-            else if (e.datas.answer === undefined || e.datas.data === undefined)
+            else if (!e.datas.answer || !e.datas.data)
                 text = 'Answer is empty';
             else if (!opt.message || !opt.message[e.datas.answer])
                 text = e.datas.data;
@@ -956,7 +951,7 @@
         droppable: false,
         droppableLimit: false,
         droppableFixed: false,
-        inheritClose: true,
+        inheritClose: false,
         keyNavigate: true,
         context: false,
         centerOnScroll: false,
@@ -1016,8 +1011,8 @@
         autoPlayInterval: {},
         hashs: {},
         drops: {},
-        galleries: {},
-        gallerieOpt: {},
+        gallery: {},
+        galleryOpt: {},
         galleryHashs: {
             _butRel: []
         },
@@ -1081,22 +1076,22 @@
     };
     $.drop.next = function(rel) {
         return methods._checkMethod(function() {
-            methods._galleriesDecorator(rel, 1);
+            methods._galleryDecorator(rel, 1);
         });
     };
     $.drop.prev = function(rel) {
         return methods._checkMethod(function() {
-            methods._galleriesDecorator(rel, -1);
+            methods._galleryDecorator(rel, -1);
         });
     };
     $.drop.jumpto = function(i, rel) {
         return methods._checkMethod(function() {
-            methods._galleriesDecorator(rel, null, i);
+            methods._galleryDecorator(rel, null, i);
         });
     };
     $.drop.play = function(rel) {
         return methods._checkMethod(function() {
-            methods._galleriesDecorator(rel, null, null);
+            methods._galleryDecorator(rel, null, null);
         });
     };
     $.drop.require = function() {

@@ -34,8 +34,8 @@ $.drop.setMethod('placeAfterClose', function(drop, $this, opt) {
     }
     if (pmt[0] !== 'center' || pmt[1] !== 'center')
         drop.stop()[method]({
-            'top': t,
-            'left': l
+            'top': t + wnd.scrollTop(),
+            'left': l + wnd.scrollLeft()
         }, {
             queue: false,
             duration: opt.durationOff

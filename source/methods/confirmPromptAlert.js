@@ -1,7 +1,7 @@
 $.drop.setMethod('confirmPromptAlert', function(opt, hashChange, _confirmF, e, el) {
     var self = this,
             $ = jQuery;
-    opt.tempClass = opt.defaultClassBtnDrop + (+new Date());
+    opt.tempClass = 'drop-' + (+new Date());
     if (opt.confirm) {
         var confirmBtn = opt.elrun = self._referCreate('.' + opt.tempClass).data('confirm', true),
                 optC = $.extend({}, opt, confirmBtn.data()),
