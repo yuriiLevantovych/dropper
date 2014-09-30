@@ -48,7 +48,7 @@
                 </li>
                 <li>
                     <div><h3>Simple inline with hash</h3> <i>(after opening popup and reload page popup will open)</i></div>
-                    <a href="#inline" data-drop="#inline">inline</a>
+                    <a href="#inline" data-drop="#inline">inline hash</a>
                 </li>
                 <li>
                     <div><h3>Simple Ajax</h3> <i>(without value of parametr <b>drop</b>)</i></div>
@@ -88,6 +88,14 @@
                     <a href="notify.php" data-drop data-notify="true">notify</a>
                 </li>
                 <li>
+                    <div><h3>Parametr place with value (global)</h3> <a href="#inheritDetail">detail about  <b>place: global</b></a></div>
+                    <a href="#" data-drop="#inline" data-place="global" data-overlay="false">global position</a>
+                </li>
+                <li>
+                    <div><h3>Simple context inline</h3> <i>(click right button mouse)</i> <a href="#inheritDetail">detail about  <b>context: true</b></a></div>
+                    <a href="#" data-drop="#inline" data-context="true">context</a>
+                </li>
+                <li>
                     <div><h3>Parametr filter</h3> <i>(closest('body').find('#inline'))</i></div>
                     <a href="#" data-drop data-filter="closest(body).find(#inline)">drop filter</a>
                 </li>
@@ -125,16 +133,8 @@
                     </ul>
                 </li>
                 <li>
-                    <div><h3>Parametr place with value (global)</h3> <i>require <b>global</b> method</i> <a href="#inheritDetail">detail about  <b>place: global</b></a></div>
-                    <a href="#" data-drop="#inline" data-place="global" data-overlay="false">global position</a>
-                </li>
-                <li>
                     <div><h3>Dropable</h3> <i>require <b>droppable</b> method</i> <a href="#inheritDetail">detail about  <b>droppable: true</b></a></div>
                     <a href="#" data-drop="#inline" data-droppable="true">droppable</a>
-                </li>
-                <li>
-                    <div><h3>Simple context inline</h3> <i>(click right button mouse)  require <b>global</b> method</i> <a href="#inheritDetail">detail about  <b>context: true</b></a></div>
-                    <a href="#" data-drop="#inline" data-context="true">context</a>
                 </li>
                 <li>
                     <div><h3>Limit size popup && scroll Content</h3> <i>require <b>limitSize</b> method</i> <a href="#inheritDetail">detail about  <b>limitSize: true</b></a></div>
@@ -899,7 +899,6 @@
                 <li>confirmPromptAlert</li>
                 <li>droppable</li>
                 <li>gallery</li>
-                <li>global</li>
                 <li>limitSize</li>
                 <li>placeAfterClose</li>
                 <li>placeBeforeShow</li>
@@ -981,7 +980,7 @@
 
             <script>
                 $.drop.setUrlMethods('../source/methods');
-                //$.drop.require('droppable', 'global', 'limitSize', 'gallery', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert');
+                $.drop.require('droppable', 'limitSize', 'gallery', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert');
                 //            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
                 //$('[href]').data('theme', 'green')
                 $(document).ready(function() {

@@ -354,9 +354,7 @@
                 });
                 wnd.off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function(e) {
                     if (opt.place === 'center' && opt.centerOnScroll)
-                        methods._checkMethod(function() {
-                            methods[opt.place].call(drop);
-                        }, opt.place);
+                        methods[opt.place].call(drop);
                 });
                 $(dropOver).stop().fadeIn(opt.durationOn / 2);
                 $(forCenter).add(dropOver).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
@@ -423,9 +421,7 @@
                 if (methods.placeBeforeShow)
                     methods.placeBeforeShow(drop, $this, opt);
                 if (opt.place !== 'inherit')
-                    methods._checkMethod(function() {
-                        methods[opt.place].call(drop);
-                    }, opt.place);
+                    methods[opt.place].call(drop);
                 $(forCenter).show();
 
                 if (opt.elBefore)
@@ -460,9 +456,7 @@
                             methods.close.call(drop, 'close notify setTimeout');
                         }, opt.timeclosenotify);
                     if (opt.droppable && opt.place !== 'inherit')
-                        methods._checkMethod(function() {
-                            methods.droppable(drop);
-                        });
+                        methods.droppable(drop);
                     if (opt.elAfter)
                         eval(opt.elAfter).call($this, opt, drop, e);
                     if (opt.after)
@@ -636,6 +630,61 @@
                     });
             });
         },
+        global: function() {
+            return this.each(function() {
+                var drop = $(this),
+                        drp = drop.data('drp');
+                if (!drp && drp.droppableIn)
+                    return false;
+                var method = drp.animate && !start ? 'animate' : 'css',
+                        $this = drp.elrun,
+                        t = 0,
+                        l = 0,
+                        $thisW = $this.width(),
+                        $thisH = $this.height(),
+                        dropW = +drop.actual('outerWidth'),
+                        dropH = +drop.actual('outerHeight'),
+                        offTop = $this.offset().top,
+                        offLeft = $this.offset().left,
+                        $thisT = 0,
+                        $thisL = 0;
+
+                if (!drop.is(':visible'))
+                    drop.css({top: 'auto', bottom: 'auto', left: 'auto', right: 'auto'});
+
+                if ($.type(drp.placement) === 'object')
+                    drop[method](drp.placement, {
+                        duration: drp.durationOn,
+                        queue: false
+                    });
+                else {
+                    var pmt = drp.placement.toLowerCase().split(' ');
+                    if (pmt[1] === 'top')
+                        t = -dropH;
+                    if (pmt[1] === 'bottom')
+                        t = $thisH;
+                    if (pmt[0] === 'left')
+                        l = 0;
+                    if (pmt[0] === 'right')
+                        l = -dropW + $thisW;
+                    if (pmt[0] === 'center')
+                        l = -dropW / 2 + $thisW / 2;
+                    if (pmt[1] === 'center')
+                        t = -dropH / 2 + $thisH / 2;
+                    $thisT = offTop + t;
+                    $thisL = offLeft + l;
+                    if ($thisL < 0)
+                        $thisL = 0;
+                    drop[method]({
+                        'top': $thisT,
+                        'left': $thisL
+                    }, {
+                        duration: drp.durationOn,
+                        queue: false
+                    });
+                }
+            });
+        },
         _resetStyleDrop: function() {
             return this.css({
                 'z-index': '',
@@ -706,13 +755,13 @@
         _setHeightAddons: function(dropOver, forCenter) {
             $(forCenter).add(dropOver).css('height', '').css('height', doc.height());
         },
-        _checkMethod: function(f, nm) {
+        _checkMethod: function(f) {
             try {
                 f();
             } catch (e) {
                 if (window.console) {
                     var method = f.toString().match(/\.\S*\(/);
-                    console.log('need connect "' + (nm ? nm : method[0].substring(1, method[0].length - 1)) + '" method');
+                    console.log('need connect "' + method[0].substring(1, method[0].length - 1) + '" method');
                 }
             }
             return this;
