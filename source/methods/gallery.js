@@ -9,9 +9,7 @@ $.drop.setMethod('_galleryDecorator', function(rel, btn, i) {
     return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.drop.drp.activeClass).each(function() {
         var $this = $(this),
                 drp = $this.data('drp');
-        self._checkMethod(function() {
-            self.gallery($this, drp, btn, i);
-        });
+        self.gallery($this, drp, btn, i);
     });
 });
 $.drop.setMethod('gallery', function(drop, opt, btn, i) {
@@ -45,7 +43,7 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
         }
         var $next = $('[data-href="' + relA[i] + '"], [href="' + relA[i] + '"]').filter('[rel="' + opt.rel + '"]');
         self._cIGallery(opt.rel);
-        self.open.call($next, $.extend($next.data('drp'), {href: relA[i], rel: opt.rel}), e);
+        self.open.call($next, $.extend($next.data('drp'), opt, {href: relA[i], drop: null}), e);
     };
     var _getnext = function(i) {
         relP += i;
@@ -67,6 +65,13 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
         _goto(i, null);
     if (btn)
         _goto(_getnext(btn === 1 ? 1 : -1), null);
+    if (i === null)
+        if (opt.autoPlay) {
+            opt.autoPlay = false;
+            self._cIGallery(opt.rel);
+        }
+        else
+            opt.autoPlay = true;
     if (opt.autoPlay) {
         if ($.drop.drp.autoPlayInterval[opt.rel])
             self._cIGallery(opt.rel);
@@ -95,3 +100,15 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
         });
     return self;
 });
+$.drop.next = function(rel) {
+    return $.drop.methods._galleryDecorator(rel, 1);
+};
+$.drop.prev = function(rel) {
+    return $.drop.methods._galleryDecorator(rel, -1);
+};
+$.drop.jumpto = function(i, rel) {
+    return $.drop.methods._galleryDecorator(rel, null, i);
+};
+$.drop.play = function(rel) {
+    return $.drop.methods._galleryDecorator(rel, null, null);
+};

@@ -805,21 +805,21 @@
                         <td>update</td>
                         <td>
                             <code>$.drop.update([selector|jQuery object])</code>
-                            <p>if call without parameters updated (reposition, size) all opened popups</p>
+                            <p>if call without parameters updated (reposition, resize) all opened popups</p>
                         </td>
                     </tr>
                     <tr>
                         <td>setMethod</td>
                         <td>
                             <code>$.drop.setMethod(name, value)</code>
-                            <p>extend Default methods</p>
+                            <p>extend default methods</p>
                         </td>
                     </tr>
                     <tr>
                         <td>getMethods</td>
                         <td>
                             <code>$.drop.getMethods()</code>
-                            <p>return only public methods</p>
+                            <p>return only public methods <i>(without prefix '_')</i></p>
                         </td>
                     </tr>
                     <tr>
@@ -832,64 +832,65 @@
                     <tr>
                         <td>setThemes</td>
                         <td>
-                            <code>$.drop.setThemes()</code>
-                            <p></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>setUrlMethods</td>
-                        <td>
-                            <code>$.drop.setUrlMethods()</code>
-                            <p></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>next</td>
-                        <td>
-                            <code>$.drop.next()</code>
-                            <p></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>prev</td>
-                        <td>
-                            <code>$.drop.prev()</code>
-                            <p></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>jumpto</td>
-                        <td>
-                            <code>$.drop.jumpto()</code>
-                            <p></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>play</td>
-                        <td>
-                            <code>$.drop.play()</code>
-                            <p></p>
+                            <code>$.drop.setThemes({name: css(string)}[, {}, ...])</code>
                         </td>
                     </tr>
                     <tr>
                         <td>showLoading</td>
                         <td>
                             <code>$.drop.showLoading()</code>
-                            <p></p>
+                            <p>Shows loading</p>
                         </td>
                     </tr>
                     <tr>
                         <td>hideLoading</td>
                         <td>
                             <code>$.drop.hideLoading()</code>
-                            <p></p>
+                            <p>Hides loading</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>setUrlMethods</td>
+                        <td>
+                            <code>$.drop.setUrlMethods(url to files of methods)</code>
                         </td>
                     </tr>
                     <tr>
                         <td>require</td>
                         <td>
-                            <code>$.drop.require()</code>
+                            <code>$.drop.require('filename'[, ...])</code>
                             <p></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="text-align: right;">next methods available only if exists <b>gallery</b> method</th>
+                    </tr>
+                    <tr>
+                        <td>next</td>
+                        <td>
+                            <code>$.drop.next([rel])</code>
+                            <p>Navigate to next gallery item (for visible popup galleries), or only on gallery by "rel"</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>prev</td>
+                        <td>
+                            <code>$.drop.prev([rel])</code>
+                            <p>Navigate to prev gallery item (for visible popup galleries), or only on gallery by "rel"</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>jumpto</td>
+                        <td>
+                            <code>$.drop.jumpto(index[, rel])</code>
+                            <p>Navigate to gallery item by index (for visible popup galleries), or only on gallery by "rel". Begining at 0.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>play</td>
+                        <td>
+                            <code>$.drop.play([rel])</code>
+                            <p>Start or stop (if already running) slideshow (for visible popup galleries), or only on gallery by "rel"</p>
                         </td>
                     </tr>
                 </tbody>

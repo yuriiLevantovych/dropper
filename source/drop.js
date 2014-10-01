@@ -955,6 +955,8 @@
         exit: '[data-closed]',
         next: '.drop-next',
         prev: '.drop-prev',
+        autoPlay: false,
+        autoPlaySpeed: 2000,
         ajax: {
             type: 'post',
             dataType: null
@@ -1004,8 +1006,6 @@
         keyNavigate: true,
         context: false,
         centerOnScroll: false,
-        autoPlay: false,
-        autoPlaySpeed: 2000,
         theme: 'default',
         type: 'auto',
         width: null,
@@ -1033,7 +1033,8 @@
                     button:focus, input:focus, textarea:focus{outline: #b3b3b3 solid 1px;}\n\
                     .drop-footer{background-color: #d5d5d5;padding: 0 12px;}\n\
                     .drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;}\n\
-                    .drop-prev,.drop-next{width: 35%;height: 100%;top: 0;}\n\
+                    .drop-prev, .drop-next{width: 35%;height: 100%;top: 0;}\n\
+                    .drop-prev:focus, .drop-next:focus{outline: none;}\n\
                     .drop-icon-prev, .drop-icon-next{width: 20px;height: 80px;line-height: 80px;}\n\
                     .drop-icon-prev, .drop-icon-next, .drop-icon-close{font-family: "Trebuchet MS", "Helvetica CY", sans-serif;font-size: 21px;color: #999;background-color: #fff;display: inline-block;text-align: center;//display: inline;zoom: 1;}\n\
                     .drop-icon-close{line-height: 17px;width: 19px;height: 19px;}\n\
@@ -1123,26 +1124,6 @@
             methods.update.call($(this));
         });
     };
-    $.drop.next = function(rel) {
-        return methods._checkMethod(function() {
-            methods._galleryDecorator(rel, 1);
-        });
-    };
-    $.drop.prev = function(rel) {
-        return methods._checkMethod(function() {
-            methods._galleryDecorator(rel, -1);
-        });
-    };
-    $.drop.jumpto = function(i, rel) {
-        return methods._checkMethod(function() {
-            methods._galleryDecorator(rel, null, i);
-        });
-    };
-    $.drop.play = function(rel) {
-        return methods._checkMethod(function() {
-            methods._galleryDecorator(rel, null, null);
-        });
-    };
     $.drop.require = function() {
         D.requireLength = arguments.length;
         for (var i in arguments) {
@@ -1161,6 +1142,7 @@
         }
         return this;
     };
+    $.drop.methods = methods;
     doc.ready(function() {
         var loadingTimer, loadingFrame = 1,
                 loading = $('<div id="drop-loading"><div></div></div>').appendTo($('body'));
