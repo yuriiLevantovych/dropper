@@ -19,45 +19,57 @@ $.drop.setMethod('_heightContent', function(drop) {
             if (el.data('jsp'))
                 el.data('jsp').destroy();
             el = drop.find($(drp.placeContent)).filter(':visible').css({'height': ''});
+            var pP = el.find(drp.placePaste).css('height', '').removeClass('drop-is-scroll');
             if ($.existsN(el)) {
                 var refer = drp.elrun,
                         api = false,
                         elCH = el.css({'overflow': ''}).outerHeight();
-                if ($.fn.jScrollPane) {
-                    api = el.jScrollPane(drp.jScrollPane).data('jsp');
-                    if ($.existsN(el.find('.jspPane')))
-                        elCH = el.find('.jspPane').outerHeight();
+                if (drp.scroll) {
+                    if ($.fn.jScrollPane) {
+                        api = el.jScrollPane(drp.jScrollPane).data('jsp');
+                        if ($.existsN(el.find('.jspPane')))
+                            elCH = el.find('.jspPane').outerHeight();
+                    }
+                    else
+                        el.css('overflow', 'auto');
                 }
                 else
-                    el.css('overflow', 'auto');
+                    el.css('overflow', 'hidden');
                 var dropH = drop.outerHeight(),
                         dropHm = drop.height(),
-                        footerHeader = drop.find($(drp.placeHeader)).outerHeight() + drop.find($(drp.placeFooter)).outerHeight();
+                        footerHeader = drop.find($(drp.placeHeader)).outerHeight() + drop.find($(drp.placeFooter)).outerHeight(),
+                        h;
                 if (drp.place === 'global') {
                     var mayHeight = 0,
                             placement = drp.placement;
                     if ($.type(placement) === 'object') {
                         if (placement.top !== undefined)
-                            mayHeight = wnd.height() - placement.top + wnd.scrollTop() - footerHeader - (dropH - dropHm);
+                            mayHeight = placement.bottom - wnd.scrollTop() - footerHeader - (dropH - dropHm);
                         if (placement.bottom !== undefined)
-                            mayHeight = placement.bottom - footerHeader - (dropH - dropHm);
+                            mayHeight = wnd.height() - placement.top + wnd.scrollTop() - footerHeader - (dropH - dropHm);
                     }
                     else {
                         if (placement.search(/top/) >= 0)
-                            mayHeight = wnd.height() - refer.offset().top - footerHeader - refer.outerHeight() - (dropH - dropHm);
+                            mayHeight = refer.offset().top - wnd.scrollTop() - footerHeader - (dropH - dropHm);
                         if (placement.search(/bottom/) >= 0)
-                            mayHeight = refer.offset().top - footerHeader - (dropH - dropHm);
+                            mayHeight = wnd.height() - refer.offset().top + wnd.scrollTop() - footerHeader - (dropH - dropHm) - refer.outerHeight();
                     }
                     if (mayHeight > elCH)
-                        el.css('height', elCH);
+                        h = elCH;
                     else
-                        el.css('height', mayHeight);
+                        h = mayHeight;
                 }
                 else {
                     if (elCH + footerHeader > dropHm)
-                        el.css('height', dropHm - footerHeader);
+                        h = dropHm - footerHeader;
                     else
-                        el.css('height', elCH);
+                        h = elCH;
+                }
+                el.css('height', h);
+                if (!drp.scroll) {
+                    var pPOH = pP.outerHeight(),
+                            pPH = pP.height();
+                    el.find(drp.placePaste).addClass('drop-is-scroll').css('height', h - pPOH + pPH);
                 }
                 if (api)
                     api.reinitialise();

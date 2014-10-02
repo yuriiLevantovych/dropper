@@ -644,6 +644,8 @@
                         $thisH = $this.height(),
                         dropW = +drop.actual('outerWidth'),
                         dropH = +drop.actual('outerHeight'),
+                        wndT = wnd.scrollTop(),
+                        wndL = wnd.scrollLeft(),
                         offTop = $this.offset().top,
                         offLeft = $this.offset().left,
                         $thisT = 0,
@@ -652,11 +654,21 @@
                 if (!drop.is(':visible'))
                     drop.css({top: 'auto', bottom: 'auto', left: 'auto', right: 'auto'});
 
-                if ($.type(drp.placement) === 'object')
-                    drop[method](drp.placement, {
+                if ($.type(drp.placement) === 'object') {
+                    var temp = {};
+                    if (drp.placement.top !== undefined)
+                        temp.top = drp.placement.top + wndT;
+                    if (drp.placement.left !== undefined)
+                        temp.left = drp.placement.left + wndL;
+                    if (drp.placement.bottom !== undefined)
+                        temp.bottom = drp.placement.bottom - wndT;
+                    if (drp.placement.right !== undefined)
+                        temp.right = drp.placement.right - wndL;
+                    drop[method](temp, {
                         duration: drp.durationOn,
                         queue: false
                     });
+                }
                 else {
                     var pmt = drp.placement.toLowerCase().split(' ');
                     if (pmt[1] === 'top')
@@ -852,9 +864,9 @@
                     if (!D.gallery[opt.rel])
                         D.gallery[opt.rel] = [];
                     m.map(function(n) {
-                        if ($.type(n) === 'string' && $.inArray(n, D.gallery[opt.rel]) === -1 && n.match(D.regImg))
+                        if ($.type(n) === 'string' && $.inArray(n, D.gallery[opt.rel]) === -1)
                             D.gallery[opt.rel].push(n);
-                        else if ($.type(n) === 'object' && n.href && $.inArray(n.href, D.gallery[opt.rel]) === -1 && n.href.match(D.regImg)) {
+                        else if ($.type(n) === 'object' && n.href && $.inArray(n.href, D.gallery[opt.rel]) === -1) {
                             D.galleryOpt[opt.rel][n.href.replace(D.reg, '')] = n;
                             D.gallery[opt.rel].push(n.href);
                         }
@@ -998,7 +1010,8 @@
         closeEsc: true,
         closeActiveClick: false,
         cycle: true,
-        limitSize: false,
+        limitSize: true,
+        scroll: true,
         droppable: false,
         droppableLimit: false,
         droppableFixed: false,
@@ -1054,7 +1067,8 @@
                     .drop-info{background-color: #d9edf7;border-color: #bce8f1;color: #31708f;}\n\
                     [[.drop-context .drop-content .inside-padd]]{padding: 0;}\n\
                     [drop][style*="width"] img{max-width: 100%;max-height: 100%;}\n\
-                    [drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}'
+                    [drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}\n\
+                    .drop-is-scroll.placePaste img{max-width: 100%;max-height: 100%;}'
         },
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
         reg: /[^a-zA-Z0-9]+/ig,

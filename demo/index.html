@@ -11,6 +11,7 @@
             body, table{font-size: 13px;}
             h1{margin: 40px 0 20px;}
             h2{margin: 20px 0 10px;}
+            p{margin-bottom: 10px;}
             .container{width: 1170px;margin: auto;}
             #inline{padding: 20px;}
             ol, ul{margin-left: 30px;}
@@ -18,7 +19,9 @@
             table{border-collapse: collapse;border-spacing: 0;}
             table th{text-align: left;font-weight: normal;}
             table thead th{font-weight: bold;padding-top: 10px;padding-bottom: 5px;}
-            table th[colspan]{background-color: #f8f7f6;}
+            table tbody th{font-weight: bold;}
+            table th[colspan]{background-color: #f8f7f6;font-weight: normal;}
+            table td[colspan]{padding-top: 25px;}
             table th, table td{padding: 3px 15 0 4px;vertical-align: top;padding: 5px 10px 5px 8px;border-bottom: 1px solid #ccc;}
             code, pre {
                 font-family: Consolas, Monaco, "Andale Mono", "Courier New", monospace;
@@ -63,7 +66,7 @@
                     <a href="with_pattern.php" data-drop data-always="true">ajax always</a>
                 </li>
                 <li>
-                    <div><h3>Simple Iframe</h3> <a href="#inheritDetail">detail about iframe</a></div>
+                    <div><h3>Simple Iframe</h3> <a href="#inheritDetail">detail about <b>type: iframe</b></a></div>
                     <a href="iframe.html" data-drop data-type="iframe">iframe</a>
                 </li>
                 <li>
@@ -84,12 +87,12 @@
                     </ul>
                 </li>
                 <li>
-                    <div><h3>Notify ajax</h3> <i>(constantly load)</i></div>
+                    <div><h3>Notify ajax (constantly load)</h3></div>
                     <a href="notify.php" data-drop data-notify="true">notify</a>
                 </li>
                 <li>
                     <div><h3>Parametr place with value (global)</h3> <a href="#inheritDetail">detail about  <b>place: global</b></a></div>
-                    <a href="#" data-drop="#inline" data-place="global" data-overlay="false">global position</a>
+                    <a href="with_pattern.php" data-drop data-place="global" data-overlay="false">global position</a>
                 </li>
                 <li>
                     <div><h3>Simple context inline</h3> <i>(click right button mouse)</i> <a href="#inheritDetail">detail about  <b>context: true</b></a></div>
@@ -113,7 +116,9 @@
                 </li>
             </ol>
             <h2>Demos with extends methods</h2>
-            <p><b>Additional methos need connect</b> <a href="#inheritDetail">detail about connect methods</a></p>
+            <p>
+                <b>Additional methos need connect</b> <a href="#inheritDetail">detail about connect methods</a>
+            </p>
             <ol class="list-example">
                 <li>
                     <div><h3>Alert Confirm Prompt</h3> <i>require <b>confirmPromptAlert</b> method</i></div>
@@ -133,11 +138,11 @@
                     </ul>
                 </li>
                 <li>
-                    <div><h3>Dropable</h3> <i>require <b>droppable</b> method</i> <a href="#inheritDetail">detail about  <b>droppable: true</b></a></div>
+                    <div><h3>Dropable</h3> <i>require <b>droppable</b> method</i> <a href="#inheritDetail">detail about <b>droppable</b></a></div>
                     <a href="#" data-drop="#inline" data-droppable="true">droppable</a>
                 </li>
                 <li>
-                    <div><h3>Limit size popup && scroll Content</h3> <i>require <b>limitSize</b> method</i> <a href="#inheritDetail">detail about  <b>limitSize: true</b></a></div>
+                    <div><h3>Limit size popup && scroll Content</h3> <i>require <b>limitSize</b> method</i> <a href="#inheritDetail">detail about  <b>limitSize</b></a></div>
                     <a href="#" data-drop data-limit-size="true" data-content="Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>">limit size and scroll content</a>
                 </li>
                 <li>
@@ -152,13 +157,13 @@
                     <div><h3>Gallery</h3> <i>(must set parametr <b>rel: 'name of group'</b>) require <b>gallery</b> method</i> <a href="#inheritDetail">detail about  <b>gallery</b></a></div>
                     <ul class="items-gallery">
                         <li>
-                            <a href="1.jpg" data-drop rel="group"><img src="1.jpg"/></a>
+                            <a href="1.jpg" rel="group"><img src="1.jpg"/></a>
                         </li>
                         <li>
-                            <a href="2.jpg" data-drop rel="group"><img src="2.jpg"/></a>
+                            <a href="2.jpg" rel="group"><img src="2.jpg"/></a>
                         </li>
                         <li>
-                            <a href="3.jpg" data-drop rel="group"><img src="3.jpg"/></a>
+                            <a href="3.jpg" rel="group"><img src="3.jpg"/></a>
                         </li>
                     </ul>
                 </li>
@@ -174,7 +179,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Description</th>
+                        <th style='color: red;'>Description</th>
                         <th>Type</th>
                         <th>Default value</th>
                     </tr>
@@ -402,7 +407,9 @@
                         <td>message</td>
                         <td>-</td>
                         <td>object</td>
-                        <td><pre><code>success: function(text) {<br/>&nbsp;&nbsp;return '&lt;div class= "drop-msg"&gt;&lt;div class="drop-success"&gt;&lt;span class="drop-icon-notify">&lt;/span&gt;&lt;div class="drop-text-el"&gt;' + text + '&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;';<br/>},<br/>warning: function(text) {<br/>&nbsp;&nbsp;return '&lt;div class= "drop-msg"&gt;&lt;div class="drop-warning"&gt;&lt;span class="drop-icon-notify"&gt;&lt;/span&gt;&lt;div class="drop-text-el"&gt;' + text + '&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;';<br/>},<br/>error: function(text) {<br/>&nbsp;&nbsp;return '&lt;div class="drop-msg"&gt;&lt;div class="drop-error"&gt;&lt;span class="drop-icon-notify"&gt;&lt;/span&gt;&lt;div class="drop-text-el"&gt;' + text + '&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;';<br/>},<br/>info: function(text) {<br/>&nbsp;&nbsp;return '&lt;div class="drop-msg"&gt;&lt;div class="drop-info"&gt;&lt;span class="drop-icon-notify"&gt;&lt;/span&gt;&lt;div class="drop-text-el"&gt;' + text + '&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;';<br/>}</code></pre></td>
+                        <td>
+                            <a href="javascript:alert('success: function(text) {\n&nbsp;&nbsp;return &lt;div class= &#34;drop-msg&#34;&gt;&lt;div class=&#34;drop-success&#34;&gt;&lt;span class=&#34;drop-icon-notify&#34;>&lt;/span&gt;&lt;div class=&#34;drop-text-el&#34;&gt; + text + &lt;/div&gt;&lt;/div&gt;&lt;/div&gt;;\n},\nwarning: function(text) {\n&nbsp;&nbsp;return &lt;div class= &#34;drop-msg&#34;&gt;&lt;div class=&#34;drop-warning&#34;&gt;&lt;span class=&#34;drop-icon-notify&#34;&gt;&lt;/span&gt;&lt;div class=&#34;drop-text-el&#34;&gt; + text + &lt;/div&gt;&lt;/div&gt;&lt;/div&gt;;\n},\nerror: function(text) {\n&nbsp;&nbsp;return &lt;div class=&#34;drop-msg&#34;&gt;&lt;div class=&#34;drop-error&#34;&gt;&lt;span class=&#34;drop-icon-notify&#34;&gt;&lt;/span&gt;&lt;div class=&#34;drop-text-el&#34;&gt; + text + &lt;/div&gt;&lt;/div&gt;&lt;/div&gt;;\n},\ninfo: function(text) {\n&nbsp;&nbsp;return &lt;div class=&#34;drop-msg&#34;&gt;&lt;div class=&#34;drop-info&#34;&gt;&lt;span class=&#34;drop-icon-notify&#34;&gt;&lt;/span&gt;&lt;div class=&#34;drop-text-el&#34;Place before show&gt; + text + &lt;/div&gt;&lt;/div&gt;&lt;/div&gt;;\n}')">show</a>
+                        </td>
                     </tr>
                     <tr>
                         <td>placeBeforeShow</td>
@@ -673,6 +680,12 @@
                         <td>false</td>
                     </tr>
                     <tr>
+                        <td>scroll</td>
+                        <td>-</td>
+                        <td>boolean</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
                         <td>centerOnScroll</td>
                         <td>-</td>
                         <td>boolean</td>
@@ -747,39 +760,39 @@
                         <th colspan="2">Properties</th>
                     </tr>
                     <tr>
-                        <td>$.drop.nS</td>
+                        <th>$.drop.nS</th>
                         <td>namespace of plugin</td>
                     </tr>
                     <tr>
-                        <td>$.drop.version</td>
+                        <th>$.drop.version</th>
                         <td>version of plugin</td>
                     </tr>
                     <tr>
-                        <td>$.drop.dP</td>
+                        <th>$.drop.dP</th>
                         <td>Object default parametrs</td>
                     </tr>                
                     <tr>
-                        <td>$.drop.drp</td>
+                        <th>$.drop.drp</th>
                         <td>system object of plugin</td>
                     </tr>
                     <tr>
                         <th colspan="2">Methods</th>
                     </tr>
                     <tr>
-                        <td>open</td>
+                        <th>open</th>
                         <td>
-                            <code>$.drop([various type], [options])</code>
-                            <br/>
-                            <br/>
+                            <p>
+                                <code>$.drop([various type], [options])</code>
+                            </p>
                             <p>
                                 First parameter can be in various types, examples:<br/>
-                                <code>$.drop([<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : '1.jpg', header : 'Title first image'},<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : '2.jpg', header : 'Title second image'}<br/>]);</code> - array containing objects
+                                <code>$.drop([<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : 'with_pattern.php', header : 'Title first document'},<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : 'notify.php', header : 'Title second document'}<br/>]);</code> - array containing objects
                                 <br/>
-                                <code>$.drop( {href : '1.jpg', title : 'Lorem lipsum'} );</code> - single object
+                                <code>$.drop( {href : 'with_pattern.php', header : 'Lorem lipsum'} );</code> - single object
                                 <br/>
-                                <code>$.drop( ['1.jpg', '2.jpg'] );</code> - array containing links as strings
+                                <code>$.drop( ['1.jpg', '2.jpg'] );</code> - array containing links as strings (only images)
                                 <br/>
-                                <code>$.drop( '1.jpg' );</code> - string as source link 
+                                <code>$.drop( '1.jpg' );</code> - string as source link (only images)
                                 <br/>
                                 <code>$.drop( [jQuery object] );</code> 
                                 <br/>
@@ -788,169 +801,220 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>close</td>
+                        <th>close</th>
                         <td>
-                            <code>$.drop.close([selector|jQuery object])</code>
+                            <p>
+                                <code>$.drop.close([selector|jQuery object])</code>
+                            </p>
                             <p>if call without parameters closing all opened popups</p>
                         </td>
                     </tr>
                     <tr>
-                        <td>cancel</td>
+                        <th>cancel</th>
                         <td>
-                            <code>$.drop.cancel()</code>
+                            <p>
+                                <code>$.drop.cancel()</code>
+                            </p>
                             <p>Cancel loading image or abort ajax request</p>
                         </td>
                     </tr>
                     <tr>
-                        <td>update</td>
+                        <th>update</th>
                         <td>
-                            <code>$.drop.update([selector|jQuery object])</code>
+                            <p>
+                                <code>$.drop.update([selector|jQuery object])</code>
+                            </p>
                             <p>if call without parameters updated (reposition, resize) all opened popups</p>
                         </td>
                     </tr>
                     <tr>
-                        <td>setMethod</td>
+                        <th>setMethod</th>
                         <td>
-                            <code>$.drop.setMethod(name, value)</code>
+                            <p>
+                                <code>$.drop.setMethod(name, context of function)</code>
+                            </p>
                             <p>extend default methods</p>
                         </td>
                     </tr>
                     <tr>
-                        <td>getMethods</td>
+                        <th>getMethods</th>
                         <td>
-                            <code>$.drop.getMethods()</code>
+                            <p>
+                                <code>$.drop.getMethods()</code>
+                            </p>
                             <p>return only public methods <i>(without prefix '_')</i></p>
                         </td>
                     </tr>
                     <tr>
-                        <td>setParameters</td>
+                        <th>setParameters</th>
                         <td>
-                            <code>$.drop.setParameters()</code>
+                            <p>
+                                <code>$.drop.setParameters(object)</code>
+                            </p>
                             <p>extend Default parameters</p>
                         </td>
                     </tr>
                     <tr>
-                        <td>setThemes</td>
+                        <th>setThemes</th>
                         <td>
-                            <code>$.drop.setThemes({name: css(string)}[, {}, ...])</code>
+                            <p>
+                                <code>$.drop.setThemes({name: css(string)}[, {}, ...])</code>
+                            </p>
+                            <p>extend Default themes</p>
                         </td>
                     </tr>
                     <tr>
-                        <td>showLoading</td>
+                        <th>showLoading</th>
                         <td>
-                            <code>$.drop.showLoading()</code>
+                            <p>
+                                <code>$.drop.showLoading()</code>
+                            </p>
                             <p>Shows loading</p>
                         </td>
                     </tr>
                     <tr>
-                        <td>hideLoading</td>
+                        <th>hideLoading</th>
                         <td>
-                            <code>$.drop.hideLoading()</code>
+                            <p>
+                                <code>$.drop.hideLoading()</code>
+                            </p>
                             <p>Hides loading</p>
                         </td>
                     </tr>
                     <tr>
-                        <td>setUrlMethods</td>
+                        <th>require</th>
                         <td>
-                            <code>$.drop.setUrlMethods(url to files of methods)</code>
+                            <p>
+                                <code>$.drop.require('filename'[, ...])</code>
+                            </p>
+                            <p>
+                                loads js - files
+                            </p>
                         </td>
                     </tr>
                     <tr>
-                        <td>require</td>
+                        <th>setUrlMethods</th>
                         <td>
-                            <code>$.drop.require('filename'[, ...])</code>
-                            <p></p>
+                            <p>
+                                <code>$.drop.setUrlMethods('url to files of methods')</code>
+                            </p>
                         </td>
                     </tr>
                     <tr>
-                        <th colspan="2" style="text-align: right;">next methods available only if exists <b>gallery</b> method</th>
+                        <td colspan="2"><i>next methods available only if exists <b>gallery</b> method</i></td>
                     </tr>
                     <tr>
-                        <td>next</td>
+                        <th>next</th>
                         <td>
-                            <code>$.drop.next([rel])</code>
-                            <p>Navigate to next gallery item (for visible popup galleries), or only one gallery by "rel"</p>
+                            <p>
+                                <code>$.drop.next([rel])</code>
+                            </p>
+                            <p>Navigate to next gallery item (for visible popup galleries), or only one gallery identify by "rel"</p>
                         </td>
                     </tr>
                     <tr>
-                        <td>prev</td>
+                        <th>prev</th>
                         <td>
-                            <code>$.drop.prev([rel])</code>
-                            <p>Navigate to prev gallery item (for visible popup galleries), or only one gallery by "rel"</p>
+                            <p>
+                                <code>$.drop.prev([rel])</code>
+                            </p>
+                            <p>Navigate to prev gallery item (for visible popup galleries), or only one gallery identify by "rel"</p>
                         </td>
                     </tr>
                     <tr>
-                        <td>jumpto</td>
+                        <th>jumpto</th>
                         <td>
-                            <code>$.drop.jumpto(index[, rel])</code>
-                            <p>Navigate to gallery item by index (for visible popup galleries), or only one gallery by "rel". Begining at 0.</p>
+                            <p>
+                                <code>$.drop.jumpto(index[, rel])</code>
+                            </p>
+                            <p>Navigate to gallery item by index (for visible popup galleries), or only one gallery identify by "rel". Begining at 0.</p>
                         </td>
                     </tr>
                     <tr>
-                        <td>play</td>
+                        <th>play</th>
                         <td>
-                            <code>$.drop.play([rel])</code>
-                            <p>Start or stop (if already running) slideshow (for visible popup galleries), or only one gallery by "rel"</p>
+                            <p>
+                                <code>$.drop.play([rel])</code>
+                            </p>
+                            <p>Start or stop (if already running) slideshow (for visible popup galleries), or only one gallery identify by "rel"</p>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <h2>Extends Methods</h2>
-            <ul>
-                <li>confirmPromptAlert</li>
-                <li>droppable</li>
-                <li>gallery</li>
-                <li>limitSize</li>
-                <li>placeAfterClose</li>
-                <li>placeBeforeShow</li>
-            </ul>
 
-            <h2>Description of functionality</h2>
-            <h3>Iframe</h3>
+            <h2 style="color: red;">Description of functionality</h2>
+            <h3>Types</h3>
             <ul>
                 <li>
-                    <div><h3>Iframe with parameters width and height</h3></div>
-                    <a href="iframe.html" data-drop data-type="iframe" data-width="500" data-height="500">iframe</a>
+                    <h4>Auto</h4>
                 </li>
                 <li>
-                    <div><h3>Iframe from other domain</h3> <i>(window.parent.postMessage for opening inside "drop")</i></div>
-                    <a href="http://levantovych.pro100host.com/iframe.html" data-type="iframe" data-drop data-width="500" data-height="500">iframe</a>
+                    <h4>Inline</h4>
+                </li>
+                <li>
+                    <h4>Ajax</h4>
+                    always ajax type
+                </li>
+                <li>
+                    <h4>Iframe</h4>
+                    <ul>
+                        <li>
+                            <div><h3>Iframe with parameters width and height</h3></div>
+                            <a href="iframe.html" data-drop data-type="iframe" data-width="500" data-height="500">iframe</a>
+                        </li>
+                        <li>
+                            <div><h3>Iframe from other domain</h3> <i>(window.parent.postMessage for opening inside "drop")</i></div>
+                            <a href="http://levantovych.pro100host.com/iframe.html" data-type="iframe" data-drop data-width="500" data-height="500">iframe</a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
             <h3>Place</h3>
-            <h4>Inherit</h4>
             <ul>
                 <li>
-                    <div><h3>Parametr place with value inherit</h3> (inherit with parametr closeActiveClick)</div>
-                    <a href="#" data-drop="#inline2" data-place="inherit" data-overlay="false" data-close-active-click="true">inherit position</a>
+                    <h4>Center</h4>
+                    <ul>
+                        <li>
+                            <div><h3></h3></div>
+                        </li>
+                    </ul>
                 </li>
                 <li>
-                    <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and href)</div>
-                    <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit">inherit position</a>
-                    <div class="placeInherit"><i>PlaceInherit</i></div>
+                    <h4>Global</h4>
+                    <ul>
+                        <li>
+                            <div><h3></h3></div>
+                        </li>
+                    </ul>
                 </li>
                 <li>
-                    <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and methoPlaceInherit "append")</div>
-                    <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit" data-method-place-inherit="append">inherit position</a>
+                    <h4>Inherit</h4>
+                    <ul>
+                        <li>
+                            <div><h3>Parametr place with value inherit</h3> (inherit with parametr closeActiveClick)</div>
+                            <a href="#" data-drop="#inline2" data-place="inherit" data-overlay="false" data-close-active-click="true">inherit position</a>
+                        </li>
+                        <li>
+                            <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and href)</div>
+                            <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit">inherit position</a>
+                            <div class="placeInherit"><i>PlaceInherit</i></div>
+                        </li>
+                        <li>
+                            <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and methoPlaceInherit "append")</div>
+                            <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit" data-method-place-inherit="append">inherit position</a>
+                        </li>
+                    </ul>
+                </li>
                 </li>
             </ul>
-            <h3>Place before show</h3>
-            <h3>Place after close</h3>
-            <h3>Position && size</h3>
-            <br/>
-            <h3>Scroll Content && limit size popup</h3>
+            <h3>Position, size, scroll</h3>
             centerOnScroll jScrollPane limitSize
-            <br/><br/>        
-            <h3>Position && size</h3>
             <br/><br/>
             <h3>Close</h3>
             closeClick closeEsc closeActiveClick moreOne
             <br/><br/>
-            <h3>Ajax</h3>
-            always ajax type
-            <br/><br/>
-            <h3>Effect</h3>
-            effectOn effectOff
+            <h3>Effects</h3>
+            effectOn effectOff placeBeforeShow placeAfterClose
             <br/><br/>
             <h3>Callbacks</h3>
             start
@@ -989,19 +1053,10 @@
                         console.log(e.drp)
                     });
                     $('[rel]').drop({
-                        overlay: false,
-                        place: 'global',
+                        scroll: false,
                         header: function(opt) {
+                            console.log(($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка')
                             return ($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка';
-                        },
-                        animate: true,
-                        start: function(opt, drop) {
-                            //console.log(opt);
-                            return true;
-                        },
-                        closed: function() {
-                            //console.log(arguments);
-                            return false;
                         }
                     });
                 });

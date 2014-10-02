@@ -43,7 +43,7 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
         }
         var $next = $('[data-href="' + relA[i] + '"], [href="' + relA[i] + '"]').filter('[rel="' + opt.rel + '"]');
         self._cIGallery(opt.rel);
-        self.open.call($next, $.extend($next.data('drp'), opt, {href: relA[i], drop: null}), e);
+        self.open.call($next, $.extend(opt, $next.data('drp'), {href: relA[i]}), e);
     };
     var _getnext = function(i) {
         relP += i;
@@ -59,7 +59,7 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
         e.stopPropagation();
         relP = $.inArray(opt.href, relA);
         self._cIGallery(opt.rel);
-        _goto(_getnext($(this).is(opt.prev) ? -1 : 1), e);
+        _goto(_getnext($(this).is(prev) ? -1 : 1), e);
     });
     if (i !== undefined && i !== null && relP !== i && relA[i])
         _goto(i, null);
@@ -93,9 +93,9 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
                 if (key === 37 || key === 39)
                     e.preventDefault();
                 if (key === 37)
-                    $(opt.prev).trigger('click.' + $.drop.nS);
+                    prev.trigger('click.' + $.drop.nS);
                 if (key === 39)
-                    $(opt.next).trigger('click.' + $.drop.nS);
+                    next.trigger('click.' + $.drop.nS);
             });
         });
     return self;
