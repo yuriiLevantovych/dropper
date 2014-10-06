@@ -1,6 +1,6 @@
-(function($, wnd, doc) {
-    (function($) {
-        $.fn.actual = function() {
+(function ($, wnd, doc) {
+    (function ($) {
+        $.fn.actual = function () {
             if (arguments.length && $.type(arguments[0]) === 'string') {
                 var dim = arguments[0],
                         clone = this.clone();
@@ -16,20 +16,19 @@
             return undefined;
         };
     })(jQuery);
-    $.existsN = function(nabir) {
+    $.existsN = function (nabir) {
         return nabir && nabir.length > 0 && nabir instanceof jQuery;
     };
-    $.exists = function(selector) {
+    $.exists = function (selector) {
         return $(selector).length > 0 && $(selector) instanceof jQuery;
     };
-    var IE = navigator.userAgent.match(/msie/i);
     var methods = {
-        init: function(options) {
+        init: function (options) {
             var set = $.extend({}, DP, options);
             if (!$.existsN(this))
                 throw 'this object is not exists';
 
-            return this.each(function() {
+            return this.each(function () {
                 var el = methods.destroy.call($(this)),
                         opt = $.extend({}, set, el.data());
                 el.data('drp', opt);
@@ -52,10 +51,10 @@
                     D.galleryHashs._butRel.push(opt.hash);
                 el.addClass('isDrop');
                 if (opt.context) {
-                    el.on('contextmenu.' + $.drop.nS + ' ' + 'click.' + $.drop.nS, function(e) {
+                    el.on('contextmenu.' + $.drop.nS + ' ' + 'click.' + $.drop.nS, function (e) {
                         e.preventDefault();
                     });
-                    el.on('mouseup.' + $.drop.nS, function(e) {
+                    el.on('mouseup.' + $.drop.nS, function (e) {
                         e.preventDefault();
                         if (e.button === 2)
                             methods.open.call($(this), opt, e);
@@ -63,16 +62,16 @@
                 }
                 else {
                     if (opt.triggerOn || opt.triggerOff)
-                        el.on(opt.triggerOn + '.' + $.drop.nS + ' ' + opt.triggerOff + '.' + $.drop.nS, function(e) {
+                        el.on(opt.triggerOn + '.' + $.drop.nS + ' ' + opt.triggerOff + '.' + $.drop.nS, function (e) {
                             e.stopPropagation();
                             e.preventDefault();
-                        }).on(opt.triggerOn + '.' + $.drop.nS, function(e) {
+                        }).on(opt.triggerOn + '.' + $.drop.nS, function (e) {
                             methods.open.call($(this), opt, e);
-                        }).on(opt.triggerOff + '.' + $.drop.nS, function(e) {
+                        }).on(opt.triggerOff + '.' + $.drop.nS, function (e) {
                             methods.close.call($(el.attr('data-drop')), e);
                         });
                     else
-                        el.on(opt.trigger + '.' + $.drop.nS, function(e) {
+                        el.on(opt.trigger + '.' + $.drop.nS, function (e) {
                             methods.open.call($(this), opt, e);
                             e.stopPropagation();
                             e.preventDefault();
@@ -80,13 +79,13 @@
                 }
                 if (/#.+/.test(opt.hash) && !D.hashs[opt.hash])
                     D.hashs[opt.hash] = el;
-            }).each(function() {
+            }).each(function () {
                 if (window.location.hash.indexOf($(this).data('drp').hash) !== -1)
                     methods.open.call($(this));
             });
         },
-        destroy: function(el) {
-            return (el || this).each(function() {
+        destroy: function (el) {
+            return (el || this).each(function () {
                 var el = $(this),
                         opt = $(el).data('drp');
                 el.removeClass('isDrop').removeData('drp');
@@ -101,7 +100,7 @@
                 el.off('contextmenu.' + $.drop.nS).off('mouseup.' + $.drop.nS).off('click.' + $.drop.nS);
             });
         },
-        _get: function(opt, e, hashChange) {
+        _get: function (opt, e, hashChange) {
             var hrefC = opt.href.replace(D.reg, '');
             if (D.curAjax[hrefC]) {
                 D.curAjax[hrefC].abort();
@@ -109,7 +108,7 @@
             }
             var el = this,
                     elSet = el.data();
-            var _update = function(data) {
+            var _update = function (data) {
                 if (opt.dropn)
                     var drop = methods._pasteDrop(opt, data);
                 else
@@ -132,44 +131,44 @@
                 return drop;
             };
             $.drop.showLoading();
-            var _getImage = function() {
+            var _getImage = function () {
                 opt.type = elSet.type = 'image';
                 var img = D.imgPreload = new Image();
-                img.onload = function() {
+                img.onload = function () {
                     $.drop.hideLoading();
                     this.onload = this.onerror = null;
                     _update($(this));
                 };
-                img.onerror = function() {
+                img.onerror = function () {
                     this.onload = this.onerror = null;
                     $.drop.hideLoading();
                     methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'image is not found'}});
                 };
                 img.src = opt.href + (opt.always ? '?' + (+new Date()) : '');
             };
-            var _getAjax = function() {
+            var _getAjax = function () {
                 opt.type = elSet.type = 'ajax';
                 D.curAjax[hrefC] = $.ajax($.extend({}, opt.ajax, {
                     url: opt.href,
                     dataType: opt.ajax.dataType ? opt.ajax.dataType : (opt.notify ? 'json' : 'html'),
-                    success: function(data) {
+                    success: function (data) {
                         $.drop.hideLoading();
                         if (opt.notify)
                             methods._pasteNotify.call(el, data, opt, hashChange, e);
                         else
                             _update(data);
                     },
-                    error: function() {
+                    error: function () {
                         $.drop.hideLoading();
                         if (arguments[2].message)
                             methods.open.call(null, {notify: true, datas: {answer: 'error', data: arguments[2].message}});
                     }
                 }));
             };
-            var _getIframe = function() {
+            var _getIframe = function () {
                 opt.type = elSet.type = 'iframe';
-                var iframe = $('<iframe name="drop-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen' + (IE ? ' allowtransparency="true"' : '') + '></iframe>');
-                iframe.one('load.' + $.drop.nS, function() {
+                var iframe = $('<iframe name="drop-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen' + (navigator.userAgent.match(/msie/i) ? ' allowtransparency="true"' : '') + '></iframe>');
+                iframe.one('load.' + $.drop.nS, function () {
                     $.drop.hideLoading();
                 });
                 _update(iframe);
@@ -193,7 +192,7 @@
                 }
             return el;
         },
-        open: function(opt, e, hashChange) {
+        open: function (opt, e, hashChange) {
             var $this = $.existsN(this) ? this : $([]),
                     elSet = $.existsN($this) ? $this.data() : {};
             opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp : {}, opt);
@@ -260,7 +259,7 @@
             }
             $this.attr('data-drop', opt.drop).data('drop', opt.drop);
             drop = $(elSet.dropn);
-            var _confirmF = function() {
+            var _confirmF = function () {
                 if (opt.notify && opt.datas)
                     methods._pasteNotify.call($this, opt.datas, opt, hashChange, e);
                 else if (opt.filter)
@@ -285,7 +284,7 @@
                 if (opt.prompt || opt.confirm || opt.alert) {
                     elSet.dropn = elSet.drop;
                     opt.drop = '.' + opt.tempClass;
-                    methods._checkMethod(function() {
+                    methods._checkMethod(function () {
                         methods.confirmPromptAlert(opt, hashChange, _confirmF, e, $this);
                     });
                 }
@@ -296,7 +295,7 @@
                 return methods.close.call($(D.aDS), 'close more one element', _show);
             return _show();
         },
-        _show: function(drop, e, opt, hashChange) {
+        _show: function (drop, e, opt, hashChange) {
             if (!opt.moreOne && $.exists(D.aDS))
                 methods.close.call($(D.aDS), 'close more one element', $.proxy(_show, this));
             else
@@ -324,7 +323,7 @@
                     drop.addClass(D.pC + 'context');
 
                 if (opt.rel)
-                    methods._checkMethod(function() {
+                    methods._checkMethod(function () {
                         methods.gallery(drop, opt);
                     });
                 methods._setHeightAddons(dropOver);
@@ -338,7 +337,7 @@
                             k = false;
                     wnd.off('hashchange.' + $.drop.nS);
                     if (opt.rel && !opt.moreOne && D.galleryHashs[opt.rel]) {
-                        D.galleryHashs[opt.rel].map(function(n) {
+                        D.galleryHashs[opt.rel].map(function (n) {
                             if (wLH && wLH.indexOf(n) !== -1)
                                 k = n;
                         });
@@ -350,14 +349,14 @@
                     wnd.scrollTop(D.scrollTop);
                     setTimeout(methods._setEventHash, 0);
                 }
-                wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function(e) {
+                wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function (e) {
                     methods.update.call(drop);
                 });
-                wnd.off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function(e) {
+                wnd.off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function (e) {
                     if (opt.place === 'center' && opt.centerOnScroll)
                         methods[opt.place].call(drop);
                 });
-                $(dropOver).stop().fadeIn(opt.durationOn / 2).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
+                $(dropOver).stop().fadeIn(opt.durationOn / 2).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function (e) {
                     e.stopPropagation();
                     if (opt.closeClick && $(e.target).is('.drop-overlay'))
                         methods.close.call($($(e.target).attr('data-rel')), e);
@@ -373,11 +372,11 @@
                     elFocus = drop.find(elFocus);
                     if (opt.prompt) {
                         elFocus.val(opt.promptInputValue);
-                        drop.find('form').off('submit.' + $.drop.nS + ev).on('submit.' + $.drop.nS + ev, function(e) {
+                        drop.find('form').off('submit.' + $.drop.nS + ev).on('submit.' + $.drop.nS + ev, function (e) {
                             e.preventDefault();
                         });
                     }
-                    var focusFunc = function() {
+                    var focusFunc = function () {
                         elFocus.focus();
                     };
                     setTimeout(focusFunc, 0);
@@ -385,7 +384,7 @@
                 opt.exit = $.type(opt.exit) === 'string' ? drop.find(opt.exit) : opt.exit;
                 if ($.existsN(opt.exit)) {
                     if (opt.closeClick)
-                        opt.exit.show().off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
+                        opt.exit.show().off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
                             e.stopPropagation();
                             methods.close.call($(this).closest('[data-elrun]'), e);
                         });
@@ -394,17 +393,18 @@
                 }
                 doc.off('keyup.' + $.drop.nS);
                 if (opt.closeEsc)
-                    doc.on('keyup.' + $.drop.nS, function(e) {
+                    doc.on('keyup.' + $.drop.nS, function (e) {
                         if (e.keyCode === 27)
-                            methods.close.call(null, e);
+                            methods.close.call(opt.closeAll && D.activeDrop.length ? null : $(D.activeDrop[0]), e);
                     });
                 $('html, body').css('height', '100%');
-                doc.off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function(e) {
-                    if (opt.closeClick && !$.existsN($(e.target).closest('[data-elrun]')))
-                        methods.close.call(null, e);
-                });
+                if (opt.closeClick)
+                    doc.off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
+                        if (!$.existsN($(e.target).closest('[data-elrun]')))
+                            methods.close.call(opt.closeAll && D.activeDrop.length ? null : $(D.activeDrop[0]), e);
+                    });
                 if (opt.context)
-                    drop.add(dropOver).off('contextmenu.' + $.drop.nS).on('contextmenu.' + $.drop.nS, function(e) {
+                    drop.add(dropOver).off('contextmenu.' + $.drop.nS).on('contextmenu.' + $.drop.nS, function (e) {
                         e.preventDefault();
                     });
                 var dropWH = opt.type === 'iframe' ? drop.find('iframe') : drop;
@@ -415,11 +415,11 @@
                 $('style' + '[data-rel="' + opt.drop + '"]').remove();
                 opt.style = methods._styleCreate(opt);
                 if (opt.limitSize)
-                    methods._checkMethod(function() {
+                    methods._checkMethod(function () {
                         methods.limitSize(drop);
                     });
                 if (opt.placeBeforeShow)
-                    methods._checkMethod(function() {
+                    methods._checkMethod(function () {
                         methods.placeBeforeShow(drop, $this, opt);
                     });
                 if (opt.place !== 'inherit')
@@ -440,7 +440,7 @@
                         options: opt
                     }
                 });
-                drop[opt.effectOn](opt.durationOn, function(e) {
+                drop[opt.effectOn](opt.durationOn, function (e) {
                     var drop = $(this);
                     if (opt.type === 'iframe')
                         dropWH.attr('src', opt.href);
@@ -450,8 +450,9 @@
                     if ($.existsN(inDrop))
                         methods.init.call(inDrop);
                     drop.add($this).addClass(D.activeClass);
+                    D.activeDrop.unshift(opt.drop);
                     if (opt.notify && !isNaN(opt.timeclosenotify))
-                        D.notifyTimeout[opt.drop] = setTimeout(function() {
+                        D.notifyTimeout[opt.drop] = setTimeout(function () {
                             methods.close.call(drop, 'close notify setTimeout');
                         }, opt.timeclosenotify);
                     if (opt.droppable && opt.place !== 'inherit')
@@ -475,11 +476,11 @@
             }
             return this;
         },
-        close: function(e, f, hashChange, force) {
+        close: function (e, f, hashChange, force) {
             var sel = this,
                     drops = $.existsN(sel) ? sel : $('[data-elrun].' + D.activeClass);
             var closeLength = drops.length;
-            drops.each(function(i) {
+            drops.each(function (i) {
                 var drop = $(this),
                         opt = $.extend({}, drop.data('drp'));
                 if (!drop.data('drp'))
@@ -488,7 +489,7 @@
                     return;
                 if (!($.existsN(sel) || opt.place !== 'inherit' || opt.inheritClose || opt.overlay) && opt.elrun)
                     return;
-                var _hide = function() {
+                var _hide = function () {
                     if (opt.notify && D.notifyTimeout[opt.drop]) {
                         clearTimeout(D.notifyTimeout[opt.drop]);
                         delete D.notifyTimeout[opt.drop];
@@ -497,7 +498,11 @@
                         drop.find('iframe').removeAttr('src');
                     var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
                     wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
-                    doc.off('keydown.' + $.drop.nS + ev).off('keyup.' + $.drop.nS).off('click.' + $.drop.nS + ev);
+                    doc.off('keydown.' + $.drop.nS + ev);
+                    if (opt.closeAll)
+                        D.activeDrop.length = 0;
+                    else
+                        D.activeDrop.splice($.inArray(opt.drop, D.activeDrop), 1);
                     drop.add(opt.elrun).removeClass(D.activeClass);
                     if (opt.hash && !hashChange) {
                         D.scrollTop = wnd.scrollTop();
@@ -507,11 +512,11 @@
                         setTimeout(methods._setEventHash, 0);
                     }
                     if (opt.placeAfterClose)
-                        methods._checkMethod(function() {
+                        methods._checkMethod(function () {
                             methods.placeAfterClose(drop, opt.elrun, opt);
                         });
                     $(opt.dropOver).fadeOut(opt.durationOff);
-                    drop[opt.effectOff](force ? 0 : opt.durationOff, function() {
+                    drop[opt.effectOff](force ? 0 : opt.durationOff, function () {
                         opt.style.remove();
                         $('html, body').css({'overflow': '', 'overflow-x': ''});
                         var $this = $(this);
@@ -578,23 +583,23 @@
             });
             return sel;
         },
-        update: function() {
+        update: function () {
             var drop = this,
                     drp = drop.data('drp');
             if (!drp)
                 return false;
             if (drp.limitSize)
-                methods._checkMethod(function() {
+                methods._checkMethod(function () {
                     methods.limitSize(drop);
                 });
             if (drp.place !== 'inherit')
-                methods._checkMethod(function() {
+                methods._checkMethod(function () {
                     methods[drp.place].call(drop);
                 }, drp.place);
             methods._setHeightAddons(drp.dropOver);
         },
-        center: function() {
-            return this.each(function() {
+        center: function () {
+            return this.each(function () {
                 var drop = $(this),
                         drp = drop.data('drp');
                 if (!drp)
@@ -627,8 +632,8 @@
                     });
             });
         },
-        global: function() {
-            return this.each(function() {
+        global: function () {
+            return this.each(function () {
                 var drop = $(this),
                         drp = drop.data('drp');
                 if (!drp && drp.droppableIn)
@@ -696,8 +701,8 @@
                 }
             });
         },
-        _resetStyleDrop: function() {
-            return this.css({
+        _resetStyleDrop: function () {
+            return this.stop().css({
                 'z-index': '',
                 'top': '',
                 'left': '',
@@ -706,13 +711,13 @@
                 'position': ''
             });
         },
-        _pasteNotify: function(datas, opt, hashChange, e) {
+        _pasteNotify: function (datas, opt, hashChange, e) {
             if (!$.isFunction(opt.handleNotify))
                 return false;
             var el = this,
                     drop = methods._pasteDrop(opt, opt.patternNotify);
 
-            el.off('successJson.' + $.drop.nS).on('successJson.' + $.drop.nS, function(e) {
+            el.off('successJson.' + $.drop.nS).on('successJson.' + $.drop.nS, function (e) {
                 e.stopPropagation();
                 opt.handleNotify.call($(this), e, opt);
             }).add(wnd).trigger({
@@ -726,7 +731,7 @@
             });
             return methods._show.call(el, drop, e, opt, hashChange);
         },
-        _pasteDrop: function(opt, drop) {
+        _pasteDrop: function (opt, drop) {
             drop = $(drop);
             if (opt.dropn)
                 drop = $.existsN(drop.filter(opt.drop)) ? drop.filter(opt.drop) : ($.existsN(drop.find(opt.drop)) ? drop.find(opt.drop) : drop);
@@ -738,14 +743,14 @@
 
             return drop.addClass(opt.tempClass).attr('data-elrun', opt.drop);
         },
-        _pasteContent: function($this, drop, opt) {
-            var _checkCont = function(place) {
+        _pasteContent: function ($this, drop, opt) {
+            var _checkCont = function (place) {
                 if (place.is(':empty'))
                     place.removeClass(D.noEmptyClass).addClass(D.emptyClass);
                 else
                     place.addClass(D.noEmptyClass).removeClass(D.emptyClass);
             };
-            var _pasteContent = function(content, place) {
+            var _pasteContent = function (content, place) {
                 place = drop.find(place).first();
                 if (!$.existsN(place))
                     return false;
@@ -761,10 +766,10 @@
             _pasteContent(opt.footer, opt.placeFooter);
             return this;
         },
-        _setHeightAddons: function(dropOver) {
+        _setHeightAddons: function (dropOver) {
             $(dropOver).css('height', '').css('height', doc.height());
         },
-        _checkMethod: function(f) {
+        _checkMethod: function (f) {
             try {
                 f();
             } catch (e) {
@@ -775,18 +780,18 @@
             }
             return this;
         },
-        _positionType: function(drop) {
+        _positionType: function (drop) {
             if (drop.data('drp') && drop.data('drp').place !== 'inherit')
                 drop.css({
                     'position': drop.data('drp').position
                 });
             return this;
         },
-        _filterSource: function(s) {
+        _filterSource: function (s) {
             var btn = this,
                     href = s.split(').'),
                     regS, regM = '';
-            $.map(href, function(v) {
+            $.map(href, function (v) {
                 regS = (v[v.length - 1] !== ')' ? v + ')' : v).match(/\(.*\)/);
                 regM = regS['input'].replace(regS[0], '');
                 regS = regS[0].substring(1, regS[0].length - 1);
@@ -794,12 +799,12 @@
             });
             return btn;
         },
-        _isScrollable: function(el) {
+        _isScrollable: function (el) {
             return (el && !(el.style.overflow && el.style.overflow === 'hidden') && ((el.clientWidth && el.scrollWidth > el.clientWidth) || (el.clientHeight && el.scrollHeight > el.clientHeight)));
         },
-        _setEventHash: function() {
+        _setEventHash: function () {
             D.wLH = window.location.hash;
-            wnd.off('hashchange.' + $.drop.nS).on('hashchange.' + $.drop.nS, function(e) {
+            wnd.off('hashchange.' + $.drop.nS).on('hashchange.' + $.drop.nS, function (e) {
                 e.preventDefault();
                 if (D.scrollTop)
                     $('html, body').scrollTop(D.scrollTop);
@@ -813,13 +818,13 @@
                 D.wLH = D.wLHN;
             });
         },
-        _styleCreate: function(opt) {
+        _styleCreate: function (opt) {
             if (!D.theme[opt.theme])
                 throw 'theme' + ' "' + opt.theme + '" ' + 'not available';
             var text = D.theme[opt.theme],
                     coms = D.theme[opt.theme].match(/.*,([^{]*)/gm);
             if (coms)
-                $.map(coms, function(n) {
+                $.map(coms, function (n) {
                     n = n.split('{')[0];
                     text = text.replace(n, n.replace(/,(?!(\s*\[drop\])|(\s*\[\[))/g, ', ' + opt.drop + ' '));
                 });
@@ -830,7 +835,7 @@
             }).appendTo($('body'));
         }
     };
-    $.fn.drop = function(method) {
+    $.fn.drop = function (method) {
         if (methods[method]) {
             if (!/_/.test(method))
                 return methods[ method ].apply(this, Array.prototype.slice.call(arguments, 1));
@@ -842,7 +847,7 @@
         else
             throw 'Method ' + method + ' does not exist on $.drop';
     };
-    $.drop = function(m, opt) {
+    $.drop = function (m, opt) {
         if (!opt)
             opt = {};
         var set;
@@ -857,7 +862,7 @@
                     D.galleryOpt[opt.rel]['genOpt'] = $.extend({}, opt);
                     if (!D.gallery[opt.rel])
                         D.gallery[opt.rel] = [];
-                    m.map(function(n) {
+                    m.map(function (n) {
                         if ($.type(n) === 'string' && $.inArray(n, D.gallery[opt.rel]) === -1)
                             D.gallery[opt.rel].push(n);
                         else if ($.type(n) === 'object' && n.href && $.inArray(n.href, D.gallery[opt.rel]) === -1) {
@@ -908,16 +913,16 @@
         methodPlaceInherit: 'html',
         filter: null,
         message: {
-            success: function(text) {
+            success: function (text) {
                 return '<div class= "drop-msg"><div class="drop-success"><span class="drop-icon-notify"></span><div class="drop-text-el">' + text + '</div></div></div>';
             },
-            warning: function(text) {
+            warning: function (text) {
                 return '<div class= "drop-msg"><div class="drop-warning"><span class="drop-icon-notify"></span><div class="drop-text-el">' + text + '</div></div></div>';
             },
-            error: function(text) {
+            error: function (text) {
                 return '<div class="drop-msg"><div class="drop-error"><span class="drop-icon-notify"></span><div class="drop-text-el">' + text + '</div></div></div>';
             },
-            info: function(text) {
+            info: function (text) {
                 return '<div class="drop-msg"><div class="drop-info"><span class="drop-icon-notify"></span><div class="drop-text-el">' + text + '</div></div></div>';
             }
         },
@@ -976,7 +981,7 @@
         timeclosenotify: 3000,
         notify: false,
         datas: null,
-        handleNotify: function(e, opt) {
+        handleNotify: function (e, opt) {
             e = e.drp;
             if (e && e.datas && $.type(e.datas) === 'string')
                 e.datas = eval("(" + e.datas + ")");
@@ -1000,6 +1005,7 @@
         always: false,
         animate: false,
         moreOne: true,
+        closeAll: true,
         closeClick: true,
         closeEsc: true,
         closeActiveClick: false,
@@ -1021,7 +1027,7 @@
     };
     $.drop.drp = {
         activeClass: 'drop-active',
-        handleMessageWindow: function(e) {
+        handleMessageWindow: function (e) {
             if (e.originalEvent.data)
                 $.drop(e.originalEvent.data);
         },
@@ -1085,38 +1091,39 @@
         noEmptyClass: 'drop-no-empty',
         pC: 'drop-',
         urlOfMethods: 'methods',
-        notifyTimeout: {}
+        notifyTimeout: {},
+        activeDrop: []
     };
     var D = $.drop.drp,
             DP = $.drop.dP;
-    $.drop.setParameters = function(options) {
+    $.drop.setParameters = function (options) {
         $.extend(DP, options);
         return this;
     };
-    $.drop.setThemes = function(options) {
+    $.drop.setThemes = function (options) {
         $.extend(D.theme, options);
         return this;
     };
-    $.drop.setMethod = function(n, v) {
+    $.drop.setMethod = function (n, v) {
         var nm = {};
         nm[n] = v;
         $.extend(methods, nm);
     };
-    $.drop.getMethods = function() {
+    $.drop.getMethods = function () {
         var public = {};
         for (var i in methods)
             if (!/_/.test(i))
                 public[i] = methods[i];
         return public;
     };
-    $.drop.setUrlMethods = function(url) {
+    $.drop.setUrlMethods = function (url) {
         D.urlOfMethods = url;
         return this;
     };
-    $.drop.close = function(el, force) {
+    $.drop.close = function (el, force) {
         return methods.close.call(el ? $(el) : null, 'artificial close element', null, null, force);
     };
-    $.drop.cancel = function() {
+    $.drop.cancel = function () {
         for (var i in D.curAjax)
             if (D.curAjax[i]) {
                 D.curAjax[i].abort();
@@ -1127,21 +1134,21 @@
         $.drop.hideLoading();
         return this;
     };
-    $.drop.update = function(el) {
-        return (el ? $(el) : $('[data-elrun].' + D.activeClass)).each(function() {
+    $.drop.update = function (el) {
+        return (el ? $(el) : $('[data-elrun].' + D.activeClass)).each(function () {
             methods.update.call($(this));
         });
     };
-    $.drop.require = function() {
+    $.drop.require = function () {
         D.requireLength = arguments.length;
         for (var i in arguments) {
             D.requireCur = 0;
-            (function(name) {
+            (function (name) {
                 $.ajax({
                     url: D.urlOfMethods + '/' + name + '.js',
                     dataType: 'script',
                     cache: true,
-                    success: function() {
+                    success: function () {
                         if (++D.requireCur === D.requireLength)
                             doc.trigger('require.' + $.drop.nS);
                     }
@@ -1151,10 +1158,10 @@
         return this;
     };
     $.drop.methods = methods;
-    doc.ready(function() {
+    doc.ready(function () {
         var loadingTimer, loadingFrame = 1,
                 loading = $('<div id="drop-loading"><div></div></div>').appendTo($('body'));
-        var _animate_loading = function() {
+        var _animate_loading = function () {
             if (!loading.is(':visible')) {
                 clearInterval(loadingTimer);
                 return;
@@ -1163,21 +1170,21 @@
             loadingFrame = (loadingFrame + 1) % 12;
         };
 
-        $.drop.showLoading = function() {
+        $.drop.showLoading = function () {
             clearInterval(loadingTimer);
             loading.show();
             loadingTimer = setInterval(_animate_loading, 66);
             return this;
         };
-        $.drop.hideLoading = function() {
+        $.drop.hideLoading = function () {
             loading.hide();
             return this;
         };
     });
-    wnd.on('load.' + $.drop.nS, function() {
-        setTimeout(function() {
+    wnd.on('load.' + $.drop.nS, function () {
+        setTimeout(function () {
             if (D.requireLength && D.requireCur !== D.requireLength)
-                doc.on('require.' + $.drop.nS, function() {
+                doc.on('require.' + $.drop.nS, function () {
                     $('[data-drop]').drop();
                 });
             else

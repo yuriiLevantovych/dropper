@@ -1,4 +1,4 @@
-$.drop.setMethod('placeAfterClose', function(drop, $this, opt) {
+$.drop.setMethod('placeAfterClose', function (drop, $this, opt) {
     var $ = jQuery,
             wnd = $(window);
     if (opt.place === 'inherit' || !opt.placeAfterClose)
@@ -33,21 +33,22 @@ $.drop.setMethod('placeAfterClose', function(drop, $this, opt) {
             l = drop.css('left');
         }
     }
-    if (pmt[0] !== 'center' || pmt[1] !== 'center')
+    if (opt.placeAfterClose !== 'center center') {
+        if (pmt[0] === 'inherit') {
+            t = $this.offset().left;
+            l = $this.offset().top;
+        }
+        else {
+            t += wnd.scrollTop();
+            l += wnd.scrollLeft();
+        }
         drop.animate({
-            'top': t + wnd.scrollTop(),
-            'left': l + wnd.scrollLeft()
+            'left': l,
+            'top': t
         }, {
             queue: false,
             duration: opt.durationOff
         });
-    if (pmt[0] === 'inherit')
-        drop.animate({
-            'left': $this.offset().left,
-            'top': $this.offset().top
-        }, {
-            queue: false,
-            duration: opt.durationOff
-        });
+    }
     return this;
 });
