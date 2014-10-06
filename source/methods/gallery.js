@@ -86,16 +86,15 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
     });
     if (opt.rel && opt.keyNavigate)
         drop.off('after.' + $.drop.nS).on('after.' + $.drop.nS, function() {
-            var opt = $(this).data('drp'),
-                    ev = opt.drop ? opt.drop.replace($.drop.drp.reg, '') : '';
-            doc.off('keydown.' + $.drop.nS + ev).on('keydown.' + $.drop.nS + ev, function(e) {
+            var opt = $(this).data('drp');
+            doc.off('keydown.' + $.drop.nS + opt.rel).on('keydown.' + $.drop.nS + opt.rel, function(e) {
                 var key = e.keyCode;
                 if (key === 37 || key === 39)
                     e.preventDefault();
                 if (key === 37)
-                    prev.trigger('click.' + $.drop.nS);
+                    _goto(_getnext(-1), e);
                 if (key === 39)
-                    next.trigger('click.' + $.drop.nS);
+                    _goto(_getnext(1), e);
             });
         });
     return self;

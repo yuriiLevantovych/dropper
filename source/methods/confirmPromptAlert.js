@@ -1,13 +1,10 @@
 $.drop.setMethod('confirmPromptAlert', function(opt, hashChange, _confirmF, e, el) {
     var self = this,
             $ = jQuery;
-    opt.tempClass = 'drop-' + (+new Date());
     if (opt.confirm) {
-        var confirmBtn = opt.elrun = self._referCreate('.' + opt.tempClass).data('confirm', true),
-                optC = $.extend({}, opt, confirmBtn.data()),
+        var optC = $.extend({}, opt),
                 drop = self._pasteDrop(optC, opt.patternConfirm);
-
-        self._show.call(confirmBtn, drop, e, optC, hashChange);
+        self._show.call(el, drop, e, optC, hashChange);
 
         (function(drop, _confirmF, opt) {
             $(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
@@ -20,11 +17,9 @@ $.drop.setMethod('confirmPromptAlert', function(opt, hashChange, _confirmF, e, e
             pp.html(opt.confirmText);
     }
     else if (opt.alert) {
-        var alertBtn = opt.elrun = self._referCreate('.' + opt.tempClass).data('alert', true),
-                optC = $.extend({}, opt, alertBtn.data()),
+        var optC = $.extend({}, opt),
                 drop = self._pasteDrop(optC, opt.patternAlert);
-
-        self._show.call(alertBtn, drop, e, optC, hashChange);
+        self._show.call(el, drop, e, optC, hashChange);
 
         (function(drop, _confirmF, opt) {
             $(opt.alertActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
@@ -37,13 +32,11 @@ $.drop.setMethod('confirmPromptAlert', function(opt, hashChange, _confirmF, e, e
             pp.html(opt.alertText);
     }
     else if (opt.prompt) {
-        var promptBtn = opt.elrun = self._referCreate('.' + opt.tempClass).data({'prompt': true, 'promptInputValue': opt.promptInputValue}),
-                optP = $.extend({}, opt, promptBtn.data()),
+        var optP = $.extend({}, opt),
                 drop = self._pasteDrop(optP, opt.patternPrompt);
+        self._show.call(el, drop, e, optP, hashChange);
 
-        self._show.call(promptBtn, drop, e, optP, hashChange);
-
-        (function(drop, _confirmF, opt) {
+        (function(drop, _confirmF, opt, optP) {
             $(opt.promptActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                 e.stopPropagation();
                 var getUrlVars = function(url) {
@@ -58,7 +51,7 @@ $.drop.setMethod('confirmPromptAlert', function(opt, hashChange, _confirmF, e, e
                 optP.dataPrompt = opt.dataPrompt = getUrlVars($(this).closest('form').serialize());
                 self.close.call(drop, e, _confirmF, null);
             });
-        })(drop, _confirmF, opt);
+        })(drop, _confirmF, opt, optP);
         var pp = drop.find(opt.placePaste).empty();
         if (opt.promptText && $.existsN(pp))
             pp.html(opt.promptText);

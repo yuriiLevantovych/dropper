@@ -87,7 +87,7 @@
                     </ul>
                 </li>
                 <li>
-                    <div><h3>Notify ajax (constantly load)</h3></div>
+                    <div><h3>Notify ajax</h3></div>
                     <a href="notify.php" data-drop data-notify="true">notify</a>
                 </li>
                 <li>
@@ -146,12 +146,12 @@
                     <a href="#" data-drop data-limit-size="true" data-content="Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>">limit size and scroll content</a>
                 </li>
                 <li>
-                    <div><h3>Place before show</h3> <i>(must set parametr <b>animate: true</b>) require <b>placeBeforeShow</b> method</i> <a href="#inheritDetail">detail about  <b>placeBeforeShow</b></a></div>
-                    <a href="#" data-drop="#inline" data-place-before-show="left top" data-animate="true">left top place before show</a>
+                    <div><h3>Place before show</h3> <i>require <b>placeBeforeShow</b> method</i> <a href="#inheritDetail">detail about  <b>placeBeforeShow</b></a></div>
+                    <a href="#" data-drop="#inline" data-place-before-show="left top">left top place before show</a>
                 </li>
                 <li>
-                    <div><h3>Place after close</h3> <i>(must set parametr <b>animate: true</b>) require <b>placeAfterClose</b> method</i> <a href="#inheritDetail">detail about  <b>placeAfterClose</b></a></div>
-                    <a href="#" data-drop="#inline" data-place-after-close="right bottom" data-animate="true">right bottom place after close</a>
+                    <div><h3>Place after close</h3> <i>require <b>placeAfterClose</b> method</i> <a href="#inheritDetail">detail about  <b>placeAfterClose</b></a></div>
+                    <a href="#" data-drop="#inline" data-place-after-close="right bottom">right bottom place after close</a>
                 </li>
                 <li>
                     <div><h3>Gallery</h3> <i>(must set parametr <b>rel: 'name of group'</b>) require <b>gallery</b> method</i> <a href="#inheritDetail">detail about  <b>gallery</b></a></div>
@@ -415,13 +415,13 @@
                         <td>placeBeforeShow</td>
                         <td>-</td>
                         <td>string <i>(left top, left bottom, left center, right top, right bottom, right center, center center, inherit)</i></td>
-                        <td>center center</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>placeAfterClose</td>
                         <td>-</td>
                         <td>string <i>(left top, left bottom, left center, right top, right bottom, right center, center center, inherit)</i></td>
-                        <td>center center</td>
+                        <td>null</td>
                     </tr>
                     <tr>
                         <td>start</td>
@@ -804,9 +804,9 @@
                         <th>close</th>
                         <td>
                             <p>
-                                <code>$.drop.close([selector|jQuery object])</code>
+                                <code>$.drop.close([selector|jQuery object], [force])</code>
                             </p>
-                            <p>if call without parameters closing all opened popups</p>
+                            <p>if call without parameters closing all opened popups, if <i>force: true</i> popups closed without effect</p>
                         </td>
                     </tr>
                     <tr>

@@ -1,13 +1,14 @@
 $.drop.setMethod('placeAfterClose', function(drop, $this, opt) {
     var $ = jQuery,
             wnd = $(window);
+    if (opt.place === 'inherit' || !opt.placeAfterClose)
+        return false;
     if (!this._isScrollable($('body').get(0)))
         $('body').css('overflow', 'hidden');
     $('body').css('overflow-x', 'hidden');
     if (!opt)
         return this;
-    var method = opt.animate ? 'animate' : 'css',
-            pmt = opt.placeAfterClose.toLowerCase().split(' '),
+    var pmt = opt.placeAfterClose.toLowerCase().split(' '),
             t = -drop.actual('outerHeight'),
             l = -drop.actual('outerWidth');
     if (pmt[1] === 'bottom')
@@ -33,7 +34,7 @@ $.drop.setMethod('placeAfterClose', function(drop, $this, opt) {
         }
     }
     if (pmt[0] !== 'center' || pmt[1] !== 'center')
-        drop.stop()[method]({
+        drop.animate({
             'top': t + wnd.scrollTop(),
             'left': l + wnd.scrollLeft()
         }, {
@@ -41,7 +42,7 @@ $.drop.setMethod('placeAfterClose', function(drop, $this, opt) {
             duration: opt.durationOff
         });
     if (pmt[0] === 'inherit')
-        drop.stop()[method]({
+        drop.animate({
             'left': $this.offset().left,
             'top': $this.offset().top
         }, {

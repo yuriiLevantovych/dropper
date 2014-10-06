@@ -40,7 +40,7 @@ $.drop.setMethod('placeBeforeShow', function(drop, $this, opt) {
     if (pmt[0] === 'inherit')
         drop.css({
             'left': $this.offset().left,
-            'top': $this.offset().top
+            'top': $this.offset().top + $this.outerHeight()
         });
     return this;
 });
