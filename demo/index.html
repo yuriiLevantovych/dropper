@@ -157,13 +157,13 @@
                     <div><h3>Gallery</h3> <i>(must set parametr <b>rel: 'name of group'</b>) require <b>gallery</b> method</i> <a href="#inheritDetail">detail about  <b>gallery</b></a></div>
                     <ul class="items-gallery">
                         <li>
-                            <a href="1.jpg" rel="group"><img src="1.jpg"/></a>
+                            <a href="1.jpg" rel="group" data-hash="#a1"><img src="1.jpg"/></a>
                         </li>
                         <li>
-                            <a href="2.jpg" rel="group"><img src="2.jpg"/></a>
+                            <a href="2.jpg" rel="group" data-hash="#a2"><img src="2.jpg"/></a>
                         </li>
                         <li>
-                            <a href="3.jpg" rel="group"><img src="3.jpg"/></a>
+                            <a href="3.jpg" rel="group" data-hash="#a3"><img src="3.jpg"/></a>
                         </li>
                     </ul>
                 </li>
@@ -1054,16 +1054,20 @@
                 $.drop.require('droppable', 'limitSize', 'gallery', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert');
                 //            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
                 //$('[href]').data('theme', 'green')
-                $(document).ready(function () {
-                    $(window).on('successJson.drop', function (e) {
+                $(document).ready(function() {
+                    $(window).on('successJson.drop', function(e) {
                         console.log(e.drp)
                     });
-                    $('[rel]').drop({
-                        scroll: false,
-                        header: function (opt) {
-                            console.log(($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка')
-                            return ($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка';
-                        }
+                    $(document).on('require.' + $.drop.nS, function() {
+                        setTimeout(function() {
+                            $('[rel]').drop({
+                                scroll: false,
+                                header: function(opt) {
+                                    console.log(($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка')
+                                    return ($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка';
+                                }
+                            });
+                        }, 0);
                     });
                 });
             </script>

@@ -336,12 +336,11 @@
                     var wLH = window.location.hash,
                             k = false;
                     wnd.off('hashchange.' + $.drop.nS);
-                    if (opt.rel && !opt.moreOne && D.galleryHashs[opt.rel]) {
+                    if (opt.rel && !opt.moreOne && D.galleryHashs[opt.rel])
                         D.galleryHashs[opt.rel].map(function (n) {
                             if (wLH && wLH.indexOf(n) !== -1)
                                 k = n;
                         });
-                    }
                     if (k)
                         window.location.hash = wLH.replace(k, opt.hash);
                     else if (opt.hash.indexOf('#') !== -1 && (new RegExp(opt.hash + '#|' + opt.hash + '$').exec(wLH) === null))
@@ -931,9 +930,9 @@
         triggerOff: null,
         effectOn: 'fadeIn',
         effectOff: 'fadeOut',
-        place: 'global',
+        place: 'center',
         placement: 'left bottom',
-        overlay: false,
+        overlay: true,
         overlayColor: '#000',
         overlayOpacity: .6,
         position: 'absolute',
