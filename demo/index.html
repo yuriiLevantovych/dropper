@@ -47,7 +47,7 @@
             <ol class="list-example">
                 <li>
                     <div><h3>Simple inline</h3></div>
-                    <a href="#" data-drop="#inline">inline</a>
+                    <a href="#" data-drop="#inline" data-close-esc="false">inline</a>
                 </li>
                 <li>
                     <div><h3>Simple inline with hash</h3> <i>(after opening popup and reload page popup will open)</i></div>
@@ -1055,10 +1055,10 @@
                 //            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
                 //$('[href]').data('theme', 'green')
                 $(document).ready(function() {
-                    $(window).on('successJson.drop', function(e) {
+                    $(window).on('dropSuccessJson', function(e) {
                         console.log(e.drp)
                     });
-                    $(document).on('require.' + $.drop.nS, function() {
+                    $(document).on('dropRequire', function() {
                         setTimeout(function() {
                             $('[rel]').drop({
                                 scroll: false,

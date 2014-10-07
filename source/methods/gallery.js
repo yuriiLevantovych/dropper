@@ -81,11 +81,12 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
                 _goto(_getnext(1));
             }, opt.autoPlaySpeed);
     }
-    drop.off('close.' + $.drop.nS).on('close.' + $.drop.nS, function() {
+    drop.off('dropClose.' + $.drop.nS).on('dropClose.' + $.drop.nS, function() {
         self._cIGallery($(this).data('drp').rel);
+        doc.off('keydown.' + $.drop.nS + opt.rel);
     });
     if (opt.rel && opt.keyNavigate)
-        drop.off('after.' + $.drop.nS).on('after.' + $.drop.nS, function() {
+        drop.off('dropAfter.' + $.drop.nS).on('dropAfter.' + $.drop.nS, function() {
             var opt = $(this).data('drp');
             doc.off('keydown.' + $.drop.nS + opt.rel).on('keydown.' + $.drop.nS + opt.rel, function(e) {
                 var key = e.keyCode;
