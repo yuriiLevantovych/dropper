@@ -40,15 +40,13 @@
                 if (opt.rel && opt.href) {
                     if (!D.gallery[opt.rel])
                         D.gallery[opt.rel] = [];
-                    if (!D.galleryHashs[opt.rel] && opt.hash)
-                        D.galleryHashs[opt.rel] = [];
                     if ($.inArray(opt.href, D.gallery[opt.rel]) === -1 && opt.href.match(D.regImg))
                         D.gallery[opt.rel].push(opt.href);
+                    if (!D.galleryHashs[opt.rel] && opt.hash)
+                        D.galleryHashs[opt.rel] = [];
                     if (opt.hash)
                         D.galleryHashs[opt.rel].push(opt.hash);
                 }
-                else if (opt.hash && $.inArray(opt.hash, D.galleryHashs._butRel) === -1)
-                    D.galleryHashs._butRel.push(opt.hash);
                 el.addClass('isDrop');
                 if (opt.context) {
                     el.on('contextmenu.' + $.drop.nS + ' ' + 'click.' + $.drop.nS, function (e) {
@@ -198,6 +196,9 @@
             opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp : {}, opt);
             e = e ? e : window.event;
 
+//            if (elSet.drop)
+//                methods._cleanActiveDrop(elSet.drop);
+            
             if (elSet.dropConfirmPromptAlert)
                 methods.close.call(elSet.dropConfirmPromptAlert, 'element already open', null, null, true);
 
@@ -209,6 +210,7 @@
             }
             else if (drop.data('drp'))
                 methods.close.call(drop, 'element already open', null, null, true);
+
 
             if (elSet.tempClass && !elSet.dropn)
                 elSet.drop = opt.drop = null;
@@ -439,7 +441,7 @@
                         methods.init.call(inDrop);
                     drop.add($this).addClass(D.activeClass);
                     D.activeDrop.unshift(opt.drop);
-                    var _decoratorClose = function(e, cond) {
+                    var _decoratorClose = function (e, cond) {
                         if (opt.place === 'inherit' && !opt.inheritClose)
                             return;
                         if (cond)
@@ -494,14 +496,12 @@
                         drop.find('iframe').removeAttr('src');
                     var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
                     wnd.off('resize.' + $.drop.nS + ev).off('scroll.' + $.drop.nS + ev);
-                    D.activeDrop.splice($.inArray(opt.drop, D.activeDrop), 1);
-                    delete D.activeDropCEsc[opt.drop];
-                    delete D.activeDropCClick[opt.drop];
+                    methods._cleanActiveDrop(opt.drop);
                     drop.add(opt.elrun).removeClass(D.activeClass);
                     if (opt.hash && !hashChange) {
                         D.scrollTop = wnd.scrollTop();
                         wnd.off('hashchange.' + $.drop.nS);
-                        window.location.hash = window.location.hash.replace(opt.hash, '');
+                        window.location.hash = window.location.hash.replace(new RegExp(opt.hash + '($|\b)', 'ig'), '');
                         wnd.scrollTop(D.scrollTop);
                         setTimeout(methods._setEventHash, 0);
                     }
@@ -827,6 +827,11 @@
                 'data-rel': opt.drop,
                 text: text
             }).appendTo($('body'));
+        },
+        _cleanActiveDrop: function (drop) {
+            D.activeDrop.splice($.inArray(drop, D.activeDrop), 1);
+            delete D.activeDropCEsc[drop];
+            delete D.activeDropCClick[drop];
         }
     };
     $.fn.drop = function (method) {
@@ -1071,9 +1076,7 @@
         drops: {},
         gallery: {},
         galleryOpt: {},
-        galleryHashs: {
-            _butRel: []
-        },
+        galleryHashs: {},
         curAjax: {},
         aDS: '[data-elrun].drop-center:visible, [data-elrun].drop-global:visible',
         tempClass: 'drop-temp',
