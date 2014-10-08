@@ -439,17 +439,17 @@
                         methods.init.call(inDrop);
                     drop.add($this).addClass(D.activeClass);
                     D.activeDrop.unshift(opt.drop);
-                    var _decoratorClose = function(e, opt, cond) {
+                    var _decoratorClose = function(e, cond) {
                         if (opt.place === 'inherit' && !opt.inheritClose)
                             return;
                         if (cond)
                             methods.close.call(opt.closeAll && D.activeDrop.length ? null : $(D.activeDrop[0]), e);
                     }
                     D.activeDropCEsc[opt.drop] = function (e) {
-                        _decoratorClose(e, opt, opt.closeEsc && e.keyCode === 27);
+                        _decoratorClose(e, opt.closeEsc && e.keyCode === 27);
                     };
                     D.activeDropCClick[opt.drop] = function (e) {
-                        _decoratorClose(e, opt, opt.closeClick && !$.existsN($(e.target).closest('[data-elrun]')));
+                        _decoratorClose(e, opt.closeClick && !$.existsN($(e.target).closest('[data-elrun]')));
                     };
                     if (opt.notify && !isNaN(opt.timeclosenotify))
                         D.notifyTimeout[opt.drop] = setTimeout(function () {
