@@ -1179,11 +1179,11 @@
         }, 0);
     });
     doc.off('keyup.' + $.drop.nS).on('keyup.' + $.drop.nS, function (e) {
-        if (D.activeDrop[0])
+        if (D.activeDrop[0] && D.activeDropCEsc[D.activeDrop[0]])
             D.activeDropCEsc[D.activeDrop[0]](e);
     });
     doc.off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
-        if (D.activeDrop[0])
+        if (D.activeDrop[0] && D.activeDropCClick[D.activeDrop[0]])
             D.activeDropCClick[D.activeDrop[0]](e);
     });
     wnd.on('message.' + $.drop.nS, D.handleMessageWindow);
