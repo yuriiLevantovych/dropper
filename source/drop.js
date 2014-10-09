@@ -196,21 +196,18 @@
             opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp : {}, opt);
             e = e ? e : window.event;
 
-//            if (elSet.drop)
-//                methods._cleanActiveDrop(elSet.drop);
-            
             if (elSet.dropConfirmPromptAlert)
                 methods.close.call(elSet.dropConfirmPromptAlert, 'element already open', null, null, true);
 
             var drop = $(elSet.drop);
             if (opt.closeActiveClick && $.existsN(drop) && $this.hasClass(D.activeClass)) {
-                $this.removeClass(D.activeClass);
                 methods.close.call(drop, 'element already open');
-                return $this;
+                return $this.removeClass(D.activeClass);
             }
+            else if (elSet.drop)
+                methods.close.call(elSet.drop, 'element already open', null, null, true);
             else if (drop.data('drp'))
                 methods.close.call(drop, 'element already open', null, null, true);
-
 
             if (elSet.tempClass && !elSet.dropn)
                 elSet.drop = opt.drop = null;
@@ -242,7 +239,6 @@
                 else
                     opt.placement = {'left': $this.offset().left, 'top': $this.offset().top};
             }
-
             opt.drop = opt.drop && $.type(opt.drop) === 'string' ? opt.drop : '.' + opt.tempClass;
 
             if (!$.existsN($this))
@@ -696,10 +692,8 @@
             });
         },
         _resetStyleDrop: function () {
-            return this.stop().css({
-                'z-index': '',
-                'top': '',
-                'left': '',
+            return this.stop().css({'z-index': '',
+                'top': '', 'left': '',
                 'bottom': '',
                 'right': '',
                 'position': ''
@@ -780,8 +774,7 @@
                     'position': drop.data('drp').position
                 });
             return this;
-        },
-        _filterSource: function (s) {
+        }, _filterSource: function (s) {
             var btn = this,
                     href = s.split(').'),
                     regS, regM = '';
@@ -811,8 +804,7 @@
                 }
                 D.wLH = D.wLHN;
             });
-        },
-        _styleCreate: function (opt) {
+        }, _styleCreate: function (opt) {
             if (!D.theme[opt.theme])
                 throw 'theme' + ' "' + opt.theme + '" ' + 'not available';
             var text = D.theme[opt.theme],
@@ -832,8 +824,7 @@
             D.activeDrop.splice($.inArray(drop, D.activeDrop), 1);
             delete D.activeDropCEsc[drop];
             delete D.activeDropCClick[drop];
-        }
-    };
+        }};
     $.fn.drop = function (method) {
         if (methods[method]) {
             if (!/_/.test(method))
@@ -897,8 +888,7 @@
     };
     $.drop.nS = 'drop';
     $.drop.version = '1.0';
-    $.drop.dP = {
-        drop: null,
+    $.drop.dP = {drop: null,
         href: null,
         hash: null,
         placeContent: '.drop-content',
@@ -932,8 +922,7 @@
         effectOff: 'fadeOut',
         place: 'global',
         placement: 'left bottom',
-        overlay: false,
-        overlayColor: '#000',
+        overlay: false, overlayColor: '#000',
         overlayOpacity: .6,
         position: 'absolute',
         placeBeforeShow: null,
@@ -1007,7 +996,7 @@
         closeAll: false,
         closeClick: true,
         closeEsc: true,
-        closeActiveClick: false,
+        closeActiveClick: true,
         cycle: true,
         limitSize: true,
         scroll: true,
@@ -1067,7 +1056,7 @@
                     [[.drop-context .drop-content .inside-padd]]{padding: 0;}\n\
                     [drop][style*="width"] img{max-width: 100%;max-height: 100%;}\n\
                     [drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}\n\
-                    .drop-is-scroll.placePaste img{max-width: 100%;max-height: 100%;}'
+        .drop-is-scroll.placePaste img{max-width: 100%;max-height: 100%;}'
         },
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
         reg: /[^a-zA-Z0-9]+/ig,
@@ -1089,8 +1078,7 @@
         pC: 'drop-',
         urlOfMethods: 'methods',
         notifyTimeout: {},
-        activeDrop: [],
-        activeDropCEsc: {},
+        activeDrop: [], activeDropCEsc: {},
         activeDropCClick: {}
     };
     var D = $.drop.drp,

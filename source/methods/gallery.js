@@ -1,18 +1,18 @@
-$.drop.setMethod('_cIGallery', function(rel) {
+$.drop.setMethod('_cIGallery', function (rel) {
     var $ = jQuery;
     clearInterval($.drop.drp.autoPlayInterval[rel]);
     delete $.drop.drp.autoPlayInterval[rel];
 });
-$.drop.setMethod('_galleryDecorator', function(rel, btn, i) {
+$.drop.setMethod('_galleryDecorator', function (rel, btn, i) {
     var self = this,
             $ = jQuery;
-    return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.drop.drp.activeClass).each(function() {
+    return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.drop.drp.activeClass).each(function () {
         var $this = $(this),
                 drp = $this.data('drp');
         self.gallery($this, drp, btn, i);
     });
 });
-$.drop.setMethod('gallery', function(drop, opt, btn, i) {
+$.drop.setMethod('gallery', function (drop, opt, btn, i) {
     var $ = jQuery,
             doc = $(document),
             self = this,
@@ -36,7 +36,7 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
         prev.show().removeAttr('disabled');
     if (opt.cycle)
         prev.add(next).show().removeAttr('disabled');
-    var _goto = function(i, e) {
+    var _goto = function (i, e) {
         if (!relA[i]) {
             relP -= 1;
             return false;
@@ -45,7 +45,7 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
         self._cIGallery(opt.rel);
         self.open.call($next, $.extend(opt, $next.data('drp'), {href: relA[i]}), e);
     };
-    var _getnext = function(i) {
+    var _getnext = function (i) {
         relP += i;
         if (opt.cycle) {
             if (relP >= relL)
@@ -55,7 +55,7 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
         }
         return relP;
     };
-    prev.add(next).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
+    prev.add(next).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
         e.stopPropagation();
         relP = $.inArray(opt.href, relA);
         self._cIGallery(opt.rel);
@@ -76,19 +76,19 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
         if ($.drop.drp.autoPlayInterval[opt.rel])
             self._cIGallery(opt.rel);
         else
-            $.drop.drp.autoPlayInterval[opt.rel] = setInterval(function() {
+            $.drop.drp.autoPlayInterval[opt.rel] = setInterval(function () {
                 self._cIGallery(opt.rel);
                 _goto(_getnext(1));
             }, opt.autoPlaySpeed);
     }
-    drop.off('dropClose.' + $.drop.nS).on('dropClose.' + $.drop.nS, function() {
+    drop.off('dropClose.' + $.drop.nS).on('dropClose.' + $.drop.nS, function () {
         self._cIGallery($(this).data('drp').rel);
         doc.off('keydown.' + $.drop.nS + opt.rel);
     });
     if (opt.rel && opt.keyNavigate)
-        drop.off('dropAfter.' + $.drop.nS).on('dropAfter.' + $.drop.nS, function() {
+        drop.off('dropAfter.' + $.drop.nS).on('dropAfter.' + $.drop.nS, function () {
             var opt = $(this).data('drp');
-            doc.off('keydown.' + $.drop.nS + opt.rel).on('keydown.' + $.drop.nS + opt.rel, function(e) {
+            doc.off('keydown.' + $.drop.nS + opt.rel).on('keydown.' + $.drop.nS + opt.rel, function (e) {
                 var key = e.keyCode;
                 if (key === 37 || key === 39)
                     e.preventDefault();
@@ -100,15 +100,15 @@ $.drop.setMethod('gallery', function(drop, opt, btn, i) {
         });
     return self;
 });
-$.drop.next = function(rel) {
+$.drop.next = function (rel) {
     return $.drop.methods._galleryDecorator(rel, 1);
 };
-$.drop.prev = function(rel) {
+$.drop.prev = function (rel) {
     return $.drop.methods._galleryDecorator(rel, -1);
 };
-$.drop.jumpto = function(i, rel) {
+$.drop.jumpto = function (i, rel) {
     return $.drop.methods._galleryDecorator(rel, null, i);
 };
-$.drop.play = function(rel) {
+$.drop.play = function (rel) {
     return $.drop.methods._galleryDecorator(rel, null, null);
 };
