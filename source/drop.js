@@ -100,10 +100,7 @@
         },
         _get: function (opt, e, hashChange) {
             var hrefC = opt.href.replace(D.reg, '');
-            if (D.curAjax[hrefC]) {
-                D.curAjax[hrefC].abort();
-                D.curAjax[hrefC] = null;
-            }
+            $.drop.cancel();
             var el = this,
                     elSet = el.data();
             var _update = function (data) {
@@ -146,7 +143,7 @@
             };
             var _getAjax = function () {
                 opt.type = elSet.type = 'ajax';
-                D.curAjax[hrefC] = $.ajax($.extend({}, opt.ajax, {
+                D.curAjax = $.ajax($.extend({}, opt.ajax, {
                     url: opt.href,
                     dataType: opt.ajax.dataType ? opt.ajax.dataType : (opt.notify ? 'json' : 'html'),
                     success: function (data) {
@@ -191,6 +188,9 @@
             return el;
         },
         open: function (opt, e, hashChange) {
+            if (D.busy)
+                return false;
+            D.busy = true;
             var $this = $.existsN(this) ? this : $([]),
                     elSet = $.existsN($this) ? $this.data() : {};
             opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp : {}, opt);
@@ -204,9 +204,9 @@
                 methods.close.call(drop, 'element already open');
                 return $this.removeClass(D.activeClass);
             }
-            else if (elSet.drop)
-                methods.close.call(elSet.drop, 'element already open', null, null, true);
-            else if (drop.data('drp'))
+            if (elSet.drop)
+                methods.close.call($(elSet.drop), 'element already open', null, null, true);
+            if (drop.data('drp'))
                 methods.close.call(drop, 'element already open', null, null, true);
 
             if (elSet.tempClass && !elSet.dropn)
@@ -232,6 +232,9 @@
                 $('[data-rel="' + opt.drop + '"]').add($(opt.drop)).remove();
                 opt.drop = elSet.dropn ? elSet.dropn : null;
             }
+            opt.drop = opt.drop && $.type(opt.drop) === 'string' ? opt.drop : '.' + opt.tempClass;
+            if (!$.existsN($this))
+                $this = $('<div><a data-drop="' + opt.drop + '" class="' + D.tempClass + '" href="' + (opt.href ? opt.href : '#') + '" rel="' + (opt.rel ? opt.rel : null) + '"></a></div>').appendTo($('body')).hide().children();
             if (opt.context) {
                 $.extend(opt, {place: 'global', limitSize: true, overlay: false});
                 if (e && e.pageX >= 0)
@@ -239,10 +242,6 @@
                 else
                     opt.placement = {'left': $this.offset().left, 'top': $this.offset().top};
             }
-            opt.drop = opt.drop && $.type(opt.drop) === 'string' ? opt.drop : '.' + opt.tempClass;
-
-            if (!$.existsN($this))
-                $this = $('<div><button data-drop="' + opt.drop + '" class="' + D.tempClass + '"></button></div>').appendTo($('body')).hide().children();
             opt.elrun = $this;
             if (opt.filter) {
                 if ($this.hasClass('drop-filter')) {
@@ -427,6 +426,7 @@
                     }
                 });
                 drop[opt.effectOn](opt.durationOn, function (e) {
+                    D.busy = false;
                     var drop = $(this);
                     if (opt.type === 'iframe')
                         dropWH.attr('src', opt.href);
@@ -505,7 +505,7 @@
                         methods._checkMethod(function () {
                             methods.placeAfterClose(drop, opt.elrun, opt);
                         });
-                    $(opt.dropOver).fadeOut(opt.durationOff);
+                    $(opt.dropOver).fadeOut(force ? 0 : opt.durationOff);
                     drop[opt.effectOff](force ? 0 : opt.durationOff, function () {
                         opt.style.remove();
                         $('html, body').css({'overflow': '', 'overflow-x': ''});
@@ -920,7 +920,7 @@
         triggerOff: null,
         effectOn: 'fadeIn',
         effectOff: 'fadeOut',
-        place: 'global',
+        place: 'center',
         placement: 'left bottom',
         overlay: false, overlayColor: '#000',
         overlayOpacity: .6,
@@ -992,11 +992,11 @@
         alertText: null,
         always: false,
         animate: false,
-        moreOne: true,
+        moreOne: false,
         closeAll: false,
         closeClick: true,
         closeEsc: true,
-        closeActiveClick: true,
+        closeActiveClick: false,
         cycle: true,
         limitSize: true,
         scroll: true,
@@ -1066,7 +1066,7 @@
         gallery: {},
         galleryOpt: {},
         galleryHashs: {},
-        curAjax: {},
+        curAjax: null,
         aDS: '[data-elrun].drop-center:visible, [data-elrun].drop-global:visible',
         tempClass: 'drop-temp',
         wasCreateClass: 'drop-was-create',
@@ -1111,11 +1111,9 @@
         return methods.close.call(el ? $(el) : null, 'artificial close element', null, null, force);
     };
     $.drop.cancel = function () {
-        for (var i in D.curAjax)
-            if (D.curAjax[i]) {
-                D.curAjax[i].abort();
-                D.curAjax[i] = null;
-            }
+        if (D.curAjax)
+            D.curAjax.abort();
+        D.curAjax = null;
         if (D.imgPreload)
             D.imgPreload.onload = D.imgPreload.onerror = null;
         $.drop.hideLoading();
