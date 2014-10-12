@@ -1,18 +1,14 @@
-$.drop.setMethod('_heightContent', function(drop) {
+$.drop.setMethod('_heightContent', function (drop) {
     var $ = jQuery,
             wnd = $(window);
-    return (drop || this).each(function() {
+    return (drop || this).each(function () {
         var drop = $(this),
                 drp = drop.data('drp');
         if (!drp.limitSize)
             return false;
-        var dropV = drop.is(':visible'),
-                forCenter = drp.forCenter;
-        if (!dropV) {
+        var dropV = drop.is(':visible');
+        if (!dropV)
             drop.show();
-            if (forCenter)
-                forCenter.show();
-        }
 
         if (drp.placeContent) {
             var el = drop.find($(drp.placeContent)).filter(':visible');
@@ -24,7 +20,7 @@ $.drop.setMethod('_heightContent', function(drop) {
                 var refer = drp.elrun,
                         api = false,
                         elCH = el.css({'overflow': ''}).outerHeight();
-                if (drp.scroll) {
+                if (drp.scrollContent) {
                     if ($.fn.jScrollPane) {
                         api = el.jScrollPane(drp.jScrollPane).data('jsp');
                         if ($.existsN(el.find('.jspPane')))
@@ -66,7 +62,7 @@ $.drop.setMethod('_heightContent', function(drop) {
                         h = elCH;
                 }
                 el.css('height', h);
-                if (!drp.scroll) {
+                if (!drp.scrollContent) {
                     var pPOH = pP.outerHeight(),
                             pPH = pP.height();
                     el.find(drp.placePaste).addClass('drop-is-scroll').css('height', h - pPOH + pPH);
@@ -75,36 +71,30 @@ $.drop.setMethod('_heightContent', function(drop) {
                     api.reinitialise();
             }
         }
-        if (!dropV) {
+        if (!dropV)
             drop.hide();
-            if (forCenter)
-                forCenter.hide();
-        }
     });
 });
-$.drop.setMethod('limitSize', function(drop) {
+$.drop.setMethod('limitSize', function (drop) {
     var self = this,
             $ = jQuery,
             wnd = $(window);
-    return drop.each(function() {
+    return drop.each(function () {
         var drop = $(this),
                 drp = drop.data('drp');
         if (drp.limitSize && drp.place === 'center') {
             var dropV = drop.is(':visible');
-            if (!dropV) {
+            if (!dropV)
                 drop.show();
-                if (drp.forCenter)
-                    drp.forCenter.show();
-            }
             drop.css({
                 'width': '',
                 'height': ''
             });
             if (drp.placeContent) {
-                var el = drop.find($(drp.placeContent)).filter(':visible');
-                if (el.data('jsp'))
-                    el.data('jsp').destroy();
-                drop.find($(drp.placeContent)).filter(':visible').css({'height': ''});
+                var jsp = drop.find($(drp.placeContent)).filter(':visible').data('jsp');
+                if (jsp)
+                    jsp.destroy();
+                drop.find(drp.placeContent).add(drop.find(drp.placePaste).removeClass('drop-is-scroll')).filter(':visible').css({'height': ''});
             }
             var wndW = wnd.width(),
                     wndH = wnd.height(),
@@ -116,14 +106,12 @@ $.drop.setMethod('limitSize', function(drop) {
                 drop.css('width', wndW - w + ws);
             if (h > wndH)
                 drop.css('height', wndH - h + hs);
-            if (!dropV) {
+            if (!dropV)
                 drop.hide();
-                if (drp.forCenter)
-                    drp.forCenter.hide();
-            }
         }
-        self._checkMethod(function() {
-            self._heightContent(drop);
-        });
+        if (drp.place !== 'inherit')
+            self._checkMethod(function () {
+                self._heightContent(drop);
+            });
     });
 });

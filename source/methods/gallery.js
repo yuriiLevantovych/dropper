@@ -43,7 +43,7 @@ $.drop.setMethod('gallery', function (drop, opt, btn, i) {
         }
         var $next = $('[data-href="' + relA[i] + '"], [href="' + relA[i] + '"]').filter('[rel="' + opt.rel + '"]');
         self._cIGallery(opt.rel);
-        self.open.call($next, $.extend(opt, $next.data('drp'), {href: relA[i], drop: null}), e);
+        self.open.call($next, $.extend($.extend({}, opt), $next.data('drp'), {href: relA[i], drop: null}), e);
     };
     var _getnext = function (i) {
         relP += i;

@@ -680,13 +680,19 @@
                         <td>true</td>
                     </tr>
                     <tr>
+                        <td>scroll</td>
+                        <td>-</td>
+                        <td>boolean</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
                         <td>limitSize</td>
                         <td>-</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
                     <tr>
-                        <td>scroll</td>
+                        <td>scrollContent</td>
                         <td>-</td>
                         <td>boolean</td>
                         <td>true</td>
@@ -1061,7 +1067,7 @@
                     $(document).on('dropRequire', function() {
                         setTimeout(function() {
                             $('[rel]').drop({
-                                scroll: false,
+                                scrollContent: false,
                                 header: function(opt) {
                                     console.log(($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка')
                                     return ($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка';
