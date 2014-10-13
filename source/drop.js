@@ -829,7 +829,7 @@
         },
         _disableScroll: function (opt) {
             D.enableScroll();
-            if (opt.scroll)
+            if (opt.place !== 'inherit' && opt.scroll)
                 D.disableScroll();
         }
     };
