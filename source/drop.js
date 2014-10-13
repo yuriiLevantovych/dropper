@@ -498,8 +498,8 @@
                     delete D.activeDropCEsc[opt.drop];
                     delete D.activeDropCClick[opt.drop];
 
-                    if (D.activeDrop[0] && D.activeDrop[0].data('drp'))
-                        methods._disableScroll(D.activeDrop[0].data('drp'));
+                    if (D.activeDrop[0] && $(D.activeDrop[0]).data('drp'))
+                        methods._disableScroll($(D.activeDrop[0]).data('drp'));
 
                     drop.add(opt.elrun).removeClass(D.activeClass);
                     if (opt.hash && !hashChange) {
