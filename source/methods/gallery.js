@@ -41,7 +41,7 @@ $.drop.setMethod('gallery', function (drop, opt, btn, i) {
             relP -= 1;
             return false;
         }
-        var $next = $('[data-href="' + relA[i] + '"], [href="' + relA[i] + '"]').filter('[rel="' + opt.rel + '"]');
+        var $next = $('[data-href="' + relA[i] + '"][rel="' + opt.rel + '"], [href="' + relA[i] + '"][rel="' + opt.rel + '"]');
         self._cIGallery(opt.rel);
         self.open.call($next, $.extend($.extend({}, opt), $next.data('drp'), {href: relA[i], drop: null}), e);
     };

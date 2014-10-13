@@ -204,7 +204,7 @@
             var drop = $(elSet.drop);
             if (opt.closeActiveClick && $.existsN(drop) && $this.hasClass(D.activeClass)) {
                 methods.close.call(drop, 'element already open');
-                return $this.removeClass(D.activeClass);
+                return $this;
             }
             if (elSet.drop)
                 methods.close.call(drop, 'element already open', null, null, true);
@@ -223,7 +223,6 @@
             opt.href = href && $.trim(href).indexOf('#') === 0 ? null : href;
             var hrefC = opt.href ? opt.href.replace(D.reg, '') : null,
                     rel = $this.attr('rel') || opt.rel;
-
             if (rel && D.gallery[rel])
                 opt.rel = rel;
             if (opt.rel && D.galleryOpt[opt.rel])
@@ -234,7 +233,7 @@
             }
             opt.drop = opt.drop && $.type(opt.drop) === 'string' ? opt.drop : '.' + opt.tempClass;
             if (!$.existsN($this))
-                $this = $('<div><a data-drop="' + opt.drop + '" class="' + D.tempClass + '" href="' + (opt.href ? opt.href : '#') + '" rel="' + (opt.rel ? opt.rel : null) + '"></a></div>').appendTo($('body')).hide().children();
+                $this = $('<a data-r="' + D.cOD + '" style="display: none !important;" data-drop="' + opt.drop + '" class="' + D.tempClass + '" href="' + (opt.href ? opt.href : '#') + '" rel="' + (opt.rel ? opt.rel : null) + '"></a>').appendTo($('body'));
             if (opt.context) {
                 $.extend(opt, {place: 'global', limitSize: true, overlay: false});
                 if (e && e.pageX >= 0)
@@ -514,6 +513,7 @@
                         });
                     $(opt.dropOver).fadeOut(force ? 0 : opt.durationOff);
                     drop[opt.effectOff](force ? 0 : opt.durationOff, function () {
+                        D.busy = false;
                         opt.style.remove();
                         $('html, body').css({'overflow': '', 'overflow-x': ''});
                         var $this = $(this);
@@ -544,13 +544,13 @@
                             $this.removeClass(opt.tempClass);
                         if (!opt.elrun.data('dropn'))
                             opt.elrun.data('drop', null);
-                        if ($(opt.elrun).hasClass(D.tempClass))
-                            $(opt.elrun).parent().remove();
+                        if (opt.elrun.hasClass(D.tempClass))
+                            opt.elrun.remove();
+                        $this.data('drp', null);
                         if (!$this.hasClass(D.wasCreateClass))
                             $this.remove();
                         $(opt.dropOver).remove();
 
-                        $this.data('drp', null);
                         if (i === closeLength - 1 && $.isFunction(f))
                             f();
                     });
@@ -930,7 +930,7 @@
         effectOff: 'fadeOut',
         place: 'center',
         placement: 'left bottom',
-        overlay: true,
+        overlay: false,
         overlayColor: '#000',
         overlayOpacity: .6,
         position: 'absolute',
