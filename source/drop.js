@@ -347,7 +347,6 @@
                     methods.update.call(drop);
                 });
                 wnd.off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function () {
-                    D.scrollTop = wnd.scrollTop();
                     if (opt.place === 'center' && opt.centerOnScroll)
                         methods[opt.place].call(drop);
                 });
@@ -424,6 +423,7 @@
                         options: opt
                     }
                 });
+                methods._disableScroll(opt);
                 drop[opt.effectOn](opt.durationOn, function (e) {
                     D.cOD++;
                     D.busy = false;
@@ -437,7 +437,6 @@
                         methods.init.call(inDrop);
                     drop.add($this).addClass(D.activeClass);
                     D.activeDrop.unshift(opt.drop);
-                    methods._disableScroll(opt);
                     var _decoratorClose = function (e, cond) {
                         if (opt.place === 'inherit' && !opt.inheritClose)
                             return;
@@ -1093,22 +1092,11 @@
         scrollTop: null,
         activeDrop: [],
         cOD: 0,
-        keys: [37, 38, 39, 40, 32, 33, 34, 35, 36],
-        preventDefault: function (e) {
+        wheel: function (e) {
             e = e || window.event;
             if (e.preventDefault)
                 e.preventDefault();
             e.returnValue = false;
-        },
-        keydown: function (e) {
-            for (var i = this.keys.length; i--; )
-                if (e.keyCode === this.keys[i]) {
-                    this.preventDefault(e);
-                    return;
-                }
-        },
-        wheel: function (e) {
-            this.preventDefault(e);
         },
         disableScroll: function () {
             var self = this;
@@ -1116,13 +1104,13 @@
             wnd.add(doc).on('mousewheel.scr' + $.drop.nS, function (e) {
                 self.wheel.call(self, e);
             });
-            doc.on('keydown.scr' + $.drop.nS, function (e) {
-                self.keydown.call(self, e);
+            D.scrollTop = wnd.scrollTop();
+            wnd.on('scroll.scr' + $.drop.nS, function () {
+                $('html, body').scrollTop(D.scrollTop);
             });
         },
         enableScroll: function () {
-            wnd.add(doc).off('mousewheel.scr' + $.drop.nS);
-            doc.off('keydown.scr' + $.drop.nS);
+            wnd.off('scroll.scr' + $.drop.nS).add(doc).off('mousewheel.scr' + $.drop.nS);
         }
     };
     var D = $.drop.drp,
