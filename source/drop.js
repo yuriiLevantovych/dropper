@@ -289,7 +289,8 @@
             }
             if (!opt.moreOne && $.exists(D.aDS))
                 methods.close.call($(D.aDS), 'close more one element', _show);
-            _show();
+            else
+                _show();
             return this;
         },
         _show: function (drop, e, opt, hashChange) {
@@ -327,17 +328,9 @@
                 var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
                 if (opt.hash && !hashChange) {
                     D.scrollTop = wnd.scrollTop();
-                    var wLH = window.location.hash,
-                            k = false;
+                    var wLH = window.location.hash;
                     wnd.off('hashchange.' + $.drop.nS);
-                    if (opt.rel && !opt.moreOne && D.galleryHashs[opt.rel])
-                        D.galleryHashs[opt.rel].map(function (n) {
-                            if (wLH && wLH.indexOf(n) !== -1)
-                                k = n;
-                        });
-                    if (k)
-                        window.location.hash = wLH.replace(k, opt.hash);
-                    else if (opt.hash.indexOf('#') !== -1 && (new RegExp(opt.hash + '#|' + opt.hash + '$').exec(wLH) === null))
+                    if (opt.hash.indexOf('#') !== -1 && (new RegExp(opt.hash + '#|' + opt.hash + '$').exec(wLH) === null))
                         window.location.hash = wLH + opt.hash;
                     wnd.scrollTop(D.scrollTop);
                     setTimeout(methods._setEventHash, 0);
@@ -1001,7 +994,7 @@
         alertText: null,
         always: false,
         animate: false,
-        moreOne: true,
+        moreOne: false,
         closeAll: false,
         closeClick: true,
         closeEsc: true,
