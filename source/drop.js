@@ -387,7 +387,6 @@
                 if (opt.height)
                     dropWH.css('height', opt.height);
                 $('html, body').css('height', '100%');
-                $('style' + '[data-rel="' + opt.drop + '"]').remove();
                 opt.style = methods._styleCreate(opt);
                 if (opt.limitSize)
                     methods._checkMethod(function () {
