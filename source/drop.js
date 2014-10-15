@@ -503,7 +503,6 @@
                         methods._checkMethod(function () {
                             methods.placeAfterClose(drop, opt.elrun, opt);
                         });
-                    $(opt.dropOver).fadeOut(force ? 0 : opt.durationOff);
                     drop[opt.effectOff](force ? 0 : opt.durationOff, function () {
                         D.busy = false;
                         opt.style.remove();
@@ -541,7 +540,9 @@
                         $this.data('drp', null);
                         if (!$this.hasClass(D.wasCreateClass))
                             $this.remove();
-                        $(opt.dropOver).remove();
+                        $(opt.dropOver).fadeOut(force ? 0 : opt.durationOff, function () {
+                            $(opt.dropOver).remove();
+                        });
 
                         if (i === closeLength - 1 && $.isFunction(f))
                             f();
@@ -922,7 +923,7 @@
         effectOff: 'fadeOut',
         place: 'center',
         placement: 'left bottom',
-        overlay: false,
+        overlay: true,
         overlayColor: '#000',
         overlayOpacity: .6,
         position: 'absolute',
