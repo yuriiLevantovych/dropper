@@ -50,6 +50,10 @@
                     <a href="#" data-drop="#inline">inline</a>
                 </li>
                 <li>
+                    <div><h3>Simple inline html</h3></div>
+                    <a href="#" data-html="inline html">inline html</a>
+                </li>
+                <li>
                     <div><h3>Simple inline with hash</h3> <i>(after opening popup and reload page popup will open)</i></div>
                     <a href="#inline" data-drop="#inline">inline hash</a>
                 </li>
@@ -111,7 +115,7 @@
                     </div>
                 </li>
                 <li>
-                    <div><h3>Different content</h3> (header, content, footer) <a href="#inheritDetail">detail about content</a></div>
+                    <div><h3>Different content</h3> (<i>header, content, footer</i>) <a href="#inheritDetail">detail about content</a></div>
                     <a href="#" data-drop data-header="header" data-content="content" data-footer="footer">content</a>
                 </li>
             </ol>
@@ -169,6 +173,32 @@
                 </li>
             </ol>
             <h2>Options</h2>
+            <p>
+                For set any option can use three methods <i>priority these methods of set parameter(-s) sort in order</i>:
+            </p>
+            <ol>
+                <li>
+                    <p>
+                        By set default parametrs
+                        <code>$.drop.setParameters({object of options})</code>
+                    </p>
+                    <p><i>but this set option(-s) need make before initialization</i> <a href="#inheritDetail">detail about  <b>initialization</b></a></p>
+                </li>
+                <li>By initializtion <code>$(selector initialization).drop({object of options})</code></li>
+                <li>
+                    <p>
+                        By data atribute with html or code, for example:<br/>
+                        <b>html (data-drop):</b><br/>
+                        <code>&lt;a href="#" id="popup-refer" data-drop="#inline"&gt;inline&lt;/a&gt;</code><br/>
+                        <b>code:</b><br/>
+                        <code>$('#popup-refer').data('drop', '#inline');</code>
+                    </p>
+                    <p><i>but set this option(-s) need make before initialization</i> <a href="#inheritDetail">detail about  <b>initialization</b></a></p>
+                </li>
+            </ol>
+            <p>
+                For auto initialization need that element had html atributes: <code>data-drop</code> or <code>data-html</code> (<i>they may be without values</i>)
+            </p>
             <table>
                 <colgroup>
                     <col width="10%"/>
@@ -189,6 +219,12 @@
                         <td>drop</td>
                         <td>-</td>
                         <td>string <i>selector</i> or jQuery Object</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>html</td>
+                        <td>-</td>
+                        <td>string</td>
                         <td>null</td>
                     </tr>
                     <tr>
@@ -386,7 +422,7 @@
                         <td>false</td>
                     </tr>
                     <tr>
-                        <td>timeclosenotify</td>
+                        <td>notifyclosetime</td>
                         <td>-</td>
                         <td>integer</td>
                         <td>3000</td>
@@ -620,18 +656,6 @@
                         <td>[data-closed]</td>
                     </tr>
                     <tr>
-                        <td>next</td>
-                        <td>-</td>
-                        <td>string <i>selector</i> or jQuery Object</td>
-                        <td>.drop-next</td>
-                    </tr>
-                    <tr>
-                        <td>prev</td>
-                        <td>-</td>
-                        <td>string <i>selector</i> or jQuery Object</td>
-                        <td>.drop-prev</td>
-                    </tr>
-                    <tr>
                         <td>animate</td>
                         <td>-</td>
                         <td>boolean</td>
@@ -674,10 +698,46 @@
                         <td>false</td>
                     </tr>
                     <tr>
+                        <td>rel</td>
+                        <td>-</td>
+                        <td>string</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>next</td>
+                        <td>-</td>
+                        <td>string <i>selector</i> or jQuery Object</td>
+                        <td>.drop-next</td>
+                    </tr>
+                    <tr>
+                        <td>prev</td>
+                        <td>-</td>
+                        <td>string <i>selector</i> or jQuery Object</td>
+                        <td>.drop-prev</td>
+                    </tr>
+                    <tr>
                         <td>cycle</td>
                         <td>-</td>
                         <td>boolean</td>
                         <td>true</td>
+                    </tr>
+                    <tr>
+                        <td>keyNavigate</td>
+                        <td>-</td>
+                        <td>boolean</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
+                        <td>autoPlay</td>
+                        <td>-</td>
+                        <td>boolean</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>autoPlaySpeed</td>
+                        <td>-</td>
+                        <td>integer</td>
+                        <td>2000</td>
                     </tr>
                     <tr>
                         <td>scroll</td>
@@ -728,30 +788,6 @@
                         <td>false</td>
                     </tr>
                     <tr>
-                        <td>keyNavigate</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>true</td>
-                    </tr>
-                    <tr>
-                        <td>autoPlay</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
-                        <td>autoPlaySpeed</td>
-                        <td>-</td>
-                        <td>integer</td>
-                        <td>2000</td>
-                    </tr>
-                    <tr>
-                        <td>rel</td>
-                        <td>-</td>
-                        <td>string</td>
-                        <td>null</td>
-                    </tr>
-                    <tr>
                         <td>theme</td>
                         <td>-</td>
                         <td>string</td>
@@ -759,6 +795,11 @@
                     </tr>
                 </tbody>
             </table>
+            <h2 style="color: red;">Methods</h2>
+            <ul>
+                <li>init</li>
+                <li>destroy</li>
+            </ul>
             <h2>API Properties && Methods</h2>
             <table>
                 <thead>
@@ -953,8 +994,14 @@
                     </tr>
                 </tbody>
             </table>
+            <h2 style="color: red;">Events</h2>
+            <ul>
+                <li>beforeDrop</li>
+            </ul>
 
             <h2 style="color: red;">Description of functionality</h2>
+            <h3>Initialization</h3>
+            <h3>Connect methods</h3>
             <h3>Types</h3>
             <ul>
                 <li>
@@ -1017,7 +1064,6 @@
                         </li>
                     </ul>
                 </li>
-                </li>
             </ul>
             <h3>Position, size, scroll</h3>
             centerOnScroll jScrollPane limitSize
@@ -1036,12 +1082,11 @@
             header footer content placeInherit
             <br/><br/>
             <h3>Notify</h3>
-            handleNotify datas timeclosenotify message
+            handleNotify datas notifyclosetime message
             <br/><br/>
             <h3>Alert</h3>
             <h3>Prompt</h3>
             <h3>Confirm</h3>
-            <h3>Themes</h3>
             <h3>Gallery</h3>
             <h3>Droppable</h3>
             <ul>
@@ -1054,21 +1099,22 @@
                     <a href="#" data-drop="#inline" data-droppable="true" data-droppable-limit="true" data-droppable-fixed="true">droppableFixed</a>
                 </li>
             </ul>
+            <h3>Themes</h3>
 
             <script>
                 $.drop.setUrlMethods('../source/methods');
                 $.drop.require('droppable', 'limitSize', 'gallery', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert');
                 //            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
                 //$('[href]').data('theme', 'green')
-                $(document).ready(function() {
-                    $(window).on('dropSuccessJson', function(e) {
+                $(document).ready(function () {
+                    $(window).on('dropSuccessJson', function (e) {
                         console.log(e.drp)
                     });
-                    $(document).on('dropRequire', function() {
-                        setTimeout(function() {
+                    $(document).on('dropRequire', function () {
+                        setTimeout(function () {
                             $('[rel]').drop({
                                 scrollContent: false,
-                                header: function(opt) {
+                                header: function (opt) {
                                     console.log(this)
                                     return ($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка';
                                 }

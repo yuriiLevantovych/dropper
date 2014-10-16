@@ -228,11 +228,11 @@
                 opt.rel = rel;
             if (opt.rel && D.galleryOpt[opt.rel])
                 $.extend(opt, D.galleryOpt[opt.rel]['genOpt'], D.galleryOpt[opt.rel][hrefC]);
-            if (opt.href && opt.always) {
-                $('[data-rel="' + opt.drop + '"]').add($(opt.drop)).remove();
+            if (opt.href && opt.always)
                 opt.drop = elSet.dropn ? elSet.dropn : null;
-            }
+
             opt.drop = opt.drop && $.type(opt.drop) === 'string' ? opt.drop : '.' + opt.tempClass;
+
             if (!$.existsN($this) /*bug of remove bellow "opt.elrun.remove"*/ || elSet.dropId !== undefined && !$.exists('[data-drop-id="' + elSet.dropId + '"]'))
                 $this = $('<a data-drop-id="' + D.cOD + '" style="display: none !important;" data-drop="' + opt.drop + '" class="' + D.tempClass + '" href="' + (opt.href ? opt.href : '#') + '" rel="' + (opt.rel ? opt.rel : null) + '"></a>').appendTo($('body'));
             if (opt.context) {
@@ -424,7 +424,7 @@
                         dropWH.attr('src', opt.href);
                     $('html, body').css({'overflow': '', 'overflow-x': ''});
                     methods._setHeightAddons(dropOver);
-                    var inDrop = opt.type === 'iframe' ? drop.find('iframe').contents().find('[data-drop]') : drop.find('[data-drop]');
+                    var inDrop = opt.type === 'iframe' ? drop.find('iframe').contents().find(D.selAutoInit) : drop.find(D.selAutoInit);
                     if ($.existsN(inDrop))
                         methods.init.call(inDrop);
                     drop.add($this).addClass(D.activeClass);
@@ -441,10 +441,10 @@
                     D.activeDropCClick[opt.drop] = function (e) {
                         _decoratorClose(e, opt.closeClick && !$.existsN($(e.target).closest('[data-elrun]')));
                     };
-                    if (opt.notify && !isNaN(opt.timeclosenotify))
+                    if (opt.notify && !isNaN(opt.notifyclosetime))
                         D.notifyTimeout[opt.drop] = setTimeout(function () {
                             methods.close.call(drop, 'close notify setTimeout');
-                        }, opt.timeclosenotify);
+                        }, opt.notifyclosetime);
                     if (opt.droppable && opt.place !== 'inherit')
                         methods.droppable(drop);
                     if (opt.elAfter)
@@ -599,32 +599,26 @@
                         drp = drop.data('drp');
                 if (!drp)
                     return false;
-                if (!drp.droppableIn) {
-                    var method = drp.animate || drp.placeBeforeShow ? 'animate' : 'css',
-                            dropV = drop.is(':visible'),
-                            w = dropV ? drop.outerWidth() : drop.actual('outerWidth'),
-                            h = dropV ? drop.outerHeight() : drop.actual('outerHeight'),
-                            wndT = wnd.scrollTop(),
-                            wndL = wnd.scrollLeft(),
-                            top = Math.floor((wnd.height() - h) / 2),
-                            left = Math.floor((wnd.width() - w) / 2);
-                    top = top > 0 ? top + wndT : wndT;
-                    left = left > 0 ? left + wndL : wndL;
-                    if (top + h > doc.height() || left + w > doc.width())
-                        return false;
-                    drop[method]({
-                        'top': top,
-                        'left': left
-                    }, {
-                        duration: drp.durationOn,
-                        queue: false
-                    });
-                }
-                else if (drp.droppableIn && drp.positionDroppableIn)
-                    drop.css({
-                        'top': drp.positionDroppableIn.top,
-                        'left': drp.positionDroppableIn.left
-                    });
+
+                var method = drp.animate || drp.placeBeforeShow ? 'animate' : 'css',
+                        dropV = drop.is(':visible'),
+                        w = dropV ? drop.outerWidth() : drop.actual('outerWidth'),
+                        h = dropV ? drop.outerHeight() : drop.actual('outerHeight'),
+                        wndT = wnd.scrollTop(),
+                        wndL = wnd.scrollLeft(),
+                        top = Math.floor((wnd.height() - h) / 2),
+                        left = Math.floor((wnd.width() - w) / 2);
+                top = top > 0 ? top + wndT : wndT;
+                left = left > 0 ? left + wndL : wndL;
+                if (top + h > doc.height() || left + w > doc.width())
+                    return false;
+                drop[method]({
+                    'top': top,
+                    'left': left
+                }, {
+                    duration: drp.durationOn,
+                    queue: false
+                });
             });
         },
         global: function () {
@@ -826,7 +820,7 @@
         },
         _disableScroll: function (opt) {
             D.enableScroll();
-            if (opt.place !== 'inherit' && opt.scroll)
+            if (opt.place !== 'inherit' && !opt.scroll)
                 D.disableScroll();
         }
     };
@@ -893,7 +887,9 @@
     };
     $.drop.nS = 'drop';
     $.drop.version = '1.0';
-    $.drop.dP = {drop: null,
+    $.drop.dP = {
+        drop: null,
+        html: null,
         href: null,
         hash: null,
         placeContent: '.drop-content',
@@ -972,7 +968,7 @@
         },
         durationOn: 300,
         durationOff: 200,
-        timeclosenotify: 3000,
+        notifyclosetime: 3000,
         notify: false,
         datas: null,
         handleNotify: function (e, opt) {
@@ -1089,17 +1085,12 @@
         scrollTop: null,
         activeDrop: [],
         cOD: 0,
-        wheel: function (e) {
-            e = e || window.event;
-            if (e.preventDefault)
-                e.preventDefault();
-            e.returnValue = false;
-        },
         disableScroll: function () {
             var self = this;
             self.enableScroll();
             wnd.add(doc).on('mousewheel.scr' + $.drop.nS, function (e) {
-                self.wheel.call(self, e);
+                if (!($(e.target).is('[data-elrun]') || $.existsN($(e.target).closest('[data-elrun]'))))
+                    e.preventDefault();
             });
             D.scrollTop = wnd.scrollTop();
             wnd.on('scroll.scr' + $.drop.nS, function () {
@@ -1108,7 +1099,8 @@
         },
         enableScroll: function () {
             wnd.off('scroll.scr' + $.drop.nS).add(doc).off('mousewheel.scr' + $.drop.nS);
-        }
+        },
+        selAutoInit: '[data-drop], [data-html]'
     };
     var D = $.drop.drp,
             DP = $.drop.dP;
@@ -1206,10 +1198,10 @@
         setTimeout(function () {
             if (D.requireLength && D.requireCur !== D.requireLength)
                 doc.on('dropRequire.' + $.drop.nS, function () {
-                    $('[data-drop]').drop();
+                    $(D.selAutoInit).drop();
                 });
             else
-                $('[data-drop]').drop();
+                $(D.selAutoInit).drop();
         }, 0);
     }).on('message.' + $.drop.nS, D.handleMessageWindow);
 })(jQuery, $(window), $(document));
