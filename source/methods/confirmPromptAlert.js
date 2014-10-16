@@ -9,7 +9,7 @@ $.drop.setMethod('confirmPromptAlert', function(opt, hashChange, _confirmF, e, e
         (function(drop, _confirmF, opt) {
             $(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                 e.stopPropagation();
-                self.close.call(drop, e, _confirmF, null);
+                self.close.call(drop, e, _confirmF);
             });
         })(drop, _confirmF, opt);
         var pp = drop.find(opt.placePaste).empty();
@@ -24,7 +24,7 @@ $.drop.setMethod('confirmPromptAlert', function(opt, hashChange, _confirmF, e, e
         (function(drop, _confirmF, opt) {
             $(opt.alertActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function(e) {
                 e.stopPropagation();
-                self.close.call(drop, e, _confirmF, null);
+                self.close.call(drop, e, _confirmF);
             });
         })(drop, _confirmF, opt);
         var pp = drop.find(opt.placePaste).empty();
@@ -49,7 +49,7 @@ $.drop.setMethod('confirmPromptAlert', function(opt, hashChange, _confirmF, e, e
                 };
 
                 optP.dataPrompt = opt.dataPrompt = getUrlVars($(this).closest('form').serialize());
-                self.close.call(drop, e, _confirmF, null);
+                self.close.call(drop, e, _confirmF);
             });
         })(drop, _confirmF, opt, optP);
         var pp = drop.find(opt.placePaste).empty();

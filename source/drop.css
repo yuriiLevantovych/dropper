@@ -22,14 +22,6 @@
 .drop{
     display: none;
 }
-.drop-for-center{
-    display:none;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-}
 .drop-overlay{
     display:none;
     position:absolute;

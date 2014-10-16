@@ -1069,7 +1069,7 @@
                             $('[rel]').drop({
                                 scrollContent: false,
                                 header: function(opt) {
-                                    console.log(($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка')
+                                    console.log(this)
                                     return ($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка';
                                 }
                             });
