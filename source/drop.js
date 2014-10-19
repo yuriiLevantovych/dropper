@@ -214,6 +214,7 @@
                 elSet.drop = opt.drop = null;
 
             opt.tempClass = elSet.tempClass = 'drop-' + (+new Date());
+            opt.tempClassS = '.' + opt.tempClass;
 
             if (elSet || $.existsN(opt.drop))
                 elSet.dropn = opt.drop;
@@ -231,7 +232,7 @@
             if (opt.href && opt.always)
                 opt.drop = elSet.dropn ? elSet.dropn : null;
 
-            opt.drop = opt.drop && $.type(opt.drop) === 'string' ? opt.drop : '.' + opt.tempClass;
+            opt.drop = opt.drop && $.type(opt.drop) === 'string' ? opt.drop : opt.tempClassS;
 
             if (!$.existsN($this) /*bug of remove bellow "opt.elrun.remove"*/ || elSet.dropId !== undefined && !$.exists('[data-drop-id="' + elSet.dropId + '"]'))
                 $this = $('<a data-drop-id="' + D.cOD + '" style="display: none !important;" data-drop="' + opt.drop + '" class="' + D.tempClass + '" href="' + (opt.href ? opt.href : '#') + '" rel="' + (opt.rel ? opt.rel : null) + '"></a>').appendTo($('body'));
@@ -250,7 +251,7 @@
                 }
                 else {
                     methods._filterSource.call($this, opt.filter).addClass(opt.tempClass);
-                    elSet.dropn = opt.drop = '.' + opt.tempClass;
+                    elSet.dropn = opt.drop = opt.tempClassS;
                     $this.addClass('drop-filter');
                 }
             }
@@ -280,7 +281,7 @@
                     return;
                 if (opt.prompt || opt.confirm || opt.alert) {
                     elSet.dropn = elSet.drop;
-                    opt.drop = '.' + opt.tempClass;
+                    opt.drop = opt.tempClassS;
                     methods._checkMethod(function () {
                         methods.confirmPromptAlert(opt, hashChange, _confirmF, e, $this);
                     });
@@ -306,9 +307,9 @@
                 var $this = this,
                         dropOver = null;
                 if (opt.overlay) {
-                    if (!$.exists('[data-rel="' + opt.drop + '"].drop-overlay'))
-                        $('body').append('<div class="drop-overlay" data-rel="' + opt.drop + '"></div>');
-                    (opt.dropOver = dropOver = $('[data-rel="' + opt.drop + '"].drop-overlay')).css({
+                    if (!$.exists('[data-rel="' + opt.tempClassS + '"].drop-overlay'))
+                        $('body').append('<div class="drop-overlay" data-rel="' + opt.tempClassS + '"></div>');
+                    (opt.dropOver = dropOver = $('[data-rel="' + opt.tempClassS + '"].drop-overlay')).css({
                         'background-color': opt.overlayColor,
                         'opacity': opt.overlayOpacity,
                         'z-index': 1103 + D.cOD
@@ -810,11 +811,11 @@
             if (coms)
                 $.map(coms, function (n) {
                     n = n.split('{')[0];
-                    text = text.replace(n, n.replace(/,(?!(\s*\[drop\])|(\s*\[\[))/g, ', ' + opt.drop + ' '));
+                    text = text.replace(n, n.replace(/,(?!(\s*\[drop\])|(\s*\[\[))/g, ', ' + opt.tempClassS + ' '));
                 });
-            text = text.replace(/\}[^$](?!(\s*\[drop\])|(\s*\[\[))/g, '} ' + opt.drop + ' ').replace(/^(?!(\s*\[drop\])|(\s*\[\[))/, opt.drop + ' ').replace(/\[\[(.*?)\]\]/g, '$1').replace(/\[drop\]/g, opt.drop).replace(/\s\s+/g, ' ');
+            text = text.replace(/\}[^$](?!(\s*\[drop\])|(\s*\[\[))/g, '} ' + opt.tempClassS + ' ').replace(/^(?!(\s*\[drop\])|(\s*\[\[))/, opt.tempClassS + ' ').replace(/\[\[(.*?)\]\]/g, '$1').replace(/\[drop\]/g, opt.tempClassS).replace(/\s\s+/g, ' ');
             return $('<style>', {
-                'data-rel': opt.drop,
+                'data-rel': opt.tempClassS,
                 text: text
             }).appendTo($('body'));
         },
