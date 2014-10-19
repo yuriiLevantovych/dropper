@@ -217,98 +217,125 @@
                 <tbody>
                     <tr>
                         <td>drop</td>
-                        <td>-</td>
+                        <td>
+                            This parameter server as init initializer of plugin, and for inline open popup, also work with parametr <code>source</code> - about this below.
+                            Has second priority if set next parameters: <code>source</code>, <code>notify</code> and <code>datas</code>, <code>html</code>, <code>filter</code>.
+                        </td>
                         <td>string <i>selector</i> or jQuery Object</td>
                         <td>null</td>
                     </tr>
                     <tr>
                         <td>html</td>
-                        <td>-</td>
+                        <td>
+                            This parameter server as init initializer of plugin, show in popup his value.
+                        </td>
                         <td>string</td>
                         <td>null</td>
                     </tr>
                     <tr>
                         <td>href</td>
-                        <td>-</td>
+                        <td>
+                            Source of popup.
+                        </td>
                         <td>string</td>
                         <td>null</td>
                     </tr>
                     <tr>
                         <td>ajax</td>
-                        <td>-</td>
+                        <td>
+                            Object for ajax request.
+                        </td>
                         <td>object</td>
-                        <td><pre><code>{<br/>&nbsp;&nbsp;type: 'post',<br/>&nbsp;&nbsp;dataType: null<br/>}</code></pre></td>
+                        <td><pre><code>{<br/>&nbsp;&nbsp;type: 'post'<br/>}</code></pre></td>
                     </tr>
                     <tr>
                         <td>always</td>
-                        <td>-</td>
+                        <td>if true that ajax load always (default content of response in this plugin saves in his cache)</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
                     <tr>
                         <td>hash</td>
-                        <td>-</td>
+                        <td>Must have valid hash</td>
                         <td>string</td>
                         <td>null</td>
                     </tr>
                     <tr>
                         <td>type</td>
-                        <td>-</td>
-                        <td>string <i>(auto, image, iframe, ajax)</i></td>
+                        <td>May have one of the four values (auto, image, iframe, ajax), plugin itself recognize if load image</td>
+                        <td>string</td>
                         <td>auto</td>
                     </tr>
                     <tr>
                         <td>width</td>
-                        <td>-</td>
+                        <td>width of popup</td>
                         <td>number, string</td>
                         <td>null</td>
                     </tr>
                     <tr>
                         <td>height</td>
-                        <td>-</td>
+                        <td>height of popup</td>
                         <td>number, string</td>
                         <td>null</td>
                     </tr>
                     <tr>
                         <td>place</td>
-                        <td>-</td>
+                        <td>If center then popup situated on the center of window browser, if noinherit then situated of popup depends on elements which opens popup, detail below in parametr placement. If inherit popup opens in place where he situated, detail below in parametr placeInerit. If parametr context(below) is true, that place get value noinherit.</td>
                         <td>string <i>(center, inherit, noinherit)</i></td>
                         <td>center</td>
                     </tr>
                     <tr>
                         <td>placement</td>
-                        <td>-</td>
+                        <td>
+                            if <code>place</code> has value 'noinherit' this parametr defines how popup will be situated relatively element which open his, if type of object popup will be situated relatively visible part of docuemnt (window)
+                        </td>
                         <td>string, object. String - <i>(left top, left bottom, left center, right top, right bottom, right center, center center)</i> or object with properies left, right, top, bottom with number or string values</td>
                         <td>left bottom</td>
                     </tr>
                     <tr>
+                        <td>placeInherit</td>
+                        <td>
+                            Place situated of popup where parametr <code>place</code> has value 'inherit'
+                        </td>
+                        <td>string <i>selector</i> or jQuery Object</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>methodPlaceInherit</td>
+                        <td>
+                            Defines which method will be paste popup where parametr <code>place</code> has value 'inherit'. It may have any method (insertion) of Jquery.
+                        </td>
+                        <td>string</td>
+                        <td>html</td>
+                    </tr>
+                    <tr>
                         <td>position</td>
-                        <td>-</td>
+                        <td>Set css property 'position' for popup except value 'inherit' of parametr <code>place</code></td>
                         <td>string <i>(absolute, relative, fixed, static, inherit)</i></td>
                         <td>absolute</td>
                     </tr>
                     <tr>
-                        <td>placeContent</td>
-                        <td>-</td>
-                        <td>string <i>selector</i></td>
-                        <td>.drop-content</td>
+                        <td>placeHeader</td>
+                        <td></td>
+                        <td>string <i>selector</i> or jQuery Object</td>
+                        <td>.drop-header</td>
                     </tr>
                     <tr>
-                        <td>placeHeader</td>
+                        <td>placeContent</td>
                         <td>-</td>
-                        <td>string <i>selector</i></td>
-                        <td>.drop-header</td>
+                        <td>string <i>selector</i> or jQuery Object</td>
+                        <td>.drop-content</td>
                     </tr>
                     <tr>
                         <td>placeFooter</td>
                         <td>-</td>
-                        <td>string <i>selector</i></td>
+                        <td>string <i>selector</i> or jQuery Object</td>
                         <td>.drop-footer</td>
                     </tr>
                     <tr>
                         <td>placePaste</td>
                         <td>-</td>
-                        <td>string <i>selector</i></td>
+                        <td>string <i>selector</i> or jQuery Object</td>
                         <td>.placePaste</td>
                     </tr>
                     <tr>
@@ -328,18 +355,6 @@
                         <td>-</td>
                         <td>string, function</td>
                         <td>null</td>
-                    </tr>
-                    <tr>
-                        <td>placeInherit</td>
-                        <td>-</td>
-                        <td>string <i>selector</i></td>
-                        <td>null</td>
-                    </tr>
-                    <tr>
-                        <td>methodPlaceInherit</td>
-                        <td>-</td>
-                        <td>string</td>
-                        <td>html</td>
                     </tr>
                     <tr>
                         <td>filter</td>

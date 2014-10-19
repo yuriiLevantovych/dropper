@@ -145,7 +145,7 @@
             };
             var _getAjax = function () {
                 opt.type = elSet.type = 'ajax';
-                D.curAjax = $.ajax($.extend({}, opt.ajax, {
+                D.curAjax = $.ajax($.extend({
                     url: opt.href,
                     dataType: opt.ajax.dataType ? opt.ajax.dataType : (opt.notify ? 'json' : 'html'),
                     success: function (data) {
@@ -160,7 +160,7 @@
                         if (arguments[2].message)
                             methods.open.call(null, {notify: true, datas: {answer: 'error', data: arguments[2].message}});
                     }
-                }));
+                }, opt.ajax));
             };
             var _getIframe = function () {
                 opt.type = elSet.type = 'iframe';
@@ -246,7 +246,7 @@
             opt.elrun = $this;
             if (opt.filter) {
                 if ($this.hasClass('drop-filter')) {
-                    elSet.dropn = opt.drop;
+                    opt.tempClassS = elSet.dropn = opt.drop;
                     opt.tempClass = null;
                 }
                 else {
@@ -960,8 +960,7 @@
         autoPlay: false,
         autoPlaySpeed: 2000,
         ajax: {
-            type: 'post',
-            dataType: null
+            type: 'post'
         },
         jScrollPane: {
             animateScroll: true,
