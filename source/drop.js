@@ -27,7 +27,6 @@
             var set = $.extend({}, DP, options);
             if (!$.existsN(this))
                 throw 'this object is not exists';
-
             return this.each(function () {
                 var el = methods.destroy.call($(this)),
                         opt = $.extend({}, set, el.data());
@@ -197,10 +196,8 @@
                     elSet = $.existsN($this) ? $this.data() : {};
             opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp : {}, opt);
             e = e ? e : window.event;
-
             if (elSet.dropConfirmPromptAlert)
                 methods.close.call(elSet.dropConfirmPromptAlert, 'element already open', null, null, true);
-
             var drop = $(elSet.drop);
             if (opt.closeActiveClick && $.existsN(drop) && $this.hasClass(D.activeClass)) {
                 methods.close.call(drop, 'element already open');
@@ -209,18 +206,13 @@
 
             if (elSet.drop || opt.drop && $.existsN(opt.drop) && opt.drop.hasClass(D.activeClass))
                 methods.close.call(drop, 'element already open', null, null, true);
-
             if (elSet.tempClass && !elSet.dropn)
                 elSet.drop = opt.drop = null;
-
             opt.tempClass = elSet.tempClass = 'drop-' + (+new Date());
             opt.tempClassS = '.' + opt.tempClass;
-
             if (elSet || $.existsN(opt.drop))
                 elSet.dropn = opt.drop;
-
             $.extend(opt, elSet);
-
             var href = $this.attr('href') || opt.href;
             opt.href = href && $.trim(href).indexOf('#') === 0 ? null : href;
             var hrefC = opt.href ? opt.href.replace(D.reg, '') : null,
@@ -231,9 +223,7 @@
                 $.extend(opt, D.galleryOpt[opt.rel]['genOpt'], D.galleryOpt[opt.rel][hrefC]);
             if (opt.href && opt.always)
                 opt.drop = elSet.dropn ? elSet.dropn : null;
-
             opt.drop = opt.drop && $.type(opt.drop) === 'string' ? opt.drop : opt.tempClassS;
-
             if (!$.existsN($this) /*bug of remove bellow "opt.elrun.remove"*/ || elSet.dropId !== undefined && !$.exists('[data-drop-id="' + elSet.dropId + '"]'))
                 $this = $('<a data-drop-id="' + D.cOD + '" style="display: none !important;" data-drop="' + opt.drop + '" class="' + D.tempClass + '" href="' + (opt.href ? opt.href : '#') + '" rel="' + (opt.rel ? opt.rel : null) + '"></a>').appendTo($('body'));
             if (opt.context) {
@@ -318,7 +308,6 @@
                 drop.data('drp', opt).attr('data-rel', opt.rel).css('z-index', 1104 + D.cOD).attr('data-elrun', opt.drop).addClass(D.pC + opt.place);
                 if (opt.context)
                     drop.addClass(D.pC + 'context');
-
                 if (opt.rel)
                     methods._checkMethod(function () {
                         methods.gallery(drop, opt);
@@ -326,7 +315,6 @@
                 methods._setHeightAddons(dropOver);
                 methods._pasteContent($this, drop, opt);
                 methods._positionType(drop);
-
                 var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
                 if (opt.hash && !hashChange) {
                     D.scrollTop = wnd.scrollTop();
@@ -399,13 +387,8 @@
                     });
                 if (opt.place !== 'inherit')
                     methods[opt.place].call(drop);
-
-                if (opt.elBefore)
-                    eval(opt.elBefore).call($this, opt, drop, e);
                 if (opt.before)
-                    opt.before.call($this, opt, drop, e);
-                if (opt.beforeG)
-                    opt.beforeG.call($this, opt, drop, e);
+                    eval(opt.before).call($this, opt, drop, e);
                 drop.add(doc).trigger({
                     type: 'dropBefore',
                     drp: {
@@ -448,12 +431,8 @@
                         }, opt.notifyclosetime);
                     if (opt.droppable && opt.place !== 'inherit')
                         methods.droppable(drop);
-                    if (opt.elAfter)
-                        eval(opt.elAfter).call($this, opt, drop, e);
                     if (opt.after)
-                        opt.after.call($this, opt, drop, e);
-                    if (opt.afterG)
-                        opt.afterG.call($this, opt, drop, e);
+                        eval(opt.after).call($this, opt, drop, e);
                     drop.add(doc).trigger({
                         type: 'dropAfter',
                         drp: {
@@ -489,10 +468,8 @@
                     D.activeDrop.splice($.inArray(opt.drop, D.activeDrop), 1);
                     delete D.activeDropCEsc[opt.drop];
                     delete D.activeDropCClick[opt.drop];
-
                     if (D.activeDrop[0] && $(D.activeDrop[0]).data('drp'))
                         methods._disableScroll($(D.activeDrop[0]).data('drp'));
-
                     drop.add(opt.elrun).removeClass(D.activeClass);
                     if (opt.hash && !hashChange) {
                         D.scrollTop = wnd.scrollTop();
@@ -513,11 +490,7 @@
                         methods._resetStyleDrop.call($(this));
                         $this.removeClass(D.pC + opt.place).removeClass(D.pC + opt.type).removeClass(D.pC + 'context');
                         if (opt.closed)
-                            opt.closed.call(opt.elrun, opt, $this, e);
-                        if (opt.elClosed)
-                            eval(opt.elClosed).call(opt.elrun, opt, $this, e);
-                        if (opt.closedG)
-                            opt.closedG.call(opt.elrun, opt, $this, e);
+                            eval(opt.closed).call(opt.elrun, opt, $this, e);
                         $this.add(doc).trigger({
                             type: 'dropClosed',
                             drp: {
@@ -532,7 +505,6 @@
                             dC.destroy();
                         if (!$.exists(D.aDS))
                             $('html, body').css('height', '');
-
                         if (!opt.filter)
                             $this.removeClass(opt.tempClass);
                         if (!opt.elrun.data('dropn'))
@@ -542,7 +514,6 @@
                         $this.data('drp', null);
                         if (!$this.hasClass(D.wasCreateClass))
                             $this.remove();
-
                         var condCallback = i === closeLength - 1 && $.isFunction(f);
                         if (opt.dropOver)
                             opt.dropOver.addClass(D.pC + 'for-remove').delay(force ? 0 : 100).fadeOut(force ? 0 : opt.durationOff, function () {
@@ -563,12 +534,8 @@
                         options: opt
                     }
                 });
-                var close = opt.elClose || opt.close || opt.closeG;
-                if (close) {
-                    if ($.type(close) === 'string')
-                        var res = eval(close).call(opt.elrun, opt, drop, e);
-                    else
-                        var res = close.call(opt.elrun, opt, drop, e);
+                if (opt.close) {
+                    var res = eval(opt.close).call(opt.elrun, opt, drop, e);
                     if (res === false && res !== true)
                         throw res;
                     else
@@ -600,7 +567,6 @@
                         drp = drop.data('drp');
                 if (!drp)
                     return false;
-
                 var method = drp.animate || drp.placeBeforeShow ? 'animate' : 'css',
                         dropV = drop.is(':visible'),
                         w = dropV ? drop.outerWidth() : drop.actual('outerWidth'),
@@ -642,10 +608,8 @@
                         offLeft = $this.offset().left,
                         $thisT = 0,
                         $thisL = 0;
-
                 if (!drop.is(':visible'))
                     drop.css({top: 'auto', bottom: 'auto', left: 'auto', right: 'auto'});
-
                 if ($.type(drp.placement) === 'object') {
                     var temp = drp.placement;
                     if (!drp.context) {
@@ -700,14 +664,13 @@
             });
         },
         _pasteNotify: function (datas, opt, hashChange, e) {
-            if (!$.isFunction(opt.handleNotify))
+            if (!$.isFunction(opt.handlerNotify))
                 return false;
             var el = this,
                     drop = methods._pasteDrop(opt, opt.patternNotify);
-
             el.off('dropSuccessJson.' + $.drop.nS).on('dropSuccessJson.' + $.drop.nS, function (e) {
                 e.stopPropagation();
-                opt.handleNotify.call($(this), e, opt);
+                opt.handlerNotify.call($(this), e, opt);
             }).add(wnd).trigger({
                 type: 'dropSuccessJson',
                 drp: {
@@ -723,7 +686,6 @@
             drop = $(drop);
             if (opt.dropn)
                 drop = $.existsN(drop.filter(opt.drop)) ? drop.filter(opt.drop) : ($.existsN(drop.find(opt.drop)) ? drop.find(opt.drop) : drop);
-
             if (opt.place !== 'inherit')
                 drop.appendTo($('body'));
             else if (opt.placeInherit)
@@ -744,8 +706,15 @@
                 _checkCont(place);
                 if (!content)
                     return false;
-                _checkCont(place.empty().html($.type(content) === 'function' ? content.call(place, opt, drop, $this) : content));
-            };
+                _checkCont(place.empty().html(function () {
+                    try {
+                        if ($.type(eval(content)) === 'function')
+                            return eval(content).call(place, opt, drop, $this);
+                    } catch (e) {
+                        return content;
+                    }
+                }));
+            }
             _pasteContent(opt.header, opt.placeHeader);
             _pasteContent(opt.content, opt.placePaste);
             _pasteContent(opt.footer, opt.placeFooter);
@@ -931,18 +900,10 @@
         placeBeforeShow: null,
         placeAfterClose: null,
         start: null,
-        elBefore: null,
-        elAfter: null,
-        elClose: null,
-        elClosed: null,
         before: null,
         after: null,
         close: null,
         closed: null,
-        beforeG: null,
-        afterG: null,
-        closeG: null,
-        closedG: null,
         pattern: '<div class="drop drop-simple"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev"><</i>&#60;</button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header"></div><div class="drop-content"><div class="inside-padd placePaste"></div></div><div class="drop-footer"></div></div>',
         patternNotify: '<div class="drop drop-notify"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header"></div><div class="drop-content"><div class="inside-padd placePaste"></div></div><div class="drop-footer"></div></div>',
         patternConfirm: '<div class="drop drop-confirm"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header">Confirm</div><div class="drop-content"><div class="inside-padd"><div class="placePaste"></div><div class="drop-group-btns"><button type="button" class="drop-button-confirm" data-button-confirm>ok</button><button type="button" class="drop-btn-cancel" data-closed>cancel</button></div></div></div><div class="drop-footer"></div></div>',
@@ -971,7 +932,7 @@
         notifyclosetime: 3000,
         notify: false,
         datas: null,
-        handleNotify: function (e, opt) {
+        handlerNotify: function (e, opt) {
             e = e.drp;
             if (e && e.datas && $.type(e.datas) === 'string')
                 e.datas = eval("(" + e.datas + ")");
@@ -1017,7 +978,7 @@
         rel: null
     };
     $.drop.drp = {
-        handleMessageWindow: function (e) {
+        handlerMessageWindow: function (e) {
             if (e.originalEvent.data)
                 $.drop(e.originalEvent.data);
         },
@@ -1176,7 +1137,6 @@
             $('div', loading).css('top', (loadingFrame * -40) + 'px');
             loadingFrame = (loadingFrame + 1) % 12;
         };
-
         $.drop.showLoading = function () {
             clearInterval(loadingTimer);
             loading.show();
@@ -1203,5 +1163,5 @@
             else
                 $(D.selAutoInit).drop();
         }, 0);
-    }).on('message.' + $.drop.nS, D.handleMessageWindow);
+    }).on('message.' + $.drop.nS, D.handlerMessageWindow);
 })(jQuery, $(window), $(document));
