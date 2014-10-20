@@ -1,7 +1,7 @@
 $.drop.setMethod('_heightContent', function (drop) {
     var $ = jQuery,
             wnd = $(window);
-    return (drop || this).each(function () {
+    return (drop || this).each(function (k) {
         var drop = $(this),
                 drp = drop.data('drp');
         if (!drp.limitSize)
@@ -15,7 +15,7 @@ $.drop.setMethod('_heightContent', function (drop) {
             if (el.data('jsp'))
                 el.data('jsp').destroy();
             el = drop.find($(drp.placeContent)).filter(':visible').css({'height': ''});
-            var pP = el.find(drp.placePaste).css('height', '').removeClass('drop-is-scroll');
+            var pP = el.find(drp.placePaste).css('height', '');
             if ($.existsN(el)) {
                 var refer = drp.elrun,
                         api = false,
@@ -61,11 +61,16 @@ $.drop.setMethod('_heightContent', function (drop) {
                     else
                         h = elCH;
                 }
+                if (elCH > h && drp.scrollContent)
+                    drop.addClass($.drop.drp.pC + 'is-scroll');
+
                 el.css('height', h);
+                if (k !== true)
+                    arguments.callee.call(drop, true); // for correct size content of popup if in style change size other elements if set class 'drop-is-scroll' 
                 if (!drp.scrollContent) {
                     var pPOH = pP.outerHeight(),
                             pPH = pP.height();
-                    el.find(drp.placePaste).addClass('drop-is-scroll').css('height', h - pPOH + pPH);
+                    el.find(drp.placePaste).css('height', h - pPOH + pPH);
                 }
                 if (api)
                     api.reinitialise();
@@ -94,7 +99,7 @@ $.drop.setMethod('limitSize', function (drop) {
                 var jsp = drop.find($(drp.placeContent)).filter(':visible').data('jsp');
                 if (jsp)
                     jsp.destroy();
-                drop.find(drp.placeContent).add(drop.find(drp.placePaste).removeClass('drop-is-scroll')).filter(':visible').css({'height': ''});
+                drop.removeClass($.drop.drp.pC + 'is-scroll').find(drp.placeContent).add(drop.find(drp.placePaste)).filter(':visible').css({'height': ''});
             }
             var wndW = wnd.width(),
                     wndH = wnd.height(),

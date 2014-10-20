@@ -710,6 +710,7 @@
                     try {
                         if ($.type(eval(content)) === 'function')
                             return eval(content).call(place, opt, drop, $this);
+                        return content;
                     } catch (e) {
                         return content;
                     }
@@ -785,7 +786,7 @@
             text = text.replace(/\}[^$](?!(\s*\[drop\])|(\s*\[\[))/g, '} ' + opt.tempClassS + ' ').replace(/^(?!(\s*\[drop\])|(\s*\[\[))/, opt.tempClassS + ' ').replace(/\[\[(.*?)\]\]/g, '$1').replace(/\[drop\]/g, opt.tempClassS).replace(/\s\s+/g, ' ');
             return $('<style>', {
                 'data-rel': opt.tempClassS,
-                text: text
+                html: text
             }).appendTo($('body'));
         },
         _disableScroll: function (opt) {
@@ -989,6 +990,7 @@
                     button{background-color: #fafafa;box-shadow: inset 0 1px #fefefe;color: #666;cursor: pointer;}\n\
                     .drop-header.drop-no-empty, .drop-footer.drop-no-empty{padding-top: 6px;padding-bottom: 7px;}\n\
                     .drop-header.drop-no-empty{border-bottom: 1px solid #d8d8d8;}\n\
+                    [drop].drop-is-scroll .drop-header.drop-empty{height: 28px;}\n\
                     .drop-footer.drop-no-empty{border-top: 1px solid #d8d8d8;}\n\
                     .drop-content .inside-padd{padding: 12px 28px 12px 12px;}\n\
                     [[.drop-image .drop-content .inside-padd]], [[.drop-alert .drop-content .inside-padd]]{padding: 10px;}\n\
@@ -1019,7 +1021,26 @@
                     [[.drop-context .drop-content .inside-padd]]{padding: 0;}\n\
                     [drop][style*="width"] img{max-width: 100%;max-height: 100%;}\n\
                     [drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}\n\
-        .drop-is-scroll.placePaste img{max-width: 100%;max-height: 100%;}'
+                    .placePaste img{max-width: 100%;max-height: 100%;}\n\
+                    .drop-is-scroll .placePaste img{max-width: none; max-height: none;}\n\
+                    .jspContainer{overflow: hidden;position: relative;}\n\
+                    .jspPane{position: absolute;}\n\
+                    .jspVerticalBar{position: absolute;top: 0;right: 0;width: 16px;height: 100%;background: red;}\n\
+                    .jspHorizontalBar{position: absolute;bottom: 0;left: 0;width: 100%;height: 16px;background: red;}\n\
+                    .jspCap{display: none;}\n\
+                    .jspHorizontalBar .jspCap{float: left;}\n\
+                    .jspTrack{background: #f9f8f7;position: relative;}\n\
+                    .jspDrag{background: #d5d5d5;position: relative;top: 0;left: 0;cursor: pointer;}\n\
+                    .jspHorizontalBar .jspTrack,.jspHorizontalBar .jspDrag{float: left;height: 100%;}\n\
+                    .jspArrow{background: #ccc;position: relative;display: block;cursor: pointer;padding: 0;margin: 0;}\n\
+                    .jspArrow.jspDisabled{cursor: default;background: #eee;}\n\
+                    .jspVerticalBar .jspArrow{height: 16px;}\n\
+                    .jspHorizontalBar .jspArrow{width: 16px;float: left;height: 100%;}\n\
+                    .jspVerticalBar .jspArrow:focus{outline: none;}\n\
+                    .jspCorner{background: #eeeef4;float: left;height: 100%;}\n\
+                    .jspArrowUp:before, .jspArrowDown:before{position: absolute;left: 3px;top: 0;font-size: 10px;color: #777;}\n\
+                    .jspArrowUp:before{content: "\\25b2";}\n\
+                    .jspArrowDown:before{content: "\\25bc";}'
         },
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
         reg: /[^a-zA-Z0-9]+/ig,
@@ -1158,10 +1179,10 @@
         setTimeout(function () {
             if (D.requireLength && D.requireCur !== D.requireLength)
                 doc.on('dropRequire.' + $.drop.nS, function () {
-                    $(D.selAutoInit).drop();
+                    $(D.selAutoInit).not('.isDrop').drop();
                 });
             else
-                $(D.selAutoInit).drop();
+                $(D.selAutoInit).not('.isDrop').drop();
         }, 0);
     }).on('message.' + $.drop.nS, D.handlerMessageWindow);
 })(jQuery, $(window), $(document));

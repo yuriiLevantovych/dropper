@@ -1,31 +1,4 @@
-#drop-loading {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 40px;
-    height: 40px;
-    margin-top: -20px;
-    margin-left: -20px;
-    cursor: pointer;
-    overflow: hidden;
-    z-index: 11104;
-    display: none;
-}
-#drop-loading div{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 40px;
-    height: 480px;
-    background-image: url(drop.png);
-}
-.drop{
-    display: none;
-}
-.drop-overlay{
-    display:none;
-    position:absolute;
-    width:100%;
-    left:0;
-    top:0;
-}
+#drop-loading {position: fixed;top: 50%;left: 50%;width: 40px;height: 40px;margin-top: -20px;margin-left: -20px;cursor: pointer;overflow: hidden;z-index: 11104;display: none;}
+#drop-loading div{position: absolute;top: 0;left: 0;width: 40px;height: 480px;background-image: url(drop.png);}
+.drop{display: none;}
+.drop-overlay{display:none;position:absolute;width:100%;left:0;top:0;}
