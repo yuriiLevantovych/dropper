@@ -992,6 +992,7 @@
                     .drop-header.drop-no-empty{border-bottom: 1px solid #d8d8d8;}\n\
                     [drop].drop-is-scroll .drop-header.drop-empty{height: 28px;}\n\
                     .drop-footer.drop-no-empty{border-top: 1px solid #d8d8d8;}\n\
+                    .drop-content{position: relative;z-index: 1;}\n\
                     .drop-content .inside-padd{padding: 12px 28px 12px 12px;}\n\
                     [[.drop-image .drop-content .inside-padd]], [[.drop-alert .drop-content .inside-padd]]{padding: 10px;}\n\
                     [[.drop-alert .drop-group-btns]]{text-align: center;}\n\
@@ -999,7 +1000,7 @@
                     button:focus, input:focus, textarea:focus{outline: #b3b3b3 solid 1px;}\n\
                     .drop-footer{background-color: #d5d5d5;padding: 0 12px;}\n\
                     .drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;}\n\
-                    .drop-prev, .drop-next{width: 35%;height: 100%;top: 0;}\n\
+                    .drop-prev, .drop-next{width: 35%;height: 100%;top: 0;z-index: 2;}\n\
                     .drop-prev:focus, .drop-next:focus{outline: none;}\n\
                     .drop-icon-prev, .drop-icon-next{width: 20px;height: 80px;line-height: 80px;}\n\
                     .drop-icon-prev, .drop-icon-next, .drop-icon-close{font-family: "Trebuchet MS", "Helvetica CY", sans-serif;font-size: 21px;color: #999;background-color: #fff;display: inline-block;text-align: center;//display: inline;zoom: 1;}\n\
@@ -1007,6 +1008,7 @@
                     .drop-close{right: 5px;top: 4px;z-index: 1;}\n\
                     .drop-next{right: 5px;text-align: right;}\n\
                     .drop-prev{left: 5px;text-align: left;}\n\
+                    [drop].drop-is-scroll .drop-next{right: 16px;}\n\
                     .drop-icon-next{text-align: center;}\n\
                     .icon-times-drop{position: absolute;z-index:1;right:0;top: 0;cursor: pointer;width: 15px;height: 15px;}\n\
                     .nav{list-style: none;margin-left: 0;}\n\
@@ -1022,7 +1024,7 @@
                     [drop][style*="width"] img{max-width: 100%;max-height: 100%;}\n\
                     [drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}\n\
                     .placePaste img{max-width: 100%;max-height: 100%;}\n\
-                    .drop-is-scroll .placePaste img{max-width: none; max-height: none;}\n\
+                    [drop].drop-is-scroll .placePaste img{max-width: none; max-height: none;}\n\
                     .jspContainer{overflow: hidden;position: relative;}\n\
                     .jspPane{position: absolute;}\n\
                     .jspVerticalBar{position: absolute;top: 0;right: 0;width: 16px;height: 100%;background: red;}\n\
