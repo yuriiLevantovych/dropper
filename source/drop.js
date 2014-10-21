@@ -308,6 +308,8 @@
                 drop.data('drp', opt).attr('data-rel', opt.rel).css('z-index', 1104 + D.cOD).attr('data-elrun', opt.drop).addClass(D.pC + opt.place);
                 if (opt.context)
                     drop.addClass(D.pC + 'context');
+                if (opt.notify)
+                    drop.addClass(D.pC + 'notify');
                 if (opt.rel)
                     methods._checkMethod(function () {
                         methods.gallery(drop, opt);
@@ -488,7 +490,7 @@
                         $('html, body').css({'overflow': '', 'overflow-x': ''});
                         var $this = $(this);
                         methods._resetStyleDrop.call($(this));
-                        $this.removeClass(D.pC + opt.place).removeClass(D.pC + opt.type).removeClass(D.pC + 'context');
+                        $this.removeClass(D.pC + opt.place).removeClass(D.pC + opt.type).removeClass(D.pC + 'context').removeClass(D.pC + 'notify');
                         if (opt.closed)
                             eval(opt.closed).call(opt.elrun, opt, $this, e);
                         $this.add(doc).trigger({
@@ -667,7 +669,7 @@
             if (!$.isFunction(opt.handlerNotify))
                 return false;
             var el = this,
-                    drop = methods._pasteDrop(opt, opt.patternNotify);
+                    drop = methods._pasteDrop(opt, opt.pattern);
             el.off('dropSuccessJson.' + $.drop.nS).on('dropSuccessJson.' + $.drop.nS, function (e) {
                 e.stopPropagation();
                 opt.handlerNotify.call($(this), e, opt);
@@ -906,7 +908,6 @@
         close: null,
         closed: null,
         pattern: '<div class="drop drop-simple"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev"><</i>&#60;</button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header"></div><div class="drop-content"><div class="inside-padd placePaste"></div></div><div class="drop-footer"></div></div>',
-        patternNotify: '<div class="drop drop-notify"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header"></div><div class="drop-content"><div class="inside-padd placePaste"></div></div><div class="drop-footer"></div></div>',
         patternConfirm: '<div class="drop drop-confirm"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header">Confirm</div><div class="drop-content"><div class="inside-padd"><div class="placePaste"></div><div class="drop-group-btns"><button type="button" class="drop-button-confirm" data-button-confirm>ok</button><button type="button" class="drop-btn-cancel" data-closed>cancel</button></div></div></div><div class="drop-footer"></div></div>',
         patternPrompt: '<div class="drop drop-prompt"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header">Prompt</div><div class="drop-content"><form class="inside-padd"><div class="placePaste"></div><input type="text" name="promptInput"/><div class="drop-group-btns"><button data-button-prompt type="submit" class="drop-button-prompt">ok</button><button type="button" data-closed class="drop-btn-cancel">cancel</button></div></form></div><div class="drop-footer"></div></div>',
         patternAlert: '<div class="drop drop-alert"><button type="button" class="drop-close" data-closed><span class="drop-icon-close">&#215;</span></button><button class="drop-prev" type="button" style="display: none;"><i class="drop-icon-prev">&#60;</i></button><button class="drop-next" type="button" style="display: none;"><i class="drop-icon-next">&#62;</i></button><div class="drop-header">Alert</div><div class="drop-content"><div class="inside-padd"><div class="placePaste"></div><div class="drop-group-btns"><button type="button" class="drop-button-alert" data-button-alert>ok</button></div></div></div><div class="drop-footer"></div></div>',
