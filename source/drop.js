@@ -1,4 +1,5 @@
 (function ($, wnd, doc) {
+    var isTouch = document.createTouch !== undefined;
     (function ($) {
         $.fn.actual = function () {
             if (arguments.length && $.type(arguments[0]) === 'string') {
@@ -557,7 +558,7 @@
                 methods._checkMethod(function () {
                     methods.limitSize(drop);
                 });
-            if (drp.place !== 'inherit')
+            if (drp.place !== 'inherit' && !isTouch)
                 methods._checkMethod(function () {
                     methods[drp.place].call(drop);
                 }, drp.place);
@@ -1071,6 +1072,8 @@
         activeDrop: [],
         cOD: 0,
         disableScroll: function () {
+            if (isTouch)
+                return false;
             var self = this;
             self.enableScroll();
             wnd.add(doc).on('mousewheel.scr' + $.drop.nS, function (e) {
@@ -1081,9 +1084,13 @@
             wnd.on('scroll.scr' + $.drop.nS, function () {
                 $('html, body').scrollTop(D.scrollTop);
             });
+            return self;
         },
         enableScroll: function () {
+            if (isTouch)
+                return false;
             wnd.off('scroll.scr' + $.drop.nS).add(doc).off('mousewheel.scr' + $.drop.nS);
+            return this;
         },
         selAutoInit: '[data-drop], [data-html]'
     };
