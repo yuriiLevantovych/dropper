@@ -718,23 +718,21 @@
                         return content;
                     }
                 }));
-            }
+            };
             _pasteContent(opt.header, opt.placeHeader);
             _pasteContent(opt.content, opt.placePaste);
             _pasteContent(opt.footer, opt.placeFooter);
             return this;
         },
         _setHeightAddons: function (dropOver) {
-            $(dropOver).css('height', '').css('height', doc.height());
+            $(dropOver).css({width: '', height: ''}).css({width: doc.width(), height: doc.height()});
         },
         _checkMethod: function (f) {
             try {
                 f();
             } catch (e) {
-                if (window.console) {
-                    var method = f.toString().match(/\.\S*\(/);
-                    console.log('need connect "' + method[0].substring(1, method[0].length - 1) + '" method');
-                }
+                var method = f.toString().match(/\.\S*\(/);
+                throw  'need connect "' + method[0].substring(1, method[0].length - 1) + '" method';
             }
             return this;
         },
@@ -964,7 +962,7 @@
         closeEsc: true,
         closeActiveClick: false,
         cycle: true,
-        scroll: true,
+        scroll: false,
         limitSize: true,
         scrollContent: true,
         centerOnScroll: false,
@@ -1081,8 +1079,9 @@
                     e.preventDefault();
             });
             D.scrollTop = wnd.scrollTop();
+            D.scrollLeft = wnd.scrollLeft();
             wnd.on('scroll.scr' + $.drop.nS, function () {
-                $('html, body').scrollTop(D.scrollTop);
+                $('html, body').scrollTop(D.scrollTop).scrollLeft(D.scrollLeft);
             });
             return self;
         },
@@ -1157,7 +1156,7 @@
     };
     $.drop.methods = methods;
     doc.ready(function () {
-        $.drop.drp.scrollTop = wnd.scrollTop();
+        D.scrollTop = wnd.scrollTop();
         var loadingTimer, loadingFrame = 1,
                 loading = $('<div id="drop-loading"><div></div></div>').appendTo($('body'));
         var _animate_loading = function () {
