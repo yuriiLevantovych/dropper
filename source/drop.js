@@ -577,7 +577,7 @@
                         wndT = wnd.scrollTop(),
                         wndL = wnd.scrollLeft(),
                         top = Math.floor((wnd.height() - h) / 2),
-                        left = Math.floor((wnd.width() - w) / 2);
+                        left = Math.floor((doc.width() - w) / 2);
                 top = top > 0 ? top + wndT : wndT;
                 left = left > 0 ? left + wndL : wndL;
                 if (top + h > doc.height() || left + w > doc.width())
@@ -792,7 +792,7 @@
         },
         _disableScroll: function (opt) {
             D.enableScroll();
-            if (opt.place !== 'inherit' && !opt.scroll)
+            if (opt.place === 'center' && !opt.scroll)
                 D.disableScroll();
         }
     };

@@ -19,7 +19,7 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
         self._show.call(el, drop, e, optC, hashChange);
 
         (function (drop, _confirmF, opt) {
-            $(opt.alertActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
+            drop.find(opt.alertActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
                 e.stopPropagation();
                 self.close.call(drop, e, _confirmF);
             });
@@ -42,7 +42,7 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
         self._show.call(el, drop, e, optC, hashChange);
 
         (function (drop, _confirmF, opt) {
-            $(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
+            drop.find(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
                 e.stopPropagation();
                 self.close.call(drop, e, _confirmF);
             });
@@ -66,7 +66,7 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
         self._show.call(el, drop, e, optP, hashChange);
 
         (function (drop, _confirmF, opt, optP) {
-            $(opt.promptActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
+            drop.find(opt.promptActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
                 e.stopPropagation();
                 var getUrlVars = function (url) {
                     var hash, myJson = {}, hashes = url.slice(url.indexOf('?') + 1).split('&');

@@ -485,25 +485,25 @@
                     </tr>
                     <tr>
                         <td>before</td>
-                        <td>This function called before show pop-up, if this parametr is set as data atribute then his look must have next - data-before="(function(){&lt;code of function&gt;})"</td>
+                        <td>This function called before show pop-up, if this parametr is set as data atribute then his look must have next - data-before="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these are a popup and third is a event.</td>
                         <td>name or code of function</td>
                         <td>null</td>
                     </tr>
                     <tr>
                         <td>after</td>
-                        <td>This function called after show pop-up, if this parametr is set as data atribute then his look must have next - data-after="(function(){&lt;code of function&gt;})"</td>
+                        <td>This function called after show pop-up, if this parametr is set as data atribute then his look must have next - data-after="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these are a popup and third is a event.</td>
                         <td>name or code of function</td>
                         <td>null</td>
                     </tr>
                     <tr>
                         <td>close</td>
-                        <td>This function called before show pop-up, if this function return false or undefined then pop-up doesn't closed, if this parametr is set as data atribute then his look must have next - data-close="(function(){&lt;code of function&gt;})"</td>
+                        <td>This function called before show pop-up, if this function return false or undefined then pop-up doesn't closed, if this parametr is set as data atribute then his look must have next - data-close="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these are a popup and third is a event.</td>
                         <td>name or code of function</td>
                         <td>null</td>
                     </tr>
                     <tr>
                         <td>closed</td>
-                        <td>This function called after closed pop-up, if this parametr is set as data atribute then his look must have next - data-closed="(function(){&lt;code of function&gt;})"</td>
+                        <td>This function called after closed pop-up, if this parametr is set as data atribute then his look must have next - data-closed="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these are a popup and third is a event.</td>
                         <td>name or code of function</td>
                         <td>null</td>
                     </tr>
@@ -541,7 +541,7 @@
                     </tr>
                     <tr>
                         <td>alert</td>
-                        <td>If this parametr is 'true' then opening pop-up use parametr <code>patternAlert</code> (above) and if click 'ok' then opening pop-up what will be open without this parametr</td>
+                        <td>If this parametr is 'true' then opening pop-up use parametr <code>patternAlert</code> (above) this parametr plays a role of a decorator</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
@@ -553,13 +553,13 @@
                     </tr>
                     <tr>
                         <td>alertActionBtn</td>
-                        <td></td>
-                        <td>string <i>selector</i></td>
+                        <td>if click on this element which contains in popup then user agrees with this alert and whereafter will be continue that as without parameter <code>alert</code> with value 'true'</td>
+                        <td>string <i>selector</i> or jQuery Object</td>
                         <td>[data-button-alert]</td>
                     </tr>
                     <tr>
                         <td>confirm</td>
-                        <td>-</td>
+                        <td>If this parametr is 'true' then opening pop-up use parametr <code>patternConfirm</code> (above) this parametr plays a role of a decorator</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
@@ -571,13 +571,13 @@
                     </tr>
                     <tr>
                         <td>confirmActionBtn</td>
-                        <td>-</td>
-                        <td>string <i>selector</i></td>
+                        <td>if click on this element which contains in popup then user agrees with this alert and whereafter will be continue that as without parameter <code>confirm</code> with value 'true'</td>
+                        <td>string <i>selector</i> or jQuery Object</td>
                         <td>[data-button-confirm]</td>
                     </tr>
                     <tr>
                         <td>prompt</td>
-                        <td>-</td>
+                        <td>If this parametr is 'true' then opening pop-up use parametr <code>patternConfirm</code> (above) this parametr plays a role of a decorator</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
@@ -589,25 +589,25 @@
                     </tr>
                     <tr>
                         <td>promptActionBtn</td>
-                        <td>-</td>
-                        <td>string <i>selector</i></td>
+                        <td>if click on this element which contains in popup then user agrees with this alert and whereafter will be continue that as without parameter <code>confirm</code> with value 'true'</td>
+                        <td>string <i>selector</i> or jQuery Object</td>
                         <td>[data-button-prompt]</td>
                     </tr>
                     <tr>
                         <td>promptInput</td>
-                        <td>-</td>
-                        <td>string <i>selector</i></td>
+                        <td>By default this is tag input, in "Prompt" popup will may have other fields of form</td>
+                        <td>string <i>selector</i> or jQuery Object</td>
                         <td>[name="promptInput"]</td>
                     </tr>
                     <tr>
                         <td>promptInputValue</td>
-                        <td>-</td>
+                        <td>Default value for element above</td>
                         <td>string, number</td>
                         <td>null</td>
                     </tr>
                     <tr>
                         <td>dataPrompt</td>
-                        <td>-</td>
+                        <td>Object in which will be write in names and values fileds of form in Prompt popup, this object is available in popup which will open after close the prompt in any callbacks or straight refer <code>$(popup).data('drp').dataPrompt</code></td>
                         <td>object</td>
                         <td>null</td>
                     </tr>
@@ -705,7 +705,7 @@
                         <td>scroll</td>
                         <td>-</td>
                         <td>boolean</td>
-                        <td>true</td>
+                        <td>false</td>
                     </tr>
                     <tr>
                         <td>limitSize</td>
