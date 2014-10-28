@@ -86,13 +86,11 @@ $.drop.setMethod('gallery', function (drop, opt, btn, i) {
         self._cIGallery($(this).data('drp').rel);
         doc.off('keydown.' + $.drop.nS + opt.rel);
     });
-    if (opt.rel && opt.keyNavigate)
+    if (opt.keyNavigate)
         drop.off('dropAfter.' + $.drop.nS).on('dropAfter.' + $.drop.nS, function () {
             var opt = $(this).data('drp');
             doc.off('keydown.' + $.drop.nS + opt.rel).on('keydown.' + $.drop.nS + opt.rel, function (e) {
                 var key = e.keyCode;
-                if (key === 37 || key === 39)
-                    e.preventDefault();
                 if (key === 37)
                     _goto(_getnext(-1), e);
                 if (key === 39)

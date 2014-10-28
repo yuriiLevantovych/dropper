@@ -106,6 +106,7 @@
             var el = this,
                     elSet = el.data();
             var _update = function (data) {
+                data = data ? data : 'response is empty';
                 if (opt.dropn)
                     var drop = methods._pasteDrop(opt, data);
                 else
@@ -137,6 +138,7 @@
                     _update($(this));
                 };
                 img.onerror = function () {
+                    D.busy = false;
                     this.onload = this.onerror = null;
                     $.drop.hideLoading();
                     methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'image is not found'}});
@@ -156,9 +158,10 @@
                             _update(data);
                     },
                     error: function () {
+                        D.busy = false;
                         $.drop.hideLoading();
-                        if (arguments[2].message)
-                            methods.open.call(null, {notify: true, datas: {answer: 'error', data: arguments[2].message}});
+                        if (arguments[2])
+                            methods.open.call(null, {notify: true, datas: {answer: 'error', data: arguments[2].message ? arguments[2].message : arguments[2]}});
                     }
                 }, opt.ajax));
             };

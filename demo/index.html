@@ -211,7 +211,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th style='color: red;'>Description</th>
+                        <th>Description</th>
                         <th>Type</th>
                         <th>Default value</th>
                     </tr>
@@ -679,79 +679,79 @@
                     </tr>
                     <tr>
                         <td>cycle</td>
-                        <td>If true then popups which united in one 'rel' opens in cycle</td>
+                        <td>If true then popups which united in one 'rel' opens in cycle (if click on next button in popup which is last in array of rel then opens first popup, and if click on prev button in popup which is first in array of rel then opens last popup)</td>
                         <td>boolean</td>
                         <td>true</td>
                     </tr>
                     <tr>
                         <td>keyNavigate</td>
-                        <td>-</td>
+                        <td>If true then gallery can controls by keybord (left and right arrows)</td>
                         <td>boolean</td>
                         <td>true</td>
                     </tr>
                     <tr>
                         <td>autoPlay</td>
-                        <td>-</td>
+                        <td>If true then if open any popup gallery then gallery as slideshow</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
                     <tr>
                         <td>autoPlaySpeed</td>
-                        <td>-</td>
+                        <td>Time of change next of item gallery</td>
                         <td>integer</td>
                         <td>2000</td>
                     </tr>
                     <tr>
                         <td>scroll</td>
-                        <td>-</td>
+                        <td>If true then scroll of browser is enabled</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
                     <tr>
                         <td>limitSize</td>
-                        <td>-</td>
+                        <td>If true then popup has sizes not more then visible part of document</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
                     <tr>
                         <td>scrollContent</td>
-                        <td>-</td>
+                        <td>If true then part of popup - content will be has scroll if height of content greater then available (if parametr <code>limitSize</code> is false then this parametr no has influence). Scroll can be default of browser or not standart if on page conected plugin jScrollPane.</td>
                         <td>boolean</td>
                         <td>true</td>
                     </tr>
                     <tr>
-                        <td>centerOnScroll</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
                         <td>jScrollPane</td>
-                        <td>-</td>
+                        <td>Parametr for plugin jScrollPane.</td>
                         <td>object</td>
                         <td><pre><code>{<br/>&nbsp;&nbsp;animateScroll: true,<br/>&nbsp;&nbsp;showArrows: true<br/>}</code></pre></td>
                     </tr>
                     <tr>
+                        <td>centerOnScroll</td>
+                        <td>if true and parametr <code>scroll</code> is true and parametr <code>place</code> is 'center' then if scroll page then popup will be situated by center.</td>
+                        <td>boolean</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
                         <td>droppable</td>
-                        <td>-</td>
+                        <td>If true then popup can movement on document</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
                     <tr>
                         <td>droppableLimit</td>
-                        <td>-</td>
+                        <td>If true then popup can movement only in limit visible part of document</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
                     <tr>
                         <td>droppableFixed</td>
-                        <td>-</td>
+                        <td>If true then after scroll of page popup will be situated in fixed position</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
                     <tr>
                         <td>theme</td>
-                        <td>-</td>
+                        <td>Name css theme for popup</td>
                         <td>string</td>
                         <td>default</td>
                     </tr>
