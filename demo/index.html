@@ -258,7 +258,7 @@
                     </tr>
                     <tr>
                         <td>hash</td>
-                        <td>Must have valid hash</td>
+                        <td>Must have valid hash, this parametr may be set as attribute href, if parametr <code>moreOne</code> below is 'true' then url can have multiply hash, after reload all popups which related with the corresponding hash</td>
                         <td>string</td>
                         <td>null</td>
                     </tr>
@@ -402,6 +402,12 @@
                         <td>Event what close pop-up by element, in this case not consider parametr <code>trigger</code> (above)</td>
                         <td>string <i>name of event</i></td>
                         <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>animate</td>
+                        <td>-</td>
+                        <td>boolean</td>
+                        <td>false</td>
                     </tr>
                     <tr>
                         <td>effectOn</td>
@@ -613,73 +619,67 @@
                     </tr>
                     <tr>
                         <td>exit</td>
-                        <td>-</td>
+                        <td>If click on this element then popup closing. If type is string then this element find inside popup, else element giving as jQuery set and don't find in popup.</td>
                         <td>string <i>selector</i> or jQuery Object</td>
                         <td>[data-closed]</td>
                     </tr>
                     <tr>
-                        <td>animate</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
-                        <td>moreOne</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
-                        <td>closeAll</td>
-                        <td>-</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
                         <td>closeClick</td>
-                        <td>-</td>
+                        <td>If this parametr 'true' then popup closing via click outside popup and button 'exit' (above) will be show.</td>
                         <td>boolean</td>
                         <td>true</td>
                     </tr>
                     <tr>
                         <td>closeEsc</td>
-                        <td>-</td>
+                        <td>If this parametr 'true' and push key 'esc' then popup will be close.</td>
                         <td>boolean</td>
                         <td>true</td>
                     </tr>
                     <tr>
+                        <td>closeAll</td>
+                        <td>If this parametr 'true' then click by mouse or push key 'esc' closing all opened popups</td>
+                        <td>boolean</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>moreOne</td>
+                        <td>If parametr true then may be opened more then one popup.</td>
+                        <td>boolean</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
                         <td>closeActiveClick</td>
-                        <td>-</td>
+                        <td>If true, popup which open and if open again then popup will close.</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
                     <tr>
                         <td>inheritClose</td>
-                        <td>-</td>
+                        <td>If true and pupup has value 'inherit' of parametr <code>place</code> (above) if click outside popup or push key 'esc' then popup will be close.</td>
                         <td>boolean</td>
                         <td>false</td>
                     </tr>
                     <tr>
                         <td>rel</td>
-                        <td>-</td>
+                        <td>If exist more one reference then popups which open this references will related in gallery</td>
                         <td>string</td>
                         <td>null</td>
                     </tr>
                     <tr>
                         <td>next</td>
-                        <td>-</td>
+                        <td>If click on this element then opens next popup in array this rel. If type is string then this element find inside popup, else element giving as jQuery set and don't find in popup.</td>
                         <td>string <i>selector</i> or jQuery Object</td>
                         <td>.drop-next</td>
                     </tr>
                     <tr>
                         <td>prev</td>
-                        <td>-</td>
+                        <td>If click on this element then opens prev popup in array this rel. If type is string then this element find inside popup, else element giving as jQuery set and don't find in popup.</td>
                         <td>string <i>selector</i> or jQuery Object</td>
                         <td>.drop-prev</td>
                     </tr>
                     <tr>
                         <td>cycle</td>
-                        <td>-</td>
+                        <td>If true then popups which united in one 'rel' opens in cycle</td>
                         <td>boolean</td>
                         <td>true</td>
                     </tr>

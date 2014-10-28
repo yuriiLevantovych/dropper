@@ -1,4 +1,4 @@
-$.drop.setMethod('placeBeforeShow', function(drop, $this, opt) {
+$.drop.setMethod('placeBeforeShow', function (drop, $this, opt) {
     var self = this,
             $ = jQuery,
             wnd = $(window);
@@ -6,15 +6,16 @@ $.drop.setMethod('placeBeforeShow', function(drop, $this, opt) {
     if (opt.place === 'inherit')
         return false;
 
-    if (!self._isScrollable($('body').get(0)))
-        $('body').css('overflow', 'hidden');
-    $('body').css('overflow-x', 'hidden');
+    if (!this._isScrollable.call($('body'), 'y'))
+        $('body').css('overflow-y', 'hidden');
+    if (!this._isScrollable.call($('body'), 'x'))
+        $('body').css('overflow-x', 'hidden');
 
     var pmt = opt.placeBeforeShow.toLowerCase().split(' '),
             t = -drop.actual('outerHeight'),
             l = -drop.actual('outerWidth');
     if (pmt[0] === 'center' || pmt[1] === 'center') {
-        self._checkMethod(function() {
+        self._checkMethod(function () {
             self[opt.place].call(drop, true);
         });
         t = drop.css('top');
@@ -44,3 +45,12 @@ $.drop.setMethod('placeBeforeShow', function(drop, $this, opt) {
         });
     return this;
 });
+if (!$.drop.methods._isScrollable)
+    $.drop.setMethod('_isScrollable', function (side) {
+        if (!$.existsN(this))
+            return this;
+        var el = this.get(0),
+                x = el.clientWidth && el.scrollWidth > el.clientWidth,
+                y = el.clientHeight && el.scrollHeight > el.clientHeight;
+        return !side ? (!(el.style.overflow && el.style.overflow === 'hidden') && (x || y)) : (side === 'x' ? !(el.style.overflowX === 'hidden') && x : !(el.style.overflowY === 'hidden') && y);
+    });

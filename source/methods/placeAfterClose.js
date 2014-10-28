@@ -3,9 +3,10 @@ $.drop.setMethod('placeAfterClose', function (drop, $this, opt) {
             wnd = $(window);
     if (opt.place === 'inherit' || !opt.placeAfterClose)
         return false;
-    if (!this._isScrollable($('body').get(0)))
-        $('body').css('overflow', 'hidden');
-    $('body').css('overflow-x', 'hidden');
+    if (!this._isScrollable.call($('body'), 'y'))
+        $('body').css('overflow-y', 'hidden');
+    if (!this._isScrollable.call($('body'), 'x'))
+        $('body').css('overflow-x', 'hidden');
     if (!opt)
         return this;
     var pmt = opt.placeAfterClose.toLowerCase().split(' '),
@@ -52,3 +53,12 @@ $.drop.setMethod('placeAfterClose', function (drop, $this, opt) {
     }
     return this;
 });
+if (!$.drop.methods._isScrollable)
+    $.drop.setMethod('_isScrollable', function (side) {
+        if (!$.existsN(this))
+            return this;
+        var el = this.get(0),
+                x = el.clientWidth && el.scrollWidth > el.clientWidth,
+                y = el.clientHeight && el.scrollHeight > el.clientHeight;
+        return !side ? (!(el.style.overflow && el.style.overflow === 'hidden') && (x || y)) : (side === 'x' ? !(el.style.overflowX === 'hidden') && x : !(el.style.overflowY === 'hidden') && y);
+    });

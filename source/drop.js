@@ -577,7 +577,7 @@
                         wndT = wnd.scrollTop(),
                         wndL = wnd.scrollLeft(),
                         top = Math.floor((wnd.height() - h) / 2),
-                        left = Math.floor((doc.width() - w) / 2);
+                        left = Math.floor((wnd.width() - w) / 2);
                 top = top > 0 ? top + wndT : wndT;
                 left = left > 0 ? left + wndL : wndL;
                 if (top + h > doc.height() || left + w > doc.width())
@@ -754,9 +754,6 @@
                 btn = btn[regM](regS);
             });
             return btn;
-        },
-        _isScrollable: function (el) {
-            return (el && !(el.style.overflow && el.style.overflow === 'hidden') && ((el.clientWidth && el.scrollWidth > el.clientWidth) || (el.clientHeight && el.scrollHeight > el.clientHeight)));
         },
         _setEventHash: function () {
             D.wLH = window.location.hash;
@@ -1005,7 +1002,7 @@
                     .drop-icon-prev, .drop-icon-next{width: 20px;height: 80px;line-height: 80px;}\n\
                     .drop-icon-prev, .drop-icon-next, .drop-icon-close{font-family: "Trebuchet MS", "Helvetica CY", sans-serif;font-size: 21px;color: #999;background-color: #fff;display: inline-block;text-align: center;//display: inline;zoom: 1;}\n\
                     .drop-icon-close{line-height: 17px;width: 19px;height: 19px;}\n\
-                    .drop-close{right: 5px;top: 4px;z-index: 1;}\n\
+                    .drop-close{right: 5px;top: 4px;z-index: 2;}\n\
                     .drop-next{right: 5px;text-align: right;}\n\
                     .drop-prev{left: 5px;text-align: left;}\n\
                     [drop].drop-is-scroll .drop-next{right: 16px;}\n\
