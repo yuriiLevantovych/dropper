@@ -116,14 +116,11 @@
                 drop.addClass(D.pC + opt.type);
                 if (!opt.always)
                     D.drops[hrefC] = drop.clone();
-                doc.trigger({
-                    type: 'dropSuccessHtml',
-                    drp: {
-                        refer: el,
-                        drop: drop,
-                        options: opt,
-                        datas: data
-                    }
+                doc.trigger('dropSuccessHtml', {
+                    refer: el,
+                    drop: drop,
+                    options: opt,
+                    datas: data
                 });
                 methods._show.call(el, drop, e, opt, hashChange);
                 return drop;
@@ -395,18 +392,15 @@
                     methods[opt.place].call(drop);
                 if (opt.before)
                     eval(opt.before).call($this, opt, drop, e);
-                drop.add(doc).trigger({
-                    type: 'dropBefore',
-                    drp: {
-                        event: e,
-                        refer: $this,
-                        drop: drop,
-                        options: opt
-                    }
+                drop.trigger('dropBefore', {
+                    event: e,
+                    refer: $this,
+                    drop: drop,
+                    options: opt
                 });
                 methods._disableScroll(opt);
                 $('.drop-overlay.' + D.pC + 'for-remove').stop().remove();
-                drop[opt.effectOn](opt.durationOn, function (e) {
+                drop[opt.effectOn](opt.durationOn, function () {
                     D.cOD++;
                     D.busy = false;
                     var drop = $(this);
@@ -439,14 +433,11 @@
                         methods.droppable(drop);
                     if (opt.after)
                         eval(opt.after).call($this, opt, drop, e);
-                    drop.add(doc).trigger({
-                        type: 'dropAfter',
-                        drp: {
-                            event: e,
-                            refer: $this,
-                            drop: drop,
-                            options: opt
-                        }
+                    drop.trigger('dropAfter', {
+                        event: e,
+                        refer: $this,
+                        drop: drop,
+                        options: opt
                     });
                 });
             }
@@ -497,14 +488,11 @@
                         $this.removeClass(D.pC + opt.place).removeClass(D.pC + opt.type).removeClass(D.pC + 'context').removeClass(D.pC + 'notify');
                         if (opt.closed)
                             eval(opt.closed).call(opt.elrun, opt, $this, e);
-                        $this.add(doc).trigger({
-                            type: 'dropClosed',
-                            drp: {
-                                event: e,
-                                refer: opt.elrun,
-                                drop: $this,
-                                options: opt
-                            }
+                        $this.trigger('dropClosed', {
+                            event: e,
+                            refer: opt.elrun,
+                            drop: $this,
+                            options: opt
                         });
                         var dC = $this.find($(opt.placeContent)).data('jsp');
                         if (dC)
@@ -531,14 +519,11 @@
                             f();
                     });
                 };
-                drop.add(doc).trigger({
-                    type: 'dropClose',
-                    drp: {
-                        event: e,
-                        refer: opt.elrun,
-                        drop: drop,
-                        options: opt
-                    }
+                drop.trigger('dropClose', {
+                    event: e,
+                    refer: opt.elrun,
+                    drop: drop,
+                    options: opt
                 });
                 if (opt.close) {
                     var res = eval(opt.close).call(opt.elrun, opt, drop, e);
@@ -674,17 +659,14 @@
                 return false;
             var el = this,
                     drop = methods._pasteDrop(opt, opt.pattern);
-            el.off('dropSuccessJson.' + $.drop.nS).on('dropSuccessJson.' + $.drop.nS, function (e) {
+            el.off('dropSuccessJson.' + $.drop.nS).on('dropSuccessJson.' + $.drop.nS, function (e, data) {
                 e.stopPropagation();
-                opt.handlerNotify.call($(this), e, opt);
-            }).add(wnd).trigger({
-                type: 'dropSuccessJson',
-                drp: {
-                    refer: el,
-                    drop: drop,
-                    options: opt,
-                    datas: el.data('datas') || datas
-                }
+                opt.handlerNotify.call($(this), data, opt);
+            }).add(wnd).trigger('dropSuccessJson', {
+                refer: el,
+                drop: drop,
+                options: opt,
+                datas: el.data('datas') || datas
             });
             return methods._show.call(el, drop, e, opt, hashChange);
         },
@@ -933,19 +915,18 @@
         notifyclosetime: 3000,
         notify: false,
         datas: null,
-        handlerNotify: function (e, opt) {
-            e = e.drp;
-            if (e && e.datas && $.type(e.datas) === 'string')
-                e.datas = eval("(" + e.datas + ")");
-            if (!e || !e.datas)
+        handlerNotify: function (data, opt) {
+            if (data && data.datas && $.type(data.datas) === 'string')
+                data.datas = eval("(" + data.datas + ")");
+            if (!data || !data.datas)
                 var text = 'Object notify is empty';
-            else if (!e.datas.answer || !e.datas.data)
+            else if (!data.datas.answer || !data.datas.data)
                 text = 'Answer is empty';
-            else if (!opt.message || !opt.message[e.datas.answer])
-                text = e.datas.data;
+            else if (!opt.message || !opt.message[data.datas.answer])
+                text = data.datas.data;
             else
-                text = opt.message[e.datas.answer](e.datas.data);
-            $(e.drop).find(opt.placePaste).empty().append(text);
+                text = opt.message[data.datas.answer](data.datas.data);
+            $(data.drop).find(opt.placePaste).empty().append(text);
             return this;
         },
         confirm: false,
@@ -956,7 +937,7 @@
         alertText: null,
         always: false,
         animate: false,
-        moreOne: true,
+        moreOne: false,
         closeAll: false,
         closeClick: true,
         closeEsc: true,
