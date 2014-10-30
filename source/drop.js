@@ -8,7 +8,8 @@
                 if (arguments[1] === undefined)
                     clone.css({
                         position: 'absolute',
-                        top: '-9999px'
+                        top: '-9999px',
+                        left: '-9999px'
                     }).show().appendTo($('body'));
                 var dimS = clone[dim]();
                 clone.remove();
@@ -944,7 +945,7 @@
         closeActiveClick: false,
         cycle: true,
         scroll: false,
-        limitSize: true,
+        limitSize: false,
         scrollContent: true,
         centerOnScroll: false,
         droppable: false,
@@ -961,8 +962,7 @@
     };
     $.drop.drp = {
         handlerMessageWindow: function (e) {
-            if (e.originalEvent.data)
-                $.drop(e.originalEvent.data);
+            $.drop(e.originalEvent.data);
         },
         theme: {
             default: '.drop-header{background-color: #f8f8f8;padding: 0 55px 0 12px;font-size: 14px;}\n\
@@ -1002,10 +1002,8 @@
                     .drop-error{background-color: #f2dede;border-color: #ebccd1;color: #a94442;}\n\
                     .drop-info{background-color: #d9edf7;border-color: #bce8f1;color: #31708f;}\n\
                     [[.drop-context .drop-content .inside-padd]]{padding: 0;}\n\
-                    [drop][style*="width"] img{max-width: 100%;max-height: 100%;}\n\
                     [drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}\n\
-                    .placePaste img{max-width: 100%;max-height: 100%;}\n\
-                    [drop].drop-is-scroll .placePaste img{max-width: none; max-height: none;}\n\
+                    [drop].drop-is-scroll .placePaste img{max-width: none; max-height: none;width: auto;height: auto;}\n\
                     .jspContainer{overflow: hidden;position: relative;}\n\
                     .jspPane{position: absolute;}\n\
                     .jspVerticalBar{position: absolute;top: 0;right: 0;width: 16px;height: 100%;background: red;}\n\
@@ -1021,9 +1019,11 @@
                     .jspHorizontalBar .jspArrow{width: 16px;float: left;height: 100%;}\n\
                     .jspVerticalBar .jspArrow:focus{outline: none;}\n\
                     .jspCorner{background: #eeeef4;float: left;height: 100%;}\n\
-                    .jspArrowUp:before, .jspArrowDown:before{position: absolute;left: 3px;top: 0;font-size: 10px;color: #777;}\n\
+                    .jspArrowUp:before, .jspArrowDown:before, .jspArrowLeft:before, .jspArrowRight:before{position: absolute;font-size: 10px;color: #777;left: 3px;top: 1px;}\n\
                     .jspArrowUp:before{content: "\\25b2";}\n\
-                    .jspArrowDown:before{content: "\\25bc";}'
+                    .jspArrowDown:before{content: "\\25bc";}\n\
+                    .jspArrowLeft:before{content: "\\25c4";}\n\
+                    .jspArrowRight:before{content: "\\25ba";}'
         },
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
         reg: /[^a-zA-Z0-9]+/ig,

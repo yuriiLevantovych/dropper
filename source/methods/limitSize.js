@@ -1,5 +1,6 @@
 $.drop.setMethod('_heightContent', function (drop) {
-    var $ = jQuery,
+    var self = this,
+            $ = jQuery,
             wnd = $(window);
     return (drop || this).each(function (k) {
         var drop = $(this),
@@ -65,15 +66,14 @@ $.drop.setMethod('_heightContent', function (drop) {
                     drop.addClass($.drop.drp.pC + 'is-scroll');
 
                 el.css('height', h);
-                if (k !== true)
-                    arguments.callee.call(drop, true); // for correct size content of popup if in style change size other elements if set class 'drop-is-scroll' 
-                if (!drp.scrollContent) {
-                    var pPOH = pP.outerHeight(),
-                            pPH = pP.height();
-                    el.find(drp.placePaste).css('height', h - pPOH + pPH);
-                }
+                if (!drp.scrollContent)
+                    el.find(drp.placePaste).css('height', h - pP.outerHeight() + pP.height());
                 if (api)
                     api.reinitialise();
+                if (k !== true) { // for correct size content of popup if in style change size other elements if set class 'drop-is-scroll' 
+                    arguments.callee.call(drop, true);
+                    self._limit(drop, drp, true);
+                }
             }
         }
         if (!dropV)
@@ -82,41 +82,46 @@ $.drop.setMethod('_heightContent', function (drop) {
 });
 $.drop.setMethod('limitSize', function (drop) {
     var self = this,
-            $ = jQuery,
-            wnd = $(window);
+            $ = jQuery;
     return drop.each(function () {
-        var drop = $(this),
+        var drop = $(this).removeClass($.drop.drp.pC + 'is-limit-size'),
                 drp = drop.data('drp');
-        if (drp.limitSize && drp.place === 'center') {
-            var dropV = drop.is(':visible');
-            if (!dropV)
-                drop.show();
-            drop.css({
-                'width': '',
-                'height': ''
-            });
-            if (drp.placeContent) {
-                var jsp = drop.find($(drp.placeContent)).filter(':visible').data('jsp');
-                if (jsp)
-                    jsp.destroy();
-                drop.removeClass($.drop.drp.pC + 'is-scroll').find(drp.placeContent).add(drop.find(drp.placePaste)).filter(':visible').css({'height': ''});
-            }
-            var wndW = wnd.width(),
-                    wndH = wnd.height(),
-                    w = drop.outerWidth(),
-                    h = drop.outerHeight(),
-                    ws = drop.width(),
-                    hs = drop.height();
-            if (w > wndW)
-                drop.css('width', wndW - w + ws);
-            if (h > wndH)
-                drop.css('height', wndH - h + hs);
-            if (!dropV)
-                drop.hide();
-        }
+
+        self._limit(drop, drp);
+
         if (drp.place !== 'inherit')
             self._checkMethod(function () {
                 self._heightContent(drop);
             });
     });
+});
+$.drop.setMethod('_limit', function (drop, drp, add) {
+    var wnd = $(window);
+    if (drp.type === 'image')
+        var img = drop.find(drp.placePaste).children('img').css({'max-width': '', 'max-height': ''});
+    if (drp.limitSize && drp.place === 'center') {
+        drop.css({
+            width: '',
+            height: ''
+        });
+        if (drp.placeContent && !add) {
+            var jsp = drop.find($(drp.placeContent)).filter(':visible').data('jsp');
+            if (jsp)
+                jsp.destroy();
+            drop.removeClass($.drop.drp.pC + 'is-scroll').find(drp.placeContent).add(drop.find(drp.placePaste)).filter(':visible').css('height', '');
+        }
+        drop.addClass($.drop.drp.pC + 'is-limit-size');
+        if (drp.type === 'image' && !drp.scrollContent)
+            img.css({'max-width': '100%', 'max-height': '100%'});
+        var wndW = wnd.width(),
+                wndH = wnd.height(),
+                w = drop.actual('outerWidth'),
+                h = drop.actual('outerHeight'),
+                ws = drop.actual('width'),
+                hs = drop.actual('height');
+        if (w > wndW)
+            drop.css('width', wndW - w + ws);
+        if (h > wndH)
+            drop.css('height', wndH - h + hs);
+    }
 });
