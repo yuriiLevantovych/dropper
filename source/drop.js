@@ -335,7 +335,7 @@
                     if (opt.place === 'center' && opt.centerOnScroll)
                         methods[opt.place].call(drop);
                 });
-                $(dropOver).show().off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function (e) {
+                $(dropOver).fadeIn(100).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function (e) {
                     e.stopPropagation();
                     if (opt.closeClick && $(e.target).is('.drop-overlay'))
                         methods.close.call($($(e.target).attr('data-rel')), e);
@@ -510,12 +510,13 @@
                         if (!$this.hasClass(D.wasCreateClass))
                             $this.remove();
                         var condCallback = i === closeLength - 1 && $.isFunction(f);
-                        if (opt.dropOver)
-                            opt.dropOver.addClass(D.pC + 'for-remove').delay(force ? 0 : 100).fadeOut(force ? 0 : opt.durationOff, function () {
-                                opt.dropOver.remove();
-                                if (condCallback)
-                                    f();
+                        if (opt.dropOver) {
+                            opt.dropOver.addClass(D.pC + 'for-remove').fadeOut(force ? 0 : opt.durationOff, function () {
+                                $(this).remove();
                             });
+                            if (condCallback)
+                                setTimeout(f, force ? 0 : opt.durationOff + 100);
+                        }
                         else if (condCallback)
                             f();
                     });
