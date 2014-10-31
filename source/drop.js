@@ -1,5 +1,4 @@
 (function ($, wnd, doc) {
-    var isTouch = document.createTouch !== undefined;
     var methods = {
         init: function (options) {
             var set = $.extend({}, DP, options);
@@ -523,7 +522,7 @@
                 methods._checkMethod(function () {
                     methods.limitSize(drop);
                 });
-            if (drp.place !== 'inherit' && !isTouch)
+            if (drp.place !== 'inherit' && !D.isTouch)
                 methods._checkMethod(function () {
                     methods['_' + drp.place].call(drop);
                 }, drp.place);
@@ -1024,7 +1023,7 @@
         activeDrop: [],
         cOD: 0,
         disableScroll: function () {
-            if (isTouch)
+            if (D.isTouch)
                 return false;
             var self = this;
             self.enableScroll();
@@ -1040,20 +1039,21 @@
             return self;
         },
         enableScroll: function () {
-            if (isTouch)
+            if (D.isTouch)
                 return false;
             wnd.off('scroll.scr' + $.drop.nS).add(doc).off('mousewheel.scr' + $.drop.nS);
             return this;
+        },
+        isTouch: document.createTouch !== undefined,
+        existsN: function (nabir) {
+            return nabir && nabir.length > 0 && nabir instanceof jQuery;
+        },
+        exists: function (selector) {
+            return $(selector).length > 0 && $(selector) instanceof jQuery;
         }
     };
     var D = $.drop.drp,
             DP = $.drop.dP;
-    D.existsN = function (nabir) {
-        return nabir && nabir.length > 0 && nabir instanceof jQuery;
-    };
-    D.exists = function (selector) {
-        return $(selector).length > 0 && $(selector) instanceof jQuery;
-    };
     $.fn[D.actual = $.fn.actual ? 'actual' + (+new Date()) : 'actual'] = function () {
         if (arguments.length && $.type(arguments[0]) === 'string') {
             var dim = arguments[0],
