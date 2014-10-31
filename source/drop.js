@@ -136,9 +136,9 @@
                     _update($(this));
                 };
                 img.onerror = function () {
-                    D.busy = false;
                     this.onload = this.onerror = null;
                     $.drop.hideLoading();
+                    D.busy = false;
                     methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'image is not found'}});
                 };
                 img.src = opt.href + (opt.always ? '?' + (+new Date()) : '');
@@ -156,10 +156,9 @@
                             _update(data);
                     },
                     error: function () {
-                        D.busy = false;
                         $.drop.hideLoading();
-                        if (arguments[2])
-                            methods.open.call(null, {notify: true, datas: {answer: 'error', data: arguments[2].message ? arguments[2].message : arguments[2]}});
+                        D.busy = false;
+                        methods.open.call(null, {notify: true, datas: {answer: 'error', data: $.type(arguments[2]) === 'string' ? arguments[2] : arguments[2].message}});
                     }
                 }, opt.ajax));
             };
