@@ -1,15 +1,9 @@
 (function ($, wnd, doc) {
     var isTouch = document.createTouch !== undefined;
-    $.existsN = function (nabir) {
-        return nabir && nabir.length > 0 && nabir instanceof jQuery;
-    };
-    $.exists = function (selector) {
-        return $(selector).length > 0 && $(selector) instanceof jQuery;
-    };
     var methods = {
         init: function (options) {
             var set = $.extend({}, DP, options);
-            if (!$.existsN(this))
+            if (!D.existsN(this))
                 throw 'this object is not exists';
             return this.each(function () {
                 var el = methods.destroy.call($(this)),
@@ -175,25 +169,25 @@
             if (D.busy)
                 return false;
             D.busy = true;
-            var $this = $.existsN(this) ? this : $([]),
-                    elSet = $.existsN($this) ? $this.data() : {};
+            var $this = D.existsN(this) ? this : $([]),
+                    elSet = D.existsN($this) ? $this.data() : {};
             opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp : {}, opt);
             e = e ? e : window.event;
             if (elSet.dropConfirmPromptAlert)
                 methods.close.call(elSet.dropConfirmPromptAlert, 'element already open', null, null, true);
             var drop = $(elSet.drop);
-            if (opt.closeActiveClick && $.existsN(drop) && $this.hasClass(D.activeClass)) {
+            if (opt.closeActiveClick && D.existsN(drop) && $this.hasClass(D.activeClass)) {
                 methods.close.call(drop, 'element already open');
                 return $this;
             }
 
-            if (elSet.drop || opt.drop && $.existsN(opt.drop) && opt.drop.hasClass(D.activeClass))
+            if (elSet.drop || opt.drop && D.existsN(opt.drop) && opt.drop.hasClass(D.activeClass))
                 methods.close.call(drop, 'element already open', null, null, true);
             if (elSet.tempClass && !elSet.dropn)
                 elSet.drop = opt.drop = null;
             opt.tempClass = elSet.tempClass = 'drop-' + (+new Date());
             opt.tempClassS = '.' + opt.tempClass;
-            if (elSet || $.existsN(opt.drop))
+            if (elSet || D.existsN(opt.drop))
                 elSet.dropn = opt.drop;
             $.extend(opt, elSet);
             var href = $this.attr('href') || opt.href;
@@ -207,7 +201,7 @@
             if (opt.href && opt.always)
                 opt.drop = elSet.dropn ? elSet.dropn : null;
             opt.drop = opt.drop && $.type(opt.drop) === 'string' ? opt.drop : opt.tempClassS;
-            if (!$.existsN($this) /*bug of remove bellow "opt.elrun.remove"*/ || elSet.dropId !== undefined && !$.exists('[data-drop-id="' + elSet.dropId + '"]'))
+            if (!D.existsN($this) /*bug of remove bellow "opt.elrun.remove"*/ || elSet.dropId !== undefined && !D.exists('[data-drop-id="' + elSet.dropId + '"]'))
                 $this = $('<a data-drop-id="' + D.cOD + '" style="display: none !important;" data-drop="' + opt.drop + '" class="' + D.tempClass + '" href="' + (opt.href ? opt.href : '#') + '" rel="' + (opt.rel ? opt.rel : null) + '"></a>').appendTo($('body'));
             if (opt.context) {
                 $.extend(opt, {place: 'global', limitSize: true, overlay: false});
@@ -242,8 +236,8 @@
                 }
                 else if (opt.href && (!D.drops[hrefC] || opt.always))
                     methods._get.call($this, opt, e, hashChange);
-                else if ($.existsN(drop) || opt.href && D.drops[hrefC])
-                    methods._show.call($this, methods._pasteDrop(opt, $.existsN(drop) ? drop.addClass(D.wasCreateClass) : D.drops[hrefC].clone()), e, opt, hashChange);
+                else if (D.existsN(drop) || opt.href && D.drops[hrefC])
+                    methods._show.call($this, methods._pasteDrop(opt, D.existsN(drop) ? drop.addClass(D.wasCreateClass) : D.drops[hrefC].clone()), e, opt, hashChange);
                 else if (opt.header || opt.content || opt.footer)
                     methods._show.call($this, methods._pasteDrop(opt, opt.pattern), e, opt, hashChange);
                 else
@@ -262,25 +256,25 @@
                 else
                     _confirmF();
             }
-            if (!opt.moreOne && $.exists(D.aDS))
+            if (!opt.moreOne && D.exists(D.aDS))
                 methods.close.call($(D.aDS), 'close more one element', _show);
             else
                 _show();
             return this;
         },
         _show: function (drop, e, opt, hashChange) {
-            if (!opt.moreOne && $.exists(D.aDS))
+            if (!opt.moreOne && D.exists(D.aDS))
                 methods.close.call($(D.aDS), 'close more one element', $.proxy(_show, this));
             else
                 _show.call(this);
             function _show() {
-                if (!$.existsN(drop))
+                if (!D.existsN(drop))
                     return false;
                 e = e ? e : window.event;
                 var $this = this,
                         dropOver = null;
                 if (opt.overlay) {
-                    if (!$.exists('[data-rel="' + opt.tempClassS + '"].drop-overlay'))
+                    if (!D.exists('[data-rel="' + opt.tempClassS + '"].drop-overlay'))
                         $('body').append('<div class="drop-overlay" data-rel="' + opt.tempClassS + '"></div>');
                     (opt.dropOver = dropOver = $('[data-rel="' + opt.tempClassS + '"].drop-overlay')).css({
                         'background-color': opt.overlayColor,
@@ -342,7 +336,7 @@
                     setTimeout(focusFunc, 0);
                 }
                 opt.exit = $.type(opt.exit) === 'string' ? drop.find(opt.exit) : opt.exit;
-                if ($.existsN(opt.exit)) {
+                if (D.existsN(opt.exit)) {
                     if (opt.closeClick)
                         opt.exit.show().off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
                             e.stopPropagation();
@@ -391,7 +385,7 @@
                     $('html, body').css({'overflow': '', 'overflow-x': ''});
                     methods._setHeightAddons(dropOver);
                     var inDrop = opt.type === 'iframe' ? drop.find('iframe').contents().find(D.selAutoInit) : drop.find(D.selAutoInit);
-                    if ($.existsN(inDrop))
+                    if (D.existsN(inDrop))
                         methods.init.call(inDrop);
                     drop.add($this).addClass(D.activeClass);
                     D.activeDrop.unshift(opt.drop);
@@ -405,7 +399,7 @@
                         _decoratorClose(e, opt.closeEsc && e.keyCode === 27);
                     };
                     D.activeDropCClick[opt.drop] = function (e) {
-                        _decoratorClose(e, opt.closeClick && !$.existsN($(e.target).closest('[data-elrun]')));
+                        _decoratorClose(e, opt.closeClick && !D.existsN($(e.target).closest('[data-elrun]')));
                     };
                     if (opt.notify && !isNaN(opt.notifyclosetime))
                         D.notifyTimeout[opt.drop] = setTimeout(function () {
@@ -427,7 +421,7 @@
         },
         close: function (e, f, hashChange, force) {
             var sel = this,
-                    drops = $.existsN(sel) ? sel : $('[data-elrun].' + D.activeClass);
+                    drops = D.existsN(sel) ? sel : $('[data-elrun].' + D.activeClass);
             var closeLength = drops.length;
             drops.each(function (i) {
                 var drop = $(this),
@@ -479,7 +473,7 @@
                         var dC = $this.find($(opt.placeContent)).data('jsp');
                         if (dC)
                             dC.destroy();
-                        if (!$.exists(D.aDS))
+                        if (!D.exists(D.aDS))
                             $('html, body').css({'height': ''});
                         if (!opt.filter)
                             $this.removeClass(opt.tempClass);
@@ -656,7 +650,7 @@
         _pasteDrop: function (opt, drop) {
             drop = $(drop);
             if (opt.dropn)
-                drop = $.existsN(drop.filter(opt.drop)) ? drop.filter(opt.drop) : ($.existsN(drop.find(opt.drop)) ? drop.find(opt.drop) : drop);
+                drop = D.existsN(drop.filter(opt.drop)) ? drop.filter(opt.drop) : (D.existsN(drop.find(opt.drop)) ? drop.find(opt.drop) : drop);
             if (opt.place !== 'inherit')
                 drop.appendTo($('body'));
             else if (opt.placeInherit)
@@ -672,7 +666,7 @@
             };
             var _pasteContent = function (content, place) {
                 place = drop.find(place).first();
-                if (!$.existsN(place))
+                if (!D.existsN(place))
                     return false;
                 _checkCont(place);
                 if (!content)
@@ -777,7 +771,7 @@
         if (!opt)
             opt = {};
         var set;
-        if ($.existsN(m))
+        if (D.existsN(m))
             set = {'drop': m};
         else if ($.type(m) === 'array' || $.type(m) === 'string' && m.match(D.regImg)) {
             if ($.type(m) === 'array') {
@@ -1035,7 +1029,7 @@
             var self = this;
             self.enableScroll();
             wnd.add(doc).on('mousewheel.scr' + $.drop.nS, function (e) {
-                if (!($(e.target).is('[data-elrun]') || $.existsN($(e.target).closest('[data-elrun]'))))
+                if (!($(e.target).is('[data-elrun]') || D.existsN($(e.target).closest('[data-elrun]'))))
                     e.preventDefault();
             });
             D.scrollTop = wnd.scrollTop();
@@ -1054,6 +1048,12 @@
     };
     var D = $.drop.drp,
             DP = $.drop.dP;
+    D.existsN = function (nabir) {
+        return nabir && nabir.length > 0 && nabir instanceof jQuery;
+    };
+    D.exists = function (selector) {
+        return $(selector).length > 0 && $(selector) instanceof jQuery;
+    };
     $.fn[D.actual = $.fn.actual ? 'actual' + (+new Date()) : 'actual'] = function () {
         if (arguments.length && $.type(arguments[0]) === 'string') {
             var dim = arguments[0],

@@ -17,14 +17,14 @@ $.drop.setMethod('_heightContent', function (drop) {
                 el.data('jsp').destroy();
             el = drop.find($(drp.placeContent)).filter(':visible').css({'height': ''});
             var pP = el.find(drp.placePaste).css('height', '');
-            if ($.existsN(el)) {
+            if ($.drop.drp.existsN(el)) {
                 var refer = drp.elrun,
                         api = false,
                         elCH = el.css({'overflow': ''}).outerHeight();
                 if (drp.scrollContent) {
                     if ($.fn.jScrollPane) {
                         api = el.jScrollPane(drp.jScrollPane).data('jsp');
-                        if ($.existsN(el.find('.jspPane')))
+                        if ($.drop.drp.existsN(el.find('.jspPane')))
                             elCH = el.find('.jspPane').outerHeight();
                     }
                     else

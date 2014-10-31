@@ -55,7 +55,7 @@ $.drop.setMethod('placeAfterClose', function (drop, $this, opt) {
 });
 if (!$.drop.methods._isScrollable)
     $.drop.setMethod('_isScrollable', function (side) {
-        if (!$.existsN(this))
+        if (!$.drop.drp.existsN(this))
             return this;
         var el = this.get(0),
                 x = el.clientWidth && el.scrollWidth > el.clientWidth,

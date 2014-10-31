@@ -14,7 +14,7 @@ $.drop.setMethod('droppable', function(drop) {
         drop.off('mousedown.' + $.drop.nS).on('mousedown.' + $.drop.nS, function(e) {
             var drop = $(this),
                     drp = drop.data('drp');
-            if ($(e.target).is(':input, button') || $.existsN($(e.target).closest('button')))
+            if ($(e.target).is(':input, button') || $.drop.drp.existsN($(e.target).closest('button')))
                 return false;
             var drop = $(this),
                     w = drop.outerWidth(),

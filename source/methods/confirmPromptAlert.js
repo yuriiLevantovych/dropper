@@ -6,7 +6,7 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
                 drop = self._pasteDrop(optC, opt.patternAlert),
                 pp = drop.find(opt.placePaste).empty();
 
-        if (opt.alertText && $.existsN(pp))
+        if (opt.alertText && $.drop.drp.existsN(pp))
             pp.html(function () {
                 try {
                     if ($.type(eval(opt.alertText)) === 'function')
@@ -29,7 +29,7 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
         var optC = $.extend({}, opt),
                 drop = self._pasteDrop(optC, opt.patternConfirm),
                 pp = drop.find(opt.placePaste).empty();
-        if (opt.confirmText && $.existsN(pp))
+        if (opt.confirmText && $.drop.drp.existsN(pp))
             pp.html(function () {
                 try {
                     if ($.type(eval(opt.confirmText)) === 'function')
@@ -53,7 +53,7 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
                 drop = self._pasteDrop(optP, opt.patternPrompt),
                 pp = drop.find(opt.placePaste).empty();
 
-        if (opt.promptText && $.existsN(pp))
+        if (opt.promptText && $.drop.drp.existsN(pp))
             pp.html(function () {
                 try {
                     if ($.type(eval(opt.promptText)) === 'function')
