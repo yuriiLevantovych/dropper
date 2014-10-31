@@ -18,7 +18,7 @@
             #inline{padding: 20px;}
             ol, ul{margin-left: 30px;}
             .list-example h3, .list-example h4{display: inline;}
-            table{border-collapse: collapse;border-spacing: 0;}
+            table{border-collapse: collapse;border-spacing: 0;margin-bottom: 20px;}
             table th{text-align: left;font-weight: normal;}
             table thead th{font-weight: bold;padding-top: 10px;padding-bottom: 5px;}
             table tbody th{font-weight: bold;}
@@ -757,19 +757,63 @@
                     </tr>
                 </tbody>
             </table>
-            <h2 style="color: red;">Methods</h2>
-            <ul>
-                <li>init</li>
-                <li>destroy</li>
-            </ul>
+            <blockquote>
+                <i>If you want get current parameters of popup then you can use next expression:</i>
+                <br/>
+                <code>$('selector of popup').data('drp')</code>
+            </blockquote>
+            <h2>Methods</h2>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>init</th>
+                        <td>
+                            <p>
+                                <code>$('selector of element which will open popup').drop(['init' | object of parametr])</code>
+                            </p>
+                            <p>Initialize plugin on element which will opens popup</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>destroy</th>
+                        <td>
+                            <p>
+                                <code>$('selector of element which opens popup').drop('destroy')</code>
+                            </p>
+                            <p>Reinitialize plugin on element which opens popup</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>open</th>
+                        <td>
+                            <p>
+                                <code>$('selector of element which opens popup').drop('open')</code>
+                            </p>
+                            <p>Initialize plugin on element which will open popup</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>close</th>
+                        <td>
+                            <p>
+                                <code>$('selector of popup').drop('close')</code>
+                            </p>
+                            <p>Close popup</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>update</th>
+                        <td>
+                            <p>
+                                <code>$('selector of popup').drop('update')</code>
+                            </p>
+                            <p>Reposition and resize popup</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             <h2>API Properties && Methods</h2>
             <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
                 <tbody>
                     <tr>
                         <th colspan="2">Properties</th>
@@ -821,7 +865,7 @@
                             <p>
                                 <code>$.drop.close([selector|jQuery object], [force])</code>
                             </p>
-                            <p>if call without parameters closing all opened popups, if <i>force: true</i> popups closed without effect</p>
+                            <p>if to call without parameters closing all opened popups, if <i>force: true</i> popups closed without effect</p>
                         </td>
                     </tr>
                     <tr>
@@ -830,7 +874,7 @@
                             <p>
                                 <code>$.drop.cancel()</code>
                             </p>
-                            <p>Cancel loading image or abort ajax request</p>
+                            <p>Cancels load for image or aborts ajax request</p>
                         </td>
                     </tr>
                     <tr>
@@ -839,7 +883,7 @@
                             <p>
                                 <code>$.drop.update([selector|jQuery object])</code>
                             </p>
-                            <p>if call without parameters updated (reposition, resize) all opened popups</p>
+                            <p>if to call without parameters updated (reposition, resize) all opened popups</p>
                         </td>
                     </tr>
                     <tr>
@@ -848,7 +892,7 @@
                             <p>
                                 <code>$.drop.setMethod(name, context of function)</code>
                             </p>
-                            <p>extend default methods</p>
+                            <p>extends default methods</p>
                         </td>
                     </tr>
                     <tr>
@@ -857,7 +901,7 @@
                             <p>
                                 <code>$.drop.getMethods()</code>
                             </p>
-                            <p>return only public methods <i>(without prefix '_')</i></p>
+                            <p>returns only public methods <i>(without prefix '_')</i></p>
                         </td>
                     </tr>
                     <tr>
@@ -866,7 +910,7 @@
                             <p>
                                 <code>$.drop.setParameters(object)</code>
                             </p>
-                            <p>extend Default parameters</p>
+                            <p>extends Default parameters</p>
                         </td>
                     </tr>
                     <tr>
@@ -875,7 +919,7 @@
                             <p>
                                 <code>$.drop.setThemes({name: css(string)}[, {}, ...])</code>
                             </p>
-                            <p>extend Default themes</p>
+                            <p>extends Default themes</p>
                         </td>
                     </tr>
                     <tr>
@@ -924,7 +968,7 @@
                             <p>
                                 <code>$.drop.next([rel])</code>
                             </p>
-                            <p>Navigate to next gallery item (for visible popup galleries), or only one gallery identify by "rel"</p>
+                            <p>Navigates to next gallery item (for visible popup galleries), or only one gallery identify by "rel"</p>
                         </td>
                     </tr>
                     <tr>
@@ -933,7 +977,7 @@
                             <p>
                                 <code>$.drop.prev([rel])</code>
                             </p>
-                            <p>Navigate to prev gallery item (for visible popup galleries), or only one gallery identify by "rel"</p>
+                            <p>Navigates to prev gallery item (for visible popup galleries), or only one gallery identify by "rel"</p>
                         </td>
                     </tr>
                     <tr>
@@ -942,7 +986,7 @@
                             <p>
                                 <code>$.drop.jumpto(index[, rel])</code>
                             </p>
-                            <p>Navigate to gallery item by index (for visible popup galleries), or only one gallery identify by "rel". Begining at 0.</p>
+                            <p>Navigates to gallery item by index (for visible popup galleries), or only one gallery identify by "rel". Begining at 0.</p>
                         </td>
                     </tr>
                     <tr>
@@ -951,130 +995,172 @@
                             <p>
                                 <code>$.drop.play([rel])</code>
                             </p>
-                            <p>Start or stop (if already running) slideshow (for visible popup galleries), or only one gallery identify by "rel"</p>
+                            <p>Starts or stops (if already running) slideshow (for visible popup galleries), or only one gallery identify by "rel"</p>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <h2>Events</h2>
-            <dl>
-                <dt>dropSuccessHtml</dt>
-                <dd>The event happens when load popup via ajax for each parameter type except when parametr <code>notify</code> is true. The event sent to $(document), second argument in handler contains object.</dd>
-                <dt>dropSuccessJson</dt>
-                <dd>The event happens when load or open popup when parametr <code>notify</code> is true. The event sent to $(window) and element which opens popup, second argument in handler contains object.</dd>
-                <dt>dropBefore</dt>
-                <dd>The event happens before opening popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)), second argument in handler contains object.</dd>
-                <dt>dropAfter</dt>
-                <dd>The event happens after opening popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)), second argument in handler contains object.</dd>
-                <dt>dropClose</dt>
-                <dd>The event happens before close popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)), second argument in handler contains object.</dd>
-                <dt>dropClosed</dt>
-                <dd>The event happens when popup already closed. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)), second argument in handler contains object.</dd>
-                <dt>dropRequire</dt>
-                <dd>The event happens when all requires are loaded. The event sent to $(document).</dd>
-            </dl>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>dropSuccessHtml</th>
+                        <td>
+                            <code>$(document).on('dropSuccessHtml', function(event, object){})</code>
+                            <p>The event happens when load popup via ajax for each parameter type except when parametr <code>notify</code> is true. The event sent to $(document), second argument in handler contains object.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>dropSuccessJson</th>
+                        <td>
+                            <code>el.on('dropSuccessJson', function(event, object){})</code>
+                            <p>Where <code>el</code> can be $(window) and/or $(selector of element which opens popup)</p>
+                            <p>The event happens when load or open popup when parametr <code>notify</code> is true. The event sent to $(window) and element which opens popup, second argument in handler contains object.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>dropBefore</th>
+                        <td>
+                            <code>el.on('dropBefore', function(event, object){})</code>
+                            <p>Where <code>el</code> can be $(selector of popup) and/or $(document) (if you haven't selector of popup)</p>
+                            <p>The event happens before opening popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)), second argument in handler contains object.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>dropAfter</th>
+                        <td>
+                            <code>el.on('dropAfter', function(event, object){})</code>
+                            <p>Where <code>el</code> can be $(selector of popup) and/or $(document) (if you haven't selector of popup)</p>
+                            <p>The event happens after opening popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)), second argument in handler contains object.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>dropClose</th>
+                        <td>
+                            <code>el.on('dropClose', function(event, object){})</code>
+                            <p>Where <code>el</code> can be $(selector of popup) and/or $(document) (if you haven't selector of popup)</p>
+                            <p>The event happens before close popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)), second argument in handler contains object.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>dropClosed</th>
+                        <td>
+                            <code>el.on('dropClosed', function(event, object){})</code>
+                            <p>Where <code>el</code> can be $(selector of popup) and/or $(document) (if you haven't selector of popup)</p>
+                            <p>The event happens when popup already closed. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)), second argument in handler contains object.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>dropRequire</th>
+                        <td>
+                            <code>$(document).on('dropRequire')</code>
+                            <p>The event happens when all requires are loaded. The event sent to $(document).</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-            <h2 style="color: red;">Description of functionality</h2>
-            <h3>Initialization</h3>
-            <h3>Connect methods</h3>
-            <h3>Types</h3>
-            <ul>
-                <li>
-                    <h4>Auto</h4>
-                </li>
-                <li>
-                    <h4>Inline</h4>
-                </li>
-                <li>
-                    <h4>Ajax</h4>
-                    always ajax type
-                </li>
-                <li>
-                    <h4>Iframe</h4>
-                    <ul>
-                        <li>
-                            <div><h3>Iframe with parameters width and height</h3></div>
-                            <a href="iframe.html" data-drop data-type="iframe" data-width="500" data-height="500">iframe</a>
-                        </li>
-                        <li>
-                            <div><h3>Iframe from other domain</h3> <i>(window.parent.postMessage for opening inside "drop")</i></div>
-                            <a href="http://levantovych.pro100host.com/iframe.html" data-type="iframe" data-drop data-width="500" data-height="500">iframe</a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            <h3>Place</h3>
-            <ul>
-                <li>
-                    <h4>Center</h4>
-                    <ul>
-                        <li>
-                            <div><h3></h3></div>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <h4>Global</h4>
-                    <ul>
-                        <li>
-                            <div><h3></h3></div>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <h4>Inherit</h4>
-                    <ul>
-                        <li>
-                            <div><h3>Parametr place with value inherit</h3> (inherit with parametr closeActiveClick)</div>
-                            <a href="#" data-drop="#inline2" data-place="inherit" data-overlay="false" data-close-active-click="true">inherit position</a>
-                        </li>
-                        <li>
-                            <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and href)</div>
-                            <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit">inherit position</a>
-                            <div class="placeInherit"><i>PlaceInherit</i></div>
-                        </li>
-                        <li>
-                            <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and methoPlaceInherit "append")</div>
-                            <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit" data-method-place-inherit="append">inherit position</a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            <h3>Position, size, scroll</h3>
-            centerOnScroll jScrollPane limitSize
-            <br/><br/>
-            <h3>Close</h3>
-            closeClick closeEsc closeActiveClick moreOne
-            <br/><br/>
-            <h3>Effects</h3>
-            effectOn effectOff placeBeforeShow placeAfterClose
-            <br/><br/>
-            <h3>Callbacks</h3>
-            start
-            <br/><br/>
-            <h3>Custom Events</h3>
-            <h3>Content</h3>
-            header footer content placeInherit
-            <br/><br/>
-            <h3>Notify</h3>
-            handlerNotify datas notifyclosetime message
-            <br/><br/>
-            <h3>Alert</h3>
-            <h3>Prompt</h3>
-            <h3>Confirm</h3>
-            <h3>Gallery</h3>
-            <h3>Droppable</h3>
-            <ul>
-                <li>
-                    <div><h3>Dropable</h3> (with parametr droppableLimit)</div>
-                    <a href="#" data-drop="#inline" data-droppable="true" data-droppable-limit="true">droppableLimit</a>
-                </li>
-                <li>
-                    <div><h3>Dropable</h3> (with parametr droppableFixed)</div>
-                    <a href="#" data-drop="#inline" data-droppable="true" data-droppable-limit="true" data-droppable-fixed="true">droppableFixed</a>
-                </li>
-            </ul>
-            <h3>Themes</h3>
+            <!--            <h2 style="color: red;">Description of functionality</h2>
+                        <h3>Initialization</h3>
+                        <h3>Connect methods</h3>
+                        <h3>Types</h3>
+                        <ul>
+                            <li>
+                                <h4>Auto</h4>
+                            </li>
+                            <li>
+                                <h4>Inline</h4>
+                            </li>
+                            <li>
+                                <h4>Ajax</h4>
+                                always ajax type
+                            </li>
+                            <li>
+                                <h4>Iframe</h4>
+                                <ul>
+                                    <li>
+                                        <div><h3>Iframe with parameters width and height</h3></div>
+                                        <a href="iframe.html" data-drop data-type="iframe" data-width="500" data-height="500">iframe</a>
+                                    </li>
+                                    <li>
+                                        <div><h3>Iframe from other domain</h3> <i>(window.parent.postMessage for opening inside "drop")</i></div>
+                                        <a href="http://levantovych.pro100host.com/iframe.html" data-type="iframe" data-drop data-width="500" data-height="500">iframe</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <h3>Place</h3>
+                        <ul>
+                            <li>
+                                <h4>Center</h4>
+                                <ul>
+                                    <li>
+                                        <div><h3></h3></div>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h4>Global</h4>
+                                <ul>
+                                    <li>
+                                        <div><h3></h3></div>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h4>Inherit</h4>
+                                <ul>
+                                    <li>
+                                        <div><h3>Parametr place with value inherit</h3> (inherit with parametr closeActiveClick)</div>
+                                        <a href="#" data-drop="#inline2" data-place="inherit" data-overlay="false" data-close-active-click="true">inherit position</a>
+                                    </li>
+                                    <li>
+                                        <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and href)</div>
+                                        <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit">inherit position</a>
+                                        <div class="placeInherit"><i>PlaceInherit</i></div>
+                                    </li>
+                                    <li>
+                                        <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and methoPlaceInherit "append")</div>
+                                        <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit" data-method-place-inherit="append">inherit position</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <h3>Position, size, scroll</h3>
+                        centerOnScroll jScrollPane limitSize
+                        <br/><br/>
+                        <h3>Close</h3>
+                        closeClick closeEsc closeActiveClick moreOne
+                        <br/><br/>
+                        <h3>Effects</h3>
+                        effectOn effectOff placeBeforeShow placeAfterClose
+                        <br/><br/>
+                        <h3>Callbacks</h3>
+                        start
+                        <br/><br/>
+                        <h3>Custom Events</h3>
+                        <h3>Content</h3>
+                        header footer content placeInherit
+                        <br/><br/>
+                        <h3>Notify</h3>
+                        handlerNotify datas notifyclosetime message
+                        <br/><br/>
+                        <h3>Alert</h3>
+                        <h3>Prompt</h3>
+                        <h3>Confirm</h3>
+                        <h3>Gallery</h3>
+                        <h3>Droppable</h3>
+                        <ul>
+                            <li>
+                                <div><h3>Dropable</h3> (with parametr droppableLimit)</div>
+                                <a href="#" data-drop="#inline" data-droppable="true" data-droppable-limit="true">droppableLimit</a>
+                            </li>
+                            <li>
+                                <div><h3>Dropable</h3> (with parametr droppableFixed)</div>
+                                <a href="#" data-drop="#inline" data-droppable="true" data-droppable-limit="true" data-droppable-fixed="true">droppableFixed</a>
+                            </li>
+                        </ul>
+                        <h3>Themes</h3>-->
 
             <script>
                 $.drop.setUrlMethods('../source/methods');
@@ -1083,13 +1169,12 @@
                 //$('[href]').data('theme', 'green')
                 $(document).ready(function () {
                     $(window).on('dropSuccessJson', function (e) {
-                        console.log(e.drp)
+                        console.log(arguments)
                     });
                     $(document).on('dropRequire', function () {
                         $('[rel]').drop({
                             scrollContent: false,
                             header: function (opt) {
-                                console.log(this)
                                 return ($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка';
                             }
                         });

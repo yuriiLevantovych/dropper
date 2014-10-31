@@ -333,7 +333,7 @@
                     methods.update.call(drop);
                 }).off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function () {
                     if (opt.place === 'center' && opt.centerOnScroll)
-                        methods[opt.place].call(drop);
+                        methods['_' + opt.place].call(drop);
                 });
                 $(dropOver).fadeIn(100).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function (e) {
                     e.stopPropagation();
@@ -390,7 +390,7 @@
                         methods.placeBeforeShow(drop, $this, opt);
                     });
                 if (opt.place !== 'inherit')
-                    methods[opt.place].call(drop);
+                    methods['_' + opt.place].call(drop);
                 if (opt.before)
                     eval(opt.before).call($this, opt, drop, e);
                 drop.trigger('dropBefore', {
@@ -550,11 +550,11 @@
                 });
             if (drp.place !== 'inherit' && !isTouch)
                 methods._checkMethod(function () {
-                    methods[drp.place].call(drop);
+                    methods['_' + drp.place].call(drop);
                 }, drp.place);
             methods._setHeightAddons(drp.dropOver);
         },
-        center: function () {
+        _center: function () {
             return this.each(function () {
                 var drop = $(this),
                         drp = drop.data('drp');
@@ -581,7 +581,7 @@
                 });
             });
         },
-        global: function () {
+        _global: function () {
             return this.each(function () {
                 var drop = $(this),
                         drp = drop.data('drp');
@@ -981,7 +981,7 @@
                     .drop-content button{margin-right: 4px;}{\n\
                     button:focus, input:focus, textarea:focus{outline: #b3b3b3 solid 1px;}\n\
                     .drop-footer{background-color: #d5d5d5;padding: 0 12px;}\n\
-                    .drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;}\n\
+                    .drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;padding: 0;}\n\
                     .drop-prev, .drop-next{width: 35%;height: 100%;top: 0;z-index: 2;}\n\
                     .drop-prev:focus, .drop-next:focus{outline: none;}\n\
                     .drop-icon-prev, .drop-icon-next{width: 20px;height: 80px;line-height: 80px;}\n\

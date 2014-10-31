@@ -91,6 +91,8 @@ $.drop.setMethod('gallery', function (drop, opt, btn, i) {
             var opt = $(this).data('drp');
             doc.off('keydown.' + $.drop.nS + opt.rel).on('keydown.' + $.drop.nS + opt.rel, function (e) {
                 var key = e.keyCode;
+                if (key === 37 || key === 39) //that window scrollLeft nochange after press left & right buttons
+                    e.preventDefault();
                 if (key === 37)
                     _goto(_getnext(-1), e);
                 if (key === 39)
