@@ -34,7 +34,7 @@
                 var ahref = $.trim(el.attr('href')),
                         href = $.trim(ahref || opt.href);
                 opt.href = href && href.indexOf('#') === 0 ? null : href;
-                opt.hash = ahref.indexOf('#') === 0 && ahref !== '#' ? ahref : opt.hash;
+                opt.hash = ahref.indexOf('#') === 0 && ahref.length !== 1 ? ahref : opt.hash;
                 opt.rel = $.trim(this.rel || opt.rel);
                 if (opt.rel && opt.href) {
                     if (!D.gallery[opt.rel])
@@ -124,7 +124,6 @@
                 methods._show.call(el, drop, e, opt, hashChange);
                 return drop;
             };
-            $.drop.showLoading();
             var _getImage = function () {
                 opt.type = elSet.type = 'image';
                 var img = D.imgPreload = new Image();
@@ -168,6 +167,7 @@
                 });
                 _update(iframe);
             };
+            $.drop.showLoading();
             if (opt.type === 'auto') {
                 if (opt.href.match(D.regImg))
                     _getImage();
