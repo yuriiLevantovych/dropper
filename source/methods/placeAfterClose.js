@@ -10,15 +10,15 @@ $.drop.setMethod('placeAfterClose', function (drop, $this, opt) {
     if (!opt)
         return this;
     var pmt = opt.placeAfterClose.toLowerCase().split(' '),
-            t = -drop.actual('outerHeight'),
-            l = -drop.actual('outerWidth');
+            t = -drop[$.drop.drp.actual]('outerHeight'),
+            l = -drop[$.drop.drp.actual]('outerWidth');
     if (pmt[1] === 'bottom')
         t = wnd.height();
     if (pmt[0] === 'right')
         l = wnd.width();
     if (pmt[0] === 'center' || pmt[1] === 'center') {
         if (pmt[0] === 'left') {
-            l = -drop.actual('outerWidth');
+            l = -drop[$.drop.drp.actual]('outerWidth');
             t = drop.css('top');
         }
         if (pmt[0] === 'right') {
@@ -26,7 +26,7 @@ $.drop.setMethod('placeAfterClose', function (drop, $this, opt) {
             t = drop.css('top');
         }
         if (pmt[1] === 'top') {
-            t = -drop.actual('outerHeight');
+            t = -drop[$.drop.drp.actual]('outerHeight');
             l = drop.css('left');
         }
         if (pmt[1] === 'bottom') {

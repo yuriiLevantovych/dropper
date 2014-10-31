@@ -115,10 +115,10 @@ $.drop.setMethod('_limit', function (drop, drp, add) {
             img.css({'max-width': '100%', 'max-height': '100%'});
         var wndW = wnd.width(),
                 wndH = wnd.height(),
-                w = drop.actual('outerWidth'),
-                h = drop.actual('outerHeight'),
-                ws = drop.actual('width'),
-                hs = drop.actual('height');
+                w = drop[$.drop.drp.actual]('outerWidth'),
+                h = drop[$.drop.drp.actual]('outerHeight'),
+                ws = drop[$.drop.drp.actual]('width'),
+                hs = drop[$.drop.drp.actual]('height');
         if (w > wndW)
             drop.css('width', wndW - w + ws);
         if (h > wndH)

@@ -12,8 +12,8 @@ $.drop.setMethod('placeBeforeShow', function (drop, $this, opt) {
         $('body').css('overflow-x', 'hidden');
 
     var pmt = opt.placeBeforeShow.toLowerCase().split(' '),
-            t = -drop.actual('outerHeight'),
-            l = -drop.actual('outerWidth');
+            t = -drop[$.drop.drp.actual]('outerHeight'),
+            l = -drop[$.drop.drp.actual]('outerWidth');
     if (pmt[0] === 'center' || pmt[1] === 'center') {
         self._checkMethod(function () {
             self[opt.place].call(drop, true);
@@ -27,11 +27,11 @@ $.drop.setMethod('placeBeforeShow', function (drop, $this, opt) {
         l = wnd.width();
     if (pmt[0] === 'center' || pmt[1] === 'center') {
         if (pmt[0] === 'left')
-            l = -drop.actual('outerWidth');
+            l = -drop[$.drop.drp.actual]('outerWidth');
         if (pmt[0] === 'right')
             l = wnd.width();
         if (pmt[1] === 'top')
-            t = -drop.actual('outerHeight');
+            t = -drop[$.drop.drp.actual]('outerHeight');
         if (pmt[1] === 'bottom')
             t = wnd.height();
     }

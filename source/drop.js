@@ -1,21 +1,5 @@
 (function ($, wnd, doc) {
     var isTouch = document.createTouch !== undefined;
-    $.fn.actual = function () {
-        if (arguments.length && $.type(arguments[0]) === 'string') {
-            var dim = arguments[0],
-                    clone = this.clone();
-            if (arguments[1] === undefined)
-                clone.css({
-                    position: 'absolute',
-                    top: '-9999px',
-                    left: '-9999px'
-                }).show().appendTo($('body'));
-            var dimS = clone[dim]();
-            clone.remove();
-            return dimS;
-        }
-        return undefined;
-    };
     $.existsN = function (nabir) {
         return nabir && nabir.length > 0 && nabir instanceof jQuery;
     };
@@ -559,8 +543,8 @@
                     return false;
                 var method = drp.animate || drp.placeBeforeShow ? 'animate' : 'css',
                         dropV = drop.is(':visible'),
-                        w = dropV ? drop.outerWidth() : drop.actual('outerWidth'),
-                        h = dropV ? drop.outerHeight() : drop.actual('outerHeight'),
+                        w = dropV ? drop.outerWidth() : drop[D.actual]('outerWidth'),
+                        h = dropV ? drop.outerHeight() : drop[D.actual]('outerHeight'),
                         wndT = wnd.scrollTop(),
                         wndL = wnd.scrollLeft(),
                         top = Math.floor((wnd.height() - h) / 2),
@@ -590,8 +574,8 @@
                         l = 0,
                         $thisW = $this.width(),
                         $thisH = $this.height(),
-                        dropW = +drop.actual('outerWidth'),
-                        dropH = +drop.actual('outerHeight'),
+                        dropW = +drop[D.actual]('outerWidth'),
+                        dropH = +drop[D.actual]('outerHeight'),
                         wndT = wnd.scrollTop(),
                         wndL = wnd.scrollLeft(),
                         offTop = $this.offset().top,
@@ -1034,18 +1018,15 @@
         notifyTimeout: {},
         activeDropCEsc: {},
         activeDropCClick: {},
-        curAjax: null,
         pC: 'drop-',
         activeClass: 'drop-active',
         aDS: '[data-elrun].drop-center:visible, [data-elrun].drop-global:visible',
+        selAutoInit: '[data-drop], [data-html]',
         tempClass: 'drop-temp',
         wasCreateClass: 'drop-was-create',
         emptyClass: 'drop-empty',
         noEmptyClass: 'drop-no-empty',
         urlOfMethods: 'methods',
-        wLH: null,
-        wLHN: null,
-        scrollTop: null,
         activeDrop: [],
         cOD: 0,
         disableScroll: function () {
@@ -1069,11 +1050,26 @@
                 return false;
             wnd.off('scroll.scr' + $.drop.nS).add(doc).off('mousewheel.scr' + $.drop.nS);
             return this;
-        },
-        selAutoInit: '[data-drop], [data-html]'
+        }
     };
     var D = $.drop.drp,
             DP = $.drop.dP;
+    $.fn[D.actual = $.fn.actual ? 'actual' + (+new Date()) : 'actual'] = function () {
+        if (arguments.length && $.type(arguments[0]) === 'string') {
+            var dim = arguments[0],
+                    clone = this.clone();
+            if (arguments[1] === undefined)
+                clone.css({
+                    position: 'absolute',
+                    top: '-9999px',
+                    left: '-9999px'
+                }).show().appendTo($('body'));
+            var dimS = clone[dim]();
+            clone.remove();
+            return dimS;
+        }
+        return undefined;
+    };
     $.drop.setParameters = function (options) {
         $.extend(DP, options);
         return this;
