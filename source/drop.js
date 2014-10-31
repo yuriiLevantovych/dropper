@@ -1,23 +1,21 @@
 (function ($, wnd, doc) {
     var isTouch = document.createTouch !== undefined;
-    (function ($) {
-        $.fn.actual = function () {
-            if (arguments.length && $.type(arguments[0]) === 'string') {
-                var dim = arguments[0],
-                        clone = this.clone();
-                if (arguments[1] === undefined)
-                    clone.css({
-                        position: 'absolute',
-                        top: '-9999px',
-                        left: '-9999px'
-                    }).show().appendTo($('body'));
-                var dimS = clone[dim]();
-                clone.remove();
-                return dimS;
-            }
-            return undefined;
-        };
-    })(jQuery);
+    $.fn.actual = function () {
+        if (arguments.length && $.type(arguments[0]) === 'string') {
+            var dim = arguments[0],
+                    clone = this.clone();
+            if (arguments[1] === undefined)
+                clone.css({
+                    position: 'absolute',
+                    top: '-9999px',
+                    left: '-9999px'
+                }).show().appendTo($('body'));
+            var dimS = clone[dim]();
+            clone.remove();
+            return dimS;
+        }
+        return undefined;
+    };
     $.existsN = function (nabir) {
         return nabir && nabir.length > 0 && nabir instanceof jQuery;
     };
