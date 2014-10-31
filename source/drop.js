@@ -77,7 +77,7 @@
         },
         _get: function (opt, e, hashChange) {
             var hrefC = opt.href.replace(D.reg, '');
-            if (!opt.isStart)
+            if (!opt.isStart) //if few popup need show on start
                 $.drop.cancel();
             var el = this,
                     elSet = el.data();
