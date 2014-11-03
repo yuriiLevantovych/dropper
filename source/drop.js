@@ -953,7 +953,7 @@
                     [[.drop-image .drop-content .inside-padd]], [[.drop-alert .drop-content .inside-padd]]{padding: 10px;}\n\
                     [[.drop-alert .drop-group-btns]]{text-align: center;}\n\
                     .drop-content button{margin-right: 4px;}{\n\
-                    button:focus, input:focus, textarea:focus, select:focus{outline: #b3b3b3 solid 1px;}\n\
+                    button:focus, input:focus, select:focus, textarea:focus{outline: #b3b3b3 solid 1px;}\n\
                     .drop-footer{background-color: #d5d5d5;padding: 0 12px;}\n\
                     .drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;padding: 0;}\n\
                     .drop-prev, .drop-next{width: 35%;height: 100%;top: 0;z-index: 2;}\n\
