@@ -23,7 +23,7 @@
                     if (opt.hash)
                         D.galleryHashs[opt.rel].push(opt.hash);
                 }
-                el.addClass('isDrop');
+                el.addClass(D.isD);
                 if (opt.context) {
                     el.on('contextmenu.' + $.drop.nS + ' ' + 'click.' + $.drop.nS, function (e) {
                         e.preventDefault();
@@ -63,7 +63,7 @@
             return (el || this).each(function () {
                 var el = $(this),
                         opt = $(el).data('drp');
-                el.removeClass('isDrop').removeData('drp');
+                el.removeClass(D.isD).removeData('drp');
                 if (!opt)
                     return;
                 if (opt.trigger)
@@ -1011,6 +1011,7 @@
         notifyTimeout: {},
         activeDropCEsc: {},
         activeDropCClick: {},
+        isD: 'isDrop',
         pC: 'drop-',
         activeClass: 'drop-active',
         aDS: '[data-elrun].drop-center:visible, [data-elrun].drop-global:visible',
@@ -1113,8 +1114,8 @@
     };
     $.drop.require = function () {
         D.requireLength = arguments.length;
-        for (var i in arguments) {
-            D.requireCur = 0;
+        D.requireCur = 0;
+        for (var i in arguments)
             (function (name) {
                 $.ajax({
                     url: D.urlOfMethods + '/' + name + '.js',
@@ -1126,7 +1127,6 @@
                     }
                 });
             })(arguments[i]);
-        }
         return this;
     };
     $.drop.methods = methods;
@@ -1163,10 +1163,10 @@
         setTimeout(function () {
             if (D.requireLength && D.requireCur !== D.requireLength)
                 doc.on('dropRequire.' + $.drop.nS, function () {
-                    $(D.selAutoInit).not('.isDrop').drop();
+                    $(D.selAutoInit).not('.' + D.isD).drop();
                 });
             else
-                $(D.selAutoInit).not('.isDrop').drop();
+                $(D.selAutoInit).not('.' + D.isD).drop();
         }, 0);
     }).on('message.' + $.drop.nS, D.handlerMessageWindow);
 })(jQuery, $(window), $(document));
