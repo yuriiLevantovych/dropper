@@ -92,12 +92,6 @@
                 drop.addClass(D.pC + opt.type);
                 if (!opt.always)
                     D.drops[hrefC] = drop.clone();
-                doc.trigger('dropSuccessHtml', {
-                    refer: el,
-                    drop: drop,
-                    options: opt,
-                    datas: data
-                });
                 methods._show.call(el, drop, e, opt, hashChange);
                 return drop;
             };
@@ -633,18 +627,8 @@
         _pasteNotify: function (datas, opt, hashChange, e) {
             if (!$.isFunction(opt.handlerNotify))
                 return false;
-            var el = this,
-                    drop = methods._pasteDrop(opt, opt.pattern);
-            el.off('dropSuccessJson.' + $.drop.nS).on('dropSuccessJson.' + $.drop.nS, function (e, data) {
-                e.stopPropagation();
-                opt.handlerNotify.call($(this), data, opt);
-            }).add(wnd).trigger('dropSuccessJson', {
-                refer: el,
-                drop: drop,
-                options: opt,
-                datas: el.data('datas') || datas
-            });
-            return methods._show.call(el, drop, e, opt, hashChange);
+            opt.handlerNotify.call($(this), datas, opt);
+            return methods._show.call($(this), methods._pasteDrop(opt, opt.pattern), e, opt, hashChange);
         },
         _pasteDrop: function (opt, drop) {
             drop = $(drop);

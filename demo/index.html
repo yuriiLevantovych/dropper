@@ -25,6 +25,7 @@
             table th[colspan]{background-color: #f8f7f6;font-weight: normal;}
             table td[colspan]{padding-top: 25px;}
             table th, table td{padding: 3px 15 0 4px;vertical-align: top;padding: 5px 10px 5px 8px;border-bottom: 1px solid #ccc;}
+            table tbody tr:last-child th, table tbody tr:last-child td{border-bottom: 0;}
             code, pre {
                 font-family: Consolas, Monaco, "Andale Mono", "Courier New", monospace;
                 font-size: 14px;
@@ -1003,22 +1004,7 @@
             <h2>Events</h2>
             <table>
                 <tbody>
-                    <tr>
-                        <th>dropSuccessHtml</th>
-                        <td>
-                            <code>$(document).on('dropSuccessHtml', function(event, object){})</code>
-                            <p>The event happens when load popup via ajax for each parameter type except when parametr <code>notify</code> is true. The event sent to $(document), second argument in handler contains object.</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>dropSuccessJson</th>
-                        <td>
-                            <code>el.on('dropSuccessJson', function(event, object){})</code>
-                            <p>Where <code>el</code> can be $(window) and/or $(selector of element which opens popup)</p>
-                            <p>The event happens when load or open popup when parametr <code>notify</code> is true. The event sent to $(window) and element which opens popup, second argument in handler contains object.</p>
-                        </td>
-                    </tr>
-                    <tr>
+                   <tr>
                         <th>dropBefore</th>
                         <td>
                             <code>el.on('dropBefore', function(event, object){})</code>
@@ -1169,9 +1155,6 @@
                 //            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
                 //$('[href]').data('theme', 'green')
                 $(document).ready(function () {
-                    $(window).on('dropSuccessJson', function (e) {
-                        console.log(arguments)
-                    });
                     $(document).on('dropRequire', function () {
                         $('[rel]').drop({
                             scrollContent: false,
