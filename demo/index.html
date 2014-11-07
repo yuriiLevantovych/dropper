@@ -1004,12 +1004,28 @@
             <h2>Events</h2>
             <table>
                 <tbody>
-                   <tr>
+                    <tr>
                         <th>dropBefore</th>
                         <td>
                             <code>el.on('dropBefore', function(event, object){})</code>
                             <p>Where <code>el</code> can be $(selector of popup) and/or $(document) (if you haven't selector of popup)</p>
-                            <p>The event happens before opening popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)), second argument in handler contains object.</p>
+                            <p>The event happens before opening popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)).
+                                <br/>Second argument in handler contains object.
+                            </p>
+                            <ul>
+                                <li>
+                                    <b>drop</b>
+                                </li>
+                                <li>
+                                    <b>refer</b>
+                                </li>
+                                <li>
+                                    <b>options</b>
+                                </li>
+                                <li>
+                                    <b>event</b>
+                                </li>
+                            </ul>
                         </td>
                     </tr>
                     <tr>
@@ -1017,7 +1033,8 @@
                         <td>
                             <code>el.on('dropAfter', function(event, object){})</code>
                             <p>Where <code>el</code> can be $(selector of popup) and/or $(document) (if you haven't selector of popup)</p>
-                            <p>The event happens after opening popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)), second argument in handler contains object.</p>
+                            <p>The event happens after opening popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)).
+                                <br/>Second argument in handler contains object.</p>
                         </td>
                     </tr>
                     <tr>
@@ -1025,7 +1042,8 @@
                         <td>
                             <code>el.on('dropClose', function(event, object){})</code>
                             <p>Where <code>el</code> can be $(selector of popup) and/or $(document) (if you haven't selector of popup)</p>
-                            <p>The event happens before close popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)), second argument in handler contains object.</p>
+                            <p>The event happens before close popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)).
+                                <br/>Second argument in handler contains object.</p>
                         </td>
                     </tr>
                     <tr>
@@ -1033,7 +1051,8 @@
                         <td>
                             <code>el.on('dropClosed', function(event, object){})</code>
                             <p>Where <code>el</code> can be $(selector of popup) and/or $(document) (if you haven't selector of popup)</p>
-                            <p>The event happens when popup already closed. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)), second argument in handler contains object.</p>
+                            <p>The event happens when popup already closed. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)).
+                                <br/>Second argument in handler contains object.</p>
                         </td>
                     </tr>
                     <tr>

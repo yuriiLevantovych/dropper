@@ -54,4 +54,4 @@
                 y = el.clientHeight && el.scrollHeight > el.clientHeight;
         return !side ? (!(el.style.overflow && el.style.overflow === 'hidden') && (x || y)) : (side === 'x' ? !(el.style.overflowX === 'hidden') && x : !(el.style.overflowY === 'hidden') && y);
     };
-});
+})();
