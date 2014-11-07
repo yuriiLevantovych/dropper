@@ -1067,6 +1067,7 @@
         var nm = {};
         nm[n] = v;
         $.extend(methods, nm);
+        return this;
     };
     $.drop.getMethods = function () {
         var public = {};
@@ -1113,7 +1114,6 @@
             })(arguments[i]);
         return this;
     };
-    $.drop.methods = methods;
     doc.ready(function () {
         D.scrollTop = wnd.scrollTop();
         var loadingTimer, loadingFrame = 1,
