@@ -33,7 +33,6 @@
             return false;
         if (relP !== relL - 1)
             next.show().removeAttr('disabled');
-        console.log(opt.cycle)
         if (relP !== 0)
             prev.show().removeAttr('disabled');
         if (opt.cycle)

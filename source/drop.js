@@ -56,7 +56,7 @@
             }).each(function () {
                 D.busy = false;
                 if (window.location.hash.indexOf($(this).data('drp').hash) !== -1)
-                    methods.open.call($(this), $.extend({isStart: true}, set, $(this).data('drp')));
+                    methods.open.call($(this), $.extend({isStart: true}, set, $(this).data('drp')), 'startHash');
             });
         },
         destroy: function (el) {
@@ -107,7 +107,7 @@
                     this.onload = this.onerror = null;
                     $.drop.hideLoading();
                     D.busy = false;
-                    methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'image is not found'}});
+                    methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'image is not found'}}, 'errorImage');
                 };
                 img.src = opt.href + (opt.always ? '?' + (+new Date()) : '');
             };
@@ -126,7 +126,7 @@
                     error: function () {
                         $.drop.hideLoading();
                         D.busy = false;
-                        methods.open.call(null, {notify: true, datas: {answer: 'error', data: $.type(arguments[2]) === 'string' ? arguments[2] : arguments[2].message}});
+                        methods.open.call(null, {notify: true, datas: {answer: 'error', data: $.type(arguments[2]) === 'string' ? arguments[2] : arguments[2].message}}, 'errorAjax');
                     }
                 }, opt.ajax));
             };
@@ -297,7 +297,7 @@
                     wnd.scrollTop(D.scrollTop);
                     setTimeout(methods._setEventHash, 0);
                 }
-                wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function (e) {
+                wnd.off('resize.' + $.drop.nS + ev).on('resize.' + $.drop.nS + ev, function () {
                     methods.update.call(drop);
                 }).off('scroll.' + $.drop.nS + ev).on('scroll.' + $.drop.nS + ev, function () {
                     if (opt.place === 'center' && opt.centerOnScroll)
@@ -363,7 +363,7 @@
                     eval(opt.before).call($this, opt, drop, e);
                 drop.trigger('dropBefore', {
                     event: e,
-                    refer: $this,
+                    anchor: $this,
                     drop: drop,
                     options: opt
                 });
@@ -404,7 +404,7 @@
                         eval(opt.after).call($this, opt, drop, e);
                     drop.trigger('dropAfter', {
                         event: e,
-                        refer: $this,
+                        anchor: $this,
                         drop: drop,
                         options: opt
                     });
@@ -459,7 +459,7 @@
                             eval(opt.closed).call(opt.elrun, opt, $this, e);
                         $this.trigger('dropClosed', {
                             event: e,
-                            refer: opt.elrun,
+                            anchor: opt.elrun,
                             drop: $this,
                             options: opt
                         });
@@ -491,7 +491,7 @@
                 };
                 drop.trigger('dropClose', {
                     event: e,
-                    refer: opt.elrun,
+                    anchor: opt.elrun,
                     drop: drop,
                     options: opt
                 });
@@ -797,7 +797,7 @@
             set = m;
         else
             throw 'insufficient data';
-        return methods.open.call(null, $.extend(opt, set));
+        return methods.open.call(null, $.extend(opt, set), 'API');
     };
     $.drop.nS = 'drop';
     $.drop.version = '1.0';
@@ -1081,7 +1081,7 @@
         return this;
     };
     $.drop.close = function (el, force) {
-        return methods.close.call(el ? $(el) : null, 'artificial close element', null, null, force);
+        return methods.close.call(el ? $(el) : null, 'artificial close element', 'API', null, force);
     };
     $.drop.cancel = function () {
         if (D.curAjax)
