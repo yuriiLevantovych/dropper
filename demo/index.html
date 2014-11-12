@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="../libs/jquery.js"></script>
         <script src="../libs/jquery.jscrollpane.min.js"></script>
-        <script src="../libs/jquery.mousewheel.js"></script>
+        
         <script src="../source/drop.js"></script>
         <style>
             html, body, table, p, div, li, ul, ol, td, th, h1, h2, h3, h4, h5{margin: 0;padding: 0;}
@@ -50,7 +50,7 @@
             <ol class="list-example">
                 <li>
                     <div><h3>Simple inline</h3></div>
-                    <a href="#" data-drop="#inline" data-start="(function(){return true})">inline</a>
+                    <a href="#" data-drop="#inline">inline</a>
                 </li>
                 <li>
                     <div><h3>Simple inline html</h3></div>
@@ -486,7 +486,7 @@
                     </tr>
                     <tr>
                         <td>start</td>
-                        <td>If this function return false or undefined then popup doesn't open, if this parametr is sets as data atribute then his look must have next - data-start="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these are a popup and third is a event. Context <code>this</code> refers to the element which open popup.</td>
+                        <td>If result this function is false then popup will not open, if this parametr is sets as data atribute then his look must have next - data-start="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these are a popup and third is a event. Context <code>this</code> refers to the element which open popup.</td>
                         <td>name or code of function</td>
                         <td>null</td>
                     </tr>
@@ -781,7 +781,7 @@
                             <p>
                                 <code>$('selector of element which opens popup').drop('destroy')</code>
                             </p>
-                            <p>Reinitialize plugin on element which opens popup</p>
+                            <p>Off plugin on element which opens popup</p>
                         </td>
                     </tr>
                     <tr>
@@ -790,7 +790,7 @@
                             <p>
                                 <code>$('selector of element which opens popup').drop('open')</code>
                             </p>
-                            <p>Initialize plugin on element which will open popup</p>
+                            <p>Opens popup</p>
                         </td>
                     </tr>
                     <tr>
@@ -799,7 +799,7 @@
                             <p>
                                 <code>$('selector of popup').drop('close')</code>
                             </p>
-                            <p>Close popup</p>
+                            <p>Closes popup</p>
                         </td>
                     </tr>
                     <tr>
