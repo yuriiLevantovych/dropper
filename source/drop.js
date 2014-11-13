@@ -1065,18 +1065,17 @@
         for (var i = 0; i < arguments.length; i++) {
             var obj = {};
             if (arguments[i].file !== undefined)
-                (function (o) {
+                (function (o, obj) {
                     $.ajax({
                         url: D.urlOfStyles + '/' + o.file,
                         dataType: 'text',
                         cache: true,
                         success: function (data) {
-                            var obj = {};
                             obj[o.name] = data;
                             $.extend(D.theme, obj);
                         }
                     })
-                })(arguments[i]);
+                })(arguments[i], obj);
             else {
                 obj[arguments[i].name] = arguments[i].text;
                 $.extend(D.theme, obj);
