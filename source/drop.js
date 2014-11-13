@@ -627,8 +627,9 @@
         _pasteNotify: function (datas, opt, hashChange, e) {
             if (!$.isFunction(opt.handlerNotify))
                 return false;
+            var drop = methods._pasteDrop(opt, opt.pattern);
             opt.handlerNotify.call($(this), datas, opt);
-            return methods._show.call($(this), methods._pasteDrop(opt, opt.pattern), e, opt, hashChange);
+            return methods._show.call($(this), drop, e, opt, hashChange);
         },
         _pasteDrop: function (opt, drop) {
             drop = $(drop);
@@ -872,21 +873,21 @@
         },
         durationOn: 300,
         durationOff: 200,
-        notifyclosetime: 3000,
+        notifyclosetime: 300000,
         notify: false,
         datas: null,
         handlerNotify: function (data, opt) {
-            if (data && data.datas && $.type(data.datas) === 'string')
-                data.datas = eval("(" + data.datas + ")");
-            if (!data || !data.datas)
+            if (data && $.type(data) === 'string')
+                data = eval("(" + data + ")");
+            if (!data)
                 var text = 'Object notify is empty';
-            else if (!data.datas.answer || !data.datas.data)
+            else if (!data.answer || !data.data)
                 text = 'Answer is empty';
-            else if (!opt.message || !opt.message[data.datas.answer])
-                text = data.datas.data;
+            else if (!opt.message || !opt.message[data.answer])
+                text = data.data;
             else
-                text = opt.message[data.datas.answer](data.datas.data);
-            $(data.drop).find(opt.placePaste).empty().append(text);
+                text = opt.message[data.answer](data.data);
+            $(opt.drop).find(opt.placePaste).empty().append(text);
             return this;
         },
         confirm: false,
@@ -927,7 +928,7 @@
             default: '.drop-header{background-color: #f8f8f8;padding: 0 55px 0 12px;font-size: 14px;}\n\
                     input, select, textarea{margin-bottom: 6px;}\n\
                     input, select, textarea, .drop-content button{outline: none;font-family: Arial, Helvetica CY, Nimbus Sans L, sans-serif;line-height: 1.5;border: 1px solid #d8d8d8;padding: 4px 6px;}\n\
-                    button{background-color: #fafafa;box-shadow: inset 0 1px #fefefe;color: #666;cursor: pointer;}\n\
+                    button{background-color: #fafafa;color: #666;cursor: pointer;}\n\
                     .drop-header.drop-no-empty, .drop-footer.drop-no-empty{padding-top: 6px;padding-bottom: 7px;}\n\
                     .drop-header.drop-no-empty{border-bottom: 1px solid #d8d8d8;}\n\
                     [drop].drop-is-scroll .drop-header.drop-empty{height: 28px;}\n\
@@ -936,7 +937,7 @@
                     .drop-content .inside-padd{padding: 12px 28px 12px 12px;}\n\
                     [[.drop-image .drop-content .inside-padd]], [[.drop-alert .drop-content .inside-padd]]{padding: 10px;}\n\
                     [[.drop-alert .drop-group-btns]]{text-align: center;}\n\
-                    .drop-content button{margin-right: 4px;}{\n\
+                    .drop-content button{margin-right: 4px;}\n\
                     button:focus, input:focus, select:focus, textarea:focus{outline: #b3b3b3 solid 1px;}\n\
                     .drop-footer{background-color: #d5d5d5;padding: 0 12px;}\n\
                     .drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;padding: 0;}\n\
@@ -1005,6 +1006,7 @@
         emptyClass: 'drop-empty',
         noEmptyClass: 'drop-no-empty',
         urlOfMethods: 'methods',
+        urlOfStyles: 'styles',
         activeDrop: [],
         cOD: 0,
         disableScroll: function () {
@@ -1059,8 +1061,27 @@
         $.extend(DP, options);
         return this;
     };
-    $.drop.setThemes = function (options) {
-        $.extend(D.theme, options);
+    $.drop.setThemes = function () {
+        for (var i = 0; i < arguments.length; i++) {
+            var obj = {};
+            if (arguments[i].file !== undefined)
+                (function (o) {
+                    $.ajax({
+                        url: D.urlOfStyles + '/' + o.file,
+                        dataType: 'text',
+                        cache: true,
+                        success: function (data) {
+                            var obj = {};
+                            obj[o.name] = data;
+                            $.extend(D.theme, obj);
+                        }
+                    })
+                })(arguments[i]);
+            else {
+                obj[arguments[i].name] = arguments[i].text;
+                $.extend(D.theme, obj);
+            }
+        }
         return this;
     };
     $.drop.setMethod = function (n, v) {
@@ -1078,6 +1099,10 @@
     };
     $.drop.setUrlMethods = function (url) {
         D.urlOfMethods = url;
+        return this;
+    };
+    $.drop.setUrlStyles = function (url) {
+        D.urlOfStyles = url;
         return this;
     };
     $.drop.close = function (el, force) {

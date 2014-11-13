@@ -918,7 +918,7 @@
                         <th>setThemes</th>
                         <td>
                             <p>
-                                <code>$.drop.setThemes({name: css(string)}[, {}, ...])</code>
+                                <code>$.drop.setThemes({name: string, text: 'css(string)', file: 'full name of file'}[, {}, ...])</code>
                             </p>
                             <p>extends Default themes</p>
                         </td>
@@ -1232,10 +1232,11 @@
                 $('a:contains("detail about")').hide();
                 $.drop.setUrlMethods('../source/methods');
                 $.drop.require('droppable', 'limitSize', 'gallery', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert');
-                //            $.drop.setThemes({green: '.drop-header-default{border: 2px solid green;}'});
-                //$('[href]').data('theme', 'green')
+//                $.drop.setUrlStyles('../source/styles');
+//                $.drop.setThemes({name: 'green', file: 'green.txt'}, {name: 'blue', file: 'blue.txt'});
+//                $('[rel]').data('theme', 'green');
                 $(document).ready(function () {
-                    $(document).on('dropRequire', function () {
+                    $(this).on('dropRequire', function () {
                         $('[rel]').drop({
                             scrollContent: false,
                             header: function (opt) {
