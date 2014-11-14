@@ -83,5 +83,5 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
         })(drop, _confirmF, opt, optP);
     }
     el.data('dropConfirmPromptAlert', drop);
-    return this;
+    return self;
 });
