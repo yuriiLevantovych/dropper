@@ -1231,20 +1231,17 @@
             <script>
                 $('a:contains("detail about")').hide();
                 $.drop.setUrlMethods('../source/methods');
-                $.drop.require('droppable', 'limitSize', 'gallery', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert');
+                $.drop.require(['droppable', 'limitSize', 'gallery', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert'], function () {
+                    $('[rel]').drop({
+                        scrollContent: false,
+                        header: function (opt) {
+                            return ($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка';
+                        }
+                    });
+                });
 //                $.drop.setUrlStyles('../source/styles');
 //                $.drop.setThemes({name: 'green', file: 'green.txt'}, {name: 'blue', file: 'blue.txt'});
 //                $('[rel]').data('theme', 'green');
-                $(document).ready(function () {
-                    $(this).on('dropRequire', function () {
-                        $('[rel]').drop({
-                            scrollContent: false,
-                            header: function (opt) {
-                                return ($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка';
-                            }
-                        });
-                    });
-                });
             </script>
 
 

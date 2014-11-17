@@ -1074,7 +1074,7 @@
                             obj[o.name] = data;
                             $.extend(D.theme, obj);
                         }
-                    })
+                    });
                 })(arguments[i], obj);
             else {
                 obj[arguments[i].name] = arguments[i].text;
@@ -1121,21 +1121,26 @@
             methods.update.call($(this));
         });
     };
-    $.drop.require = function () {
-        D.requireLength = arguments.length;
-        D.requireCur = 0;
-        for (var i in arguments)
-            (function (name) {
-                $.ajax({
-                    url: D.urlOfMethods + '/' + name + '.js',
-                    dataType: 'script',
-                    cache: true,
-                    success: function () {
-                        if (++D.requireCur === D.requireLength)
-                            doc.trigger('dropRequire');
-                    }
-                });
-            })(arguments[i]);
+    $.drop.require = function (arr, cb) {
+        (function (arr, cb) {
+            D.requireLength = arr.length;
+            D.requireCur = 0;
+            for (var i in arr)
+                (function (name) {
+                    $.ajax({
+                        url: D.urlOfMethods + '/' + name + '.js',
+                        dataType: 'script',
+                        cache: true,
+                        success: function () {
+                            if (++D.requireCur === D.requireLength) {
+                                if (cb)
+                                    cb();
+                                doc.trigger('dropRequire');
+                            }
+                        }
+                    });
+                })(arr[i]);
+        })(arr, cb);
         return this;
     };
     doc.ready(function () {
