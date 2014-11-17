@@ -31,7 +31,7 @@
                     el.on('mouseup.' + $.drop.nS, function (e) {
                         e.preventDefault();
                         if (e.button === 2)
-                            methods.open.call($(this), opt, e);
+                            methods.open.call($(this), null, e);
                     });
                 }
                 else {
@@ -40,13 +40,13 @@
                             e.stopPropagation();
                             e.preventDefault();
                         }).on(opt.triggerOn + '.' + $.drop.nS, function (e) {
-                            methods.open.call($(this), opt, e);
+                            methods.open.call($(this), null, e);
                         }).on(opt.triggerOff + '.' + $.drop.nS, function (e) {
-                            methods.close.call($(el.attr('data-drop')), e);
+                            methods.close.call($($(this).attr('data-drop')), e);
                         });
                     else
                         el.on(opt.trigger + '.' + $.drop.nS, function (e) {
-                            methods.open.call($(this), opt, e);
+                            methods.open.call($(this), null, e);
                             e.stopPropagation();
                             e.preventDefault();
                         });
