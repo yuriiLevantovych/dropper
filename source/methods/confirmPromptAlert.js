@@ -22,6 +22,15 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
             drop.find(opt.alertActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
                 e.stopPropagation();
                 self.close.call(drop, e, _confirmF);
+                if (opt.ok)
+                    eval(opt.ok).call(el, opt, drop, e, 'alert');
+                drop.trigger('dropOk', {
+                    type: 'alert',
+                    event: e,
+                    anchor: el,
+                    drop: drop,
+                    options: opt
+                });
             });
         })(drop, _confirmF, opt);
     }
@@ -45,6 +54,15 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
             drop.find(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
                 e.stopPropagation();
                 self.close.call(drop, e, _confirmF);
+                if (opt.ok)
+                    eval(opt.ok).call(el, opt, drop, e, 'confirm');
+                drop.trigger('dropOk', {
+                    type: 'confirm',
+                    event: e,
+                    anchor: el,
+                    drop: drop,
+                    options: opt
+                });
             });
         })(drop, _confirmF, opt);
     }
@@ -79,6 +97,16 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
 
                 optP.dataPrompt = opt.dataPrompt = getUrlVars($(this).closest('form').serialize());
                 self.close.call(drop, e, _confirmF);
+                if (opt.ok)
+                    eval(opt.ok).call(el, opt, drop, e, 'prompt', opt.dataPrompt);
+                drop.trigger('dropOk', {
+                    type: 'prompt',
+                    dataPrompt: opt.dataPrompt,
+                    event: e,
+                    anchor: el,
+                    drop: drop,
+                    options: opt
+                });
             });
         })(drop, _confirmF, opt, optP);
     }

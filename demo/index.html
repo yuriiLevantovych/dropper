@@ -485,66 +485,46 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>start</td>
-                        <td>If result this function is false then popup will not open, if this parametr is sets as data atribute then his look must have next - data-start="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these are a popup and third is a event. Context <code>this</code> refers to the element which open popup.</td>
-                        <td>name or code of function</td>
-                        <td>null</td>
+                        <td>exit</td>
+                        <td>If click on this element then popup closing. If type is string then this element find inside popup, else element giving as jQuery set and don't find in popup.</td>
+                        <td>string <i>selector</i> or jQuery Object</td>
+                        <td>[data-closed]</td>
                     </tr>
                     <tr>
-                        <td>before</td>
-                        <td>This function called before show popup, if this parametr is sets as data atribute then his look must have next - data-before="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these are a popup and third is a event. Context <code>this</code> refers to the element which open popup.</td>
-                        <td>name or code of function</td>
-                        <td>null</td>
+                        <td>closeClick</td>
+                        <td>If this parametr 'true' then popup closing via click outside popup and button 'exit' (above) will be show.</td>
+                        <td>boolean</td>
+                        <td>true</td>
                     </tr>
                     <tr>
-                        <td>after</td>
-                        <td>This function called after show popup, if this parametr is sets as data atribute then his look must have next - data-after="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these are a popup and third is a event. Arguments are such: first argument these are options, second these are a popup and third is a event. Context <code>this</code> refers to the element which open popup.</td>
-                        <td>name or code of function</td>
-                        <td>null</td>
+                        <td>closeEsc</td>
+                        <td>If this parametr 'true' and push key 'esc' then popup will be close.</td>
+                        <td>boolean</td>
+                        <td>true</td>
                     </tr>
                     <tr>
-                        <td>close</td>
-                        <td>This function called before show popup, if this function return false or undefined then popup doesn't closed, if this parametr is sets as data atribute then his look must have next - data-close="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these are a popup and third is a event. Arguments are such: first argument these are options, second these are a popup and third is a event. Context <code>this</code> refers to the element which open popup.</td>
-                        <td>name or code of function</td>
-                        <td>null</td>
+                        <td>closeAll</td>
+                        <td>If this parametr 'true' then click by mouse or push key 'esc' closing all opened popups</td>
+                        <td>boolean</td>
+                        <td>false</td>
                     </tr>
                     <tr>
-                        <td>closed</td>
-                        <td>This function called after closed popup, if this parametr is sets as data atribute then his look must have next - data-closed="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these are a popup and third is a event. Arguments are such: first argument these are options, second these are a popup and third is a event. Context <code>this</code> refers to the element which open popup.</td>
-                        <td>name or code of function</td>
-                        <td>null</td>
+                        <td>moreOne</td>
+                        <td>If parametr true then may be opened more then one popup.</td>
+                        <td>boolean</td>
+                        <td>false</td>
                     </tr>
                     <tr>
-                        <td>pattern</td>
-                        <td>General pattern except <code>alert</code>, <code>confirm</code>, <code>prompt</code> below</td>
-                        <td>string</td>
-                        <td>
-                            <a href="javascript:alert($.drop.dP.pattern)">show</a>
-                        </td>
+                        <td>closeActiveClick</td>
+                        <td>If true, popup which open and if open again then popup will close.</td>
+                        <td>boolean</td>
+                        <td>false</td>
                     </tr>
                     <tr>
-                        <td>patternAlert</td>
-                        <td>Patern for alert popup</td>
-                        <td>string</td>
-                        <td>
-                            <a href="javascript:alert($.drop.dP.patternAlert)">show</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>patternConfirm</td>
-                        <td>Patern for confirm popup</td>
-                        <td>string</td>
-                        <td>
-                            <a href="javascript:alert($.drop.dP.patternConfirm)">show</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>patternPrompt</td>
-                        <td>Patern for prompt popup</td>
-                        <td>string</td>
-                        <td>
-                            <a href="javascript:alert($.drop.dP.patternPrompt)">show</a>
-                        </td>
+                        <td>inheritClose</td>
+                        <td>If true and pupup has value 'inherit' of parametr <code>place</code> (above) if click outside popup or push key 'esc' then popup will be close.</td>
+                        <td>boolean</td>
+                        <td>false</td>
                     </tr>
                     <tr>
                         <td>alert</td>
@@ -619,46 +599,36 @@
                         <td>null</td>
                     </tr>
                     <tr>
-                        <td>exit</td>
-                        <td>If click on this element then popup closing. If type is string then this element find inside popup, else element giving as jQuery set and don't find in popup.</td>
-                        <td>string <i>selector</i> or jQuery Object</td>
-                        <td>[data-closed]</td>
+                        <td>pattern</td>
+                        <td>General pattern except <code>alert</code>, <code>confirm</code>, <code>prompt</code> below</td>
+                        <td>string</td>
+                        <td>
+                            <a href="javascript:alert($.drop.dP.pattern)">show</a>
+                        </td>
                     </tr>
                     <tr>
-                        <td>closeClick</td>
-                        <td>If this parametr 'true' then popup closing via click outside popup and button 'exit' (above) will be show.</td>
-                        <td>boolean</td>
-                        <td>true</td>
+                        <td>patternAlert</td>
+                        <td>Patern for alert popup</td>
+                        <td>string</td>
+                        <td>
+                            <a href="javascript:alert($.drop.dP.patternAlert)">show</a>
+                        </td>
                     </tr>
                     <tr>
-                        <td>closeEsc</td>
-                        <td>If this parametr 'true' and push key 'esc' then popup will be close.</td>
-                        <td>boolean</td>
-                        <td>true</td>
+                        <td>patternConfirm</td>
+                        <td>Patern for confirm popup</td>
+                        <td>string</td>
+                        <td>
+                            <a href="javascript:alert($.drop.dP.patternConfirm)">show</a>
+                        </td>
                     </tr>
                     <tr>
-                        <td>closeAll</td>
-                        <td>If this parametr 'true' then click by mouse or push key 'esc' closing all opened popups</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
-                        <td>moreOne</td>
-                        <td>If parametr true then may be opened more then one popup.</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
-                        <td>closeActiveClick</td>
-                        <td>If true, popup which open and if open again then popup will close.</td>
-                        <td>boolean</td>
-                        <td>false</td>
-                    </tr>
-                    <tr>
-                        <td>inheritClose</td>
-                        <td>If true and pupup has value 'inherit' of parametr <code>place</code> (above) if click outside popup or push key 'esc' then popup will be close.</td>
-                        <td>boolean</td>
-                        <td>false</td>
+                        <td>patternPrompt</td>
+                        <td>Patern for prompt popup</td>
+                        <td>string</td>
+                        <td>
+                            <a href="javascript:alert($.drop.dP.patternPrompt)">show</a>
+                        </td>
                     </tr>
                     <tr>
                         <td>rel</td>
@@ -755,6 +725,42 @@
                         <td>Name css theme for popup</td>
                         <td>string</td>
                         <td>default</td>
+                    </tr>
+                    <tr>
+                        <td>start</td>
+                        <td>If result this function is false then popup will not open, if this parametr is sets as data atribute then his look must have next - data-start="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these is a popup and third is a event. Context <code>this</code> refers to the element which open popup.</td>
+                        <td>name or code of function</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>before</td>
+                        <td>This function called before show popup, if this parametr is sets as data atribute then his look must have next - data-before="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these is a popup and third is a event. Context <code>this</code> refers to the element which open popup.</td>
+                        <td>name or code of function</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>after</td>
+                        <td>This function called after show popup, if this parametr is sets as data atribute then his look must have next - data-after="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these is a popup and third is a event. Context <code>this</code> refers to the element which open popup.</td>
+                        <td>name or code of function</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>close</td>
+                        <td>This function called before show popup, if this function return false or undefined then popup doesn't closed, if this parametr is sets as data atribute then his look must have next - data-close="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these is a popup and third is a event. Context <code>this</code> refers to the element which open popup.</td>
+                        <td>name or code of function</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>closed</td>
+                        <td>This function called after closed popup, if this parametr is sets as data atribute then his look must have next - data-closed="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these is a popup and third is a event. Context <code>this</code> refers to the element which open popup.</td>
+                        <td>name or code of function</td>
+                        <td>null</td>
+                    </tr>
+                    <tr>
+                        <td>ok</td>
+                        <td>This function called after click 'ok' into alert, confirm or pormpt popus, if this parametr is sets as data atribute then his look must have next - data-ok="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these is a popup and third is a event, fourth is a type (alert, confirm or prompt) and fifth exists if prompt (the parametr is object entered fields of form). Context <code>this</code> refers to the element which open popup.</td>
+                        <td>name or code of function</td>
+                        <td>null</td>
                     </tr>
                 </tbody>
             </table>
@@ -945,7 +951,7 @@
                         <th>require</th>
                         <td>
                             <p>
-                                <code>$.drop.require('filename'[, ...])</code>
+                                <code>$.drop.require(['filename', ...], callback)</code>
                             </p>
                             <p>
                                 loads js - files
@@ -1112,6 +1118,42 @@
                                 <li>
                                     <b>event</b>
                                     <p>jQuery event or string (e. g. when use API method <code>$.drop</code> the parametr has value 'API')</p>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>dropOk</th>
+                        <td>
+                            <code>el.on('dropOk', function(event, object){})</code>
+                            <p>Where <code>el</code> can be $(selector of popup) and/or $(document) (if you haven't selector of popup)</p>
+                            <p>The event happens when click 'ok' into alert, confirm or pormpt popus. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)).
+                                <br/>Second argument in handler contains object.
+                            </p>
+                            <ul>
+                                <li>
+                                    <b>options</b>
+                                    <p>Object of options the popup</p>
+                                </li>
+                                <li>
+                                    <b>drop</b>
+                                    <p>jQuery element (popup)</p>
+                                </li>
+                                <li>
+                                    <b>anchor</b>
+                                    <p>jQuery element which opens popup</p>
+                                </li>
+                                <li>
+                                    <b>event</b>
+                                    <p>jQuery event or string (e. g. when use API method <code>$.drop</code> the parametr has value 'API')</p>
+                                </li>
+                                <li>
+                                    <b>type</b>
+                                    <p>String <i>alert, confirm, prompt</i></p>
+                                </li>
+                                <li>
+                                    <b>dataPrompt</b>
+                                    <p>Object entered fields of form</p>
                                 </li>
                             </ul>
                         </td>
