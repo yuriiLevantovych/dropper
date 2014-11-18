@@ -874,7 +874,7 @@
         },
         durationOn: 300,
         durationOff: 200,
-        notifyclosetime: 300000,
+        notifyclosetime: 3000,
         notify: false,
         datas: null,
         handlerNotify: function (data, opt) {
