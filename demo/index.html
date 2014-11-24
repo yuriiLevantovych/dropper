@@ -41,7 +41,6 @@
             .items-gallery li{width: 60px;height: 60px;margin-left: 10px;}
             .items-gallery img{max-width: 100%;}
         </style>
-        <link rel="stylesheet" type="text/css" href="../source/drop.css"/>
     </head>
     <body>
         <div class="container">
@@ -959,14 +958,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>setUrlMethods</th>
-                        <td>
-                            <p>
-                                <code>$.drop.setUrlMethods('url to files of methods')</code>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
                         <td colspan="2"><i>next methods available only if exists <b>gallery</b> method</i></td>
                     </tr>
                     <tr>
@@ -1272,7 +1263,6 @@
 
             <script>
                 $('a:contains("detail about")').hide();
-                $.drop.setUrlMethods('../source/methods');
                 $.drop.require(['droppable', 'limitSize', 'gallery', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert'], function () {
                     $('[rel]').drop({
                         scrollContent: false,
@@ -1281,9 +1271,8 @@
                         }
                     });
                 });
-//                $.drop.setUrlStyles('../source/styles');
-//                $.drop.setThemes({name: 'green', file: 'green.txt'}, {name: 'blue', file: 'blue.txt'});
-//                $('[rel]').data('theme', 'green');
+                $.drop.setThemes({name: 'green', file: 'green.txt'}, {name: 'blue', file: 'blue.txt'});
+                $('[href]').data('theme', 'green');
             </script>
 
 

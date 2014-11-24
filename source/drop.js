@@ -8,21 +8,13 @@
                 var el = methods.destroy.call($(this)),
                         opt = $.extend({}, set, el.data());
                 el.data('drp', opt);
-                var ahref = $.trim(el.attr('href')),
-                        href = $.trim(ahref || opt.href);
+                var href = $.trim(el.attr('href') || opt.href);
                 opt.href = href && href.indexOf('#') === 0 ? null : href;
-                opt.hash = ahref.indexOf('#') === 0 && ahref.length !== 1 ? ahref : opt.hash;
+                opt.hash = /#.+?$/.test(href) ? href.match(/(#.+?$)/g)[0] : opt.hash;
                 opt.rel = $.trim(this.rel || opt.rel);
-                if (opt.rel && opt.href) {
-                    if (!D.gallery[opt.rel])
-                        D.gallery[opt.rel] = [];
-                    if ($.inArray(opt.href, D.gallery[opt.rel]) === -1 && opt.href.match(D.regImg))
-                        D.gallery[opt.rel].push(opt.href);
-                    if (!D.galleryHashs[opt.rel] && opt.hash)
-                        D.galleryHashs[opt.rel] = [];
-                    if (opt.hash)
-                        D.galleryHashs[opt.rel].push(opt.hash);
-                }
+
+                methods._setGallery(opt);
+
                 el.addClass(D.isD);
                 if (opt.context) {
                     el.on('contextmenu.' + $.drop.nS + ' ' + 'click.' + $.drop.nS, function (e) {
@@ -187,10 +179,14 @@
             opt.href = href && $.trim(href).indexOf('#') === 0 ? null : href;
             var hrefC = opt.href ? opt.href.replace(D.reg, '') : null,
                     rel = $this.attr('rel') || opt.rel;
+            opt.hash = /#.+?$/.test(href) ? href.match(/(#.+?$)/g)[0] : opt.hash;
             if (rel && D.gallery[rel])
                 opt.rel = rel;
             if (opt.rel && D.galleryOpt[opt.rel])
                 $.extend(opt, D.galleryOpt[opt.rel]['genOpt'], D.galleryOpt[opt.rel][hrefC]);
+
+            methods._setGallery(opt);
+
             if (opt.href && opt.always)
                 opt.drop = elSet.dropn ? elSet.dropn : null;
             opt.drop = opt.drop && $.type(opt.drop) === 'string' ? opt.drop : opt.tempClassS;
@@ -216,6 +212,7 @@
                 }
             }
             $this.attr('data-drop', opt.drop).data('drop', opt.drop);
+            opt.style = methods._styleCreate(opt);
             drop = $(elSet.dropn);
             var _confirmF = function () {
                 if (opt.notify && opt.datas)
@@ -242,6 +239,7 @@
                 if (opt.prompt || opt.confirm || opt.alert) {
                     elSet.dropn = elSet.drop;
                     opt.drop = opt.tempClassS;
+                    opt.style = methods._styleCreate(opt);
                     methods._checkMethod(function () {
                         methods.confirmPromptAlert(opt, hashChange, _confirmF, e, $this);
                     });
@@ -348,7 +346,6 @@
                 if (opt.height)
                     dropWH.css('height', opt.height);
                 $('html, body').css({'height': '100%'});
-                opt.style = methods._styleCreate(opt);
                 if (opt.limitSize)
                     methods._checkMethod(function () {
                         methods.limitSize(drop);
@@ -718,6 +715,7 @@
             });
         },
         _styleCreate: function (opt) {
+            $('[data-rel="' + opt.tempClassS + '"]').remove();
             if (!D.theme[opt.theme])
                 throw 'theme' + ' "' + opt.theme + '" ' + 'not available';
             var text = D.theme[opt.theme],
@@ -727,7 +725,7 @@
                     n = n.split('{')[0];
                     text = text.replace(n, n.replace(/,(?!(\s*\[drop\])|(\s*\[\[))/g, ', ' + opt.tempClassS + ' '));
                 });
-            text = text.replace(/\}[^$](?!(\s*\[drop\])|(\s*\[\[))/g, '} ' + opt.tempClassS + ' ').replace(/^(?!(\s*\[drop\])|(\s*\[\[))/, opt.tempClassS + ' ').replace(/\[\[(.*?)\]\]/g, '$1').replace(/\[drop\]/g, opt.tempClassS).replace(/\s{2,}/g, ' ');
+            text = text.replace(/\}[^$](?!(\s*\[drop\])|(\s*\[\[))/g, '} ' + opt.tempClassS + ' ').replace(/^(?!(\s*\[drop\])|(\s*\[\[))/, opt.tempClassS + ' ').replace(/\[\[(.*?)\]\]/g, '$1').replace(/\[drop\]/g, opt.tempClassS).replace(/\s{2,}/g, ' ').replace(/url\((.*)\)/g, 'url(' + D.url + 'images/' + opt.theme + '/$1)');
             return $('<style>', {
                 'data-rel': opt.tempClassS,
                 html: text
@@ -737,6 +735,19 @@
             D.enableScroll();
             if (opt.place === 'center' && !opt.scroll)
                 D.disableScroll();
+        },
+        _setGallery: function (opt) {
+            if (opt.rel && opt.href) {
+                if (!D.gallery[opt.rel])
+                    D.gallery[opt.rel] = [];
+                if ($.inArray(opt.href, D.gallery[opt.rel]) === -1 && opt.href.match(D.regImg))
+                    D.gallery[opt.rel].push(opt.href);
+                if (!D.galleryHashs[opt.rel] && opt.hash)
+                    D.galleryHashs[opt.rel] = [];
+                if (opt.hash)
+                    D.galleryHashs[opt.rel].push(opt.hash);
+            }
+            return this;
         }
     };
     $.fn.drop = function (method) {
@@ -984,9 +995,13 @@
                     .jspArrowUp:before{content: "\\25b2";}\n\
                     .jspArrowDown:before{content: "\\25bc";}\n\
                     .jspArrowLeft:before{content: "\\25c4";}\n\
-                    .jspArrowRight:before{content: "\\25ba";}'
+                    .jspArrowRight:before{content: "\\25ba";}\n\
+                    [[#drop-loading div]]{background-image: url(drop.png);}'
         },
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
+        mainStyle: '#drop-loading {position: fixed;top: 50%;left: 50%;width: 40px;height: 40px;margin-top: -20px;margin-left: -20px;cursor: pointer;overflow: hidden;z-index: 11104;display: none;}\n\
+                    #drop-loading div{position: absolute;top: 0;left: 0;width: 40px;height: 480px;}\n\
+                    .drop{display: none;}.drop-overlay{display:none;position:absolute;width:100%;left:0;top:0;}',
         reg: /[^a-zA-Z0-9]+/ig,
         autoPlayInterval: {},
         hashs: {},
@@ -1006,8 +1021,6 @@
         wasCreateClass: 'drop-was-create',
         emptyClass: 'drop-empty',
         noEmptyClass: 'drop-no-empty',
-        urlOfMethods: 'methods',
-        urlOfStyles: 'styles',
         activeDrop: [],
         cOD: 0,
         disableScroll: function () {
@@ -1038,7 +1051,8 @@
         },
         exists: function (selector) {
             return $(selector).length > 0 && $(selector) instanceof jQuery;
-        }
+        },
+        url: (location.origin + location.pathname + $("[src*='drop']").attr('src') + '/../').replace(/(.[^\/]*?)\/\.\./g, '')
     };
     var D = $.drop.drp,
             DP = $.drop.dP;
@@ -1068,7 +1082,7 @@
             if (arguments[i].file !== undefined)
                 (function (o, obj) {
                     $.ajax({
-                        url: D.urlOfStyles + '/' + o.file,
+                        url: D.url + 'styles/' + o.file,
                         dataType: 'text',
                         cache: true,
                         success: function (data) {
@@ -1097,14 +1111,6 @@
                 public[i] = methods[i];
         return public;
     };
-    $.drop.setUrlMethods = function (url) {
-        D.urlOfMethods = url;
-        return this;
-    };
-    $.drop.setUrlStyles = function (url) {
-        D.urlOfStyles = url;
-        return this;
-    };
     $.drop.close = function (el, force) {
         return methods.close.call(el ? $(el) : null, 'artificial close element', 'API', null, force);
     };
@@ -1129,7 +1135,7 @@
             for (var i in arr)
                 (function (name) {
                     $.ajax({
-                        url: D.urlOfMethods + '/' + name + '.js',
+                        url: D.url + 'methods/' + name + '.js',
                         dataType: 'script',
                         cache: true,
                         success: function () {
@@ -1145,6 +1151,7 @@
         return this;
     };
     doc.ready(function () {
+        $('<style>', {html: D.mainStyle.replace(/\s{2,}/g, ' ').replace(/url\((.*)\)/g, 'url(' + D.url + 'images/default/$1)')}).appendTo($('body'));
         D.scrollTop = wnd.scrollTop();
         var loadingTimer, loadingFrame = 1,
                 loading = $('<div id="drop-loading"><div></div></div>').appendTo($('body'));

@@ -57,3 +57,4 @@ button:focus, input:focus, select:focus, textarea:focus{outline: #b3b3b3 solid 1
 .jspArrowDown:before{content: "\25bc";}
 .jspArrowLeft:before{content: "\25c4";}
 .jspArrowRight:before{content: "\25ba";}
+[[#drop-loading div]]{background-image: url(drop.png);}
