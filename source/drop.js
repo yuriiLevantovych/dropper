@@ -212,9 +212,9 @@
                 }
             }
             $this.attr('data-drop', opt.drop).data('drop', opt.drop);
-            opt.style = methods._styleCreate(opt);
             drop = $(elSet.dropn);
             var _confirmF = function () {
+                opt.style = methods._styleCreate(opt);
                 if (opt.notify && opt.datas)
                     methods._pasteNotify.call($this, opt.datas, opt, hashChange, e);
                 else if (opt.filter)
@@ -974,7 +974,7 @@
                     .drop-error{background-color: #f2dede;border-color: #ebccd1;color: #a94442;}\n\
                     .drop-info{background-color: #d9edf7;border-color: #bce8f1;color: #31708f;}\n\
                     [[.drop-context .drop-content .inside-padd]]{padding: 0;}\n\
-                    [drop]{font-family: "Arial Black", "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}\n\
+                    [drop]{font-family: Arial, "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}\n\
                     [drop].drop-is-scroll .placePaste img{max-width: none; max-height: none;width: auto;height: auto;}\n\
                     .jspContainer{overflow: hidden;position: relative;}\n\
                     .jspPane{position: absolute;}\n\
