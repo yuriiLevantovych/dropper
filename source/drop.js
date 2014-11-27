@@ -937,7 +937,8 @@
             $.drop(e.originalEvent.data);
         },
         theme: {
-            default: '.drop-header{background-color: #f8f8f8;padding: 0 55px 0 12px;font-size: 14px;}\n\
+            default: '*{margin: 0;padding: 0;}\n\
+                    .drop-header{background-color: #f8f8f8;padding: 0 55px 0 12px;font-size: 14px;}\n\
                     input, select, textarea{margin-bottom: 6px;}\n\
                     input, select, textarea, .drop-content button{outline: none;font-family: Arial, Helvetica CY, Nimbus Sans L, sans-serif;line-height: 1.5;border: 1px solid #d8d8d8;padding: 4px 6px;}\n\
                     button{background-color: #fafafa;color: #666;cursor: pointer;}\n\
