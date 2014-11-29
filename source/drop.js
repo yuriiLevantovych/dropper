@@ -12,9 +12,7 @@
                 opt.href = href && href.indexOf('#') === 0 ? null : href;
                 opt.hash = /#.+?$/.test(href) ? href.match(/(#.+?$)/g)[0] : opt.hash;
                 opt.rel = $.trim(this.rel || opt.rel);
-
                 methods._setGallery(opt);
-
                 el.addClass(D.isD);
                 if (opt.context) {
                     el.on('contextmenu.' + $.drop.nS + ' ' + 'click.' + $.drop.nS, function (e) {
@@ -184,9 +182,7 @@
                 opt.rel = rel;
             if (opt.rel && D.galleryOpt[opt.rel])
                 $.extend(opt, D.galleryOpt[opt.rel]['genOpt'], D.galleryOpt[opt.rel][hrefC]);
-
             methods._setGallery(opt);
-
             if (opt.href && opt.always)
                 opt.drop = elSet.dropn ? elSet.dropn : null;
             opt.drop = opt.drop && $.type(opt.drop) === 'string' ? opt.drop : opt.tempClassS;
@@ -1089,6 +1085,9 @@
                         success: function (data) {
                             obj[o.name] = data;
                             $.extend(D.theme, obj);
+                        },
+                        error: function () {
+                            throw $.type(arguments[2]) === 'string' ? arguments[2] : arguments[2].message;
                         }
                     });
                 })(arguments[i], obj);
@@ -1133,21 +1132,25 @@
         (function (arr, cb) {
             D.requireLength = arr.length;
             D.requireCur = 0;
-            for (var i in arr)
-                (function (name) {
-                    $.ajax({
-                        url: D.url + 'methods/' + name + '.js',
-                        dataType: 'script',
-                        cache: true,
-                        success: function () {
-                            if (++D.requireCur === D.requireLength) {
-                                if (cb)
-                                    cb();
-                                doc.trigger('dropRequire');
-                            }
+            for (var i in arr) {
+                if (methods.hasOwnProperty(arr[i]))
+                    continue;
+                $.ajax({
+                    url: D.url + 'methods/' + arr[i] + '.js',
+                    dataType: 'script',
+                    cache: true,
+                    success: function () {
+                        if (++D.requireCur === D.requireLength) {
+                            if (cb)
+                                cb();
+                            doc.trigger('dropRequire');
                         }
-                    });
-                })(arr[i]);
+                    },
+                    error: function () {
+                        throw $.type(arguments[2]) === 'string' ? arguments[2] : arguments[2].message;
+                    }
+                });
+            }
         })(arr, cb);
         return this;
     };
