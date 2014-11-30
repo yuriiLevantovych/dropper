@@ -950,7 +950,9 @@
                         <th>require</th>
                         <td>
                             <p>
-                                <code>$.drop.require(['filename', ...], callback)</code>
+                                <code>$.drop.require(files, callback)</code>
+                                where <i>files</i> has type array (<code>['filename', ...]</code>) or string (one filename)
+                                
                             </p>
                             <p>
                                 loads js - files
@@ -1263,7 +1265,7 @@
 
             <script>
                 $('a:contains("detail about")').hide();
-                $.drop.require(['droppable', 'limitSize', 'gallery', 'placeBeforeShow', 'placeAfterClose'], function () {
+                $.drop.require(['droppable', 'limitSize', 'gallery', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert'], function () {
                     $('[rel]').drop({
                         scrollContent: false,
                         header: function (opt) {

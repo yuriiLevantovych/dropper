@@ -1134,6 +1134,8 @@
     };
     $.drop.require = function (arr, cb) {
         (function (arr, cb) {
+            if ($.type(arr) !== 'array')
+                arr = arr.split(',');
             D.requireLength += arr.length;
             for (var i in arr) {
                 if (methods.hasOwnProperty(arr[i]))
