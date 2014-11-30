@@ -116,7 +116,7 @@
                     error: function () {
                         $.drop.hideLoading();
                         D.busy = false;
-                        methods.open.call(null, {notify: true, datas: {answer: 'error', data: $.type(arguments[2]) === 'string' ? arguments[2] : arguments[2].message}}, 'errorAjax');
+                        methods.open.call(null, {notify: true, datas: {answer: 'error', data: methods._errorM(arguments[2])}}, 'errorAjax');
                     }
                 }, opt.ajax));
             };
@@ -721,10 +721,9 @@
                     n = n.split('{')[0];
                     text = text.replace(n, n.replace(/,(?!(\s*\[drop\])|(\s*\[\[))/g, ', ' + opt.tempClassS + ' '));
                 });
-            text = text.replace(/\}[^$](?!(\s*\[drop\])|(\s*\[\[))/g, '} ' + opt.tempClassS + ' ').replace(/^(?!(\s*\[drop\])|(\s*\[\[))/, opt.tempClassS + ' ').replace(/\[\[(.*?)\]\]/g, '$1').replace(/\[drop\]/g, opt.tempClassS).replace(/\s{2,}/g, ' ').replace(/url\((.*)\)/g, 'url(' + D.url + 'images/' + opt.theme + '/$1)');
             return $('<style>', {
                 'data-rel': opt.tempClassS,
-                html: text
+                html: text.replace(/\}[^$](?!(\s*\[drop\])|(\s*\[\[))/g, '} ' + opt.tempClassS + ' ').replace(/^(?!(\s*\[drop\])|(\s*\[\[))/, opt.tempClassS + ' ').replace(/\[\[(.*?)\]\]/g, '$1').replace(/\[drop\]/g, opt.tempClassS).replace(/\s{2,}/g, ' ').replace(/url\((.*)\)/g, 'url(' + D.url + 'images/' + opt.theme + '/$1)')
             }).appendTo($('body'));
         },
         _disableScroll: function (opt) {
@@ -744,6 +743,9 @@
                     D.galleryHashs[opt.rel].push(opt.hash);
             }
             return this;
+        },
+        _errorM: function (mes) {
+            return $.type(mes) === 'string' ? mes : mes.message;
         }
     };
     $.fn.drop = function (method) {
@@ -1049,7 +1051,9 @@
         exists: function (selector) {
             return $(selector).length > 0 && $(selector) instanceof jQuery;
         },
-        url: (location.origin + location.pathname + $("[src*='drop']").attr('src') + '/../').replace(/(.[^\/]*?)\/\.\./g, '')
+        url: (location.origin + location.pathname + $("[src*='drop']").attr('src') + '/../').replace(/(.[^\/]*?)\/\.\./g, ''),
+        requireLength: 0,
+        requireCur: 0
     };
     var D = $.drop.drp,
             DP = $.drop.dP;
@@ -1087,7 +1091,7 @@
                             $.extend(D.theme, obj);
                         },
                         error: function () {
-                            throw $.type(arguments[2]) === 'string' ? arguments[2] : arguments[2].message;
+                            throw methods._errorM(arguments[2]);
                         }
                     });
                 })(arguments[i], obj);
@@ -1130,8 +1134,7 @@
     };
     $.drop.require = function (arr, cb) {
         (function (arr, cb) {
-            D.requireLength = arr.length;
-            D.requireCur = 0;
+            D.requireLength += arr.length;
             for (var i in arr) {
                 if (methods.hasOwnProperty(arr[i]))
                     continue;
@@ -1147,7 +1150,7 @@
                         }
                     },
                     error: function () {
-                        throw $.type(arguments[2]) === 'string' ? arguments[2] : arguments[2].message;
+                        throw methods._errorM(arguments[2]);
                     }
                 });
             }
@@ -1188,7 +1191,8 @@
         setTimeout(function () {
             if (D.requireLength && D.requireCur !== D.requireLength)
                 doc.on('dropRequire.' + $.drop.nS, function () {
-                    $(D.selAutoInit).not('.' + D.isD).drop();
+                    if (D.existsN($(D.selAutoInit).not('.' + D.isD)))
+                        $(D.selAutoInit).not('.' + D.isD).drop();
                 });
             else
                 $(D.selAutoInit).not('.' + D.isD).drop();
