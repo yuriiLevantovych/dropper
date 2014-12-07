@@ -3,6 +3,8 @@
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="bootstrap-theme.css"/>
         <script src="../libs/jquery.js"></script>
         <script src="../libs/jquery.jscrollpane.min.js"></script>
         <script src="../libs/jquery.mousewheel.js"></script>
@@ -24,17 +26,8 @@
             table tbody th{font-weight: bold;}
             table th[colspan]{background-color: #f8f7f6;font-weight: normal;}
             table td[colspan]{padding-top: 25px;}
-            table th, table td{padding: 3px 15 0 4px;vertical-align: top;padding: 5px 10px 5px 8px;border-bottom: 1px solid #ccc;}
+            table th, table td{vertical-align: top;padding: 10px 10px 10px 8px;border-bottom: 1px solid #ccc;}
             table tbody tr:last-child th, table tbody tr:last-child td{border-bottom: 0;}
-            code, pre {
-                font-family: Consolas, Monaco, "Andale Mono", "Courier New", monospace;
-                font-size: 14px;
-                white-space: pre-wrap;
-                overflow: auto;
-                -webkit-border-radius: 5px;
-                -moz-border-radius: 5px;
-                border-radius: 5px;
-            }
             [class*="items"]{font-size: 0;list-style: none;overflow: hidden;}
             [class*="items"] li{float: left;}
             .items-gallery{margin-left: -10px;}
@@ -204,9 +197,9 @@
             <table>
                 <colgroup>
                     <col width="10%"/>
-                    <col width="53%"/>
+                    <col width="50%"/>
                     <col width="20%"/>
-                    <col width="17%"/>
+                    <col width="20%"/>
                 </colgroup>
                 <thead>
                     <tr>
@@ -952,7 +945,7 @@
                             <p>
                                 <code>$.drop.require(files, callback)</code>
                                 where <i>files</i> has type array (<code>['filename', ...]</code>) or string (one filename)
-                                
+
                             </p>
                             <p>
                                 loads js - files
@@ -1274,7 +1267,7 @@
                     });
                 });
                 /*$.drop.setThemes({name: 'green', file: 'green.txt'}, {name: 'blue', file: 'blue.txt'});
-                $('[href]').data('theme', 'green');*/
+                 $('[href]').data('theme', 'green');*/
             </script>
 
 
