@@ -995,11 +995,11 @@
                     .jspArrowDown:before{content: "\\25bc";}\n\
                     .jspArrowLeft:before{content: "\\25c4";}\n\
                     .jspArrowRight:before{content: "\\25ba";}\n\
-                    [[#drop-loading div]]{background-image: url(drop.png);}'
+                    [[#drop-loading div]]{background-image: url(drop.gif);}'
         },
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
         mainStyle: '#drop-loading {position: fixed;top: 50%;left: 50%;width: 40px;height: 40px;margin-top: -20px;margin-left: -20px;cursor: pointer;overflow: hidden;z-index: 11104;display: none;}\n\
-                    #drop-loading div{position: absolute;top: 0;left: 0;width: 40px;height: 480px;}\n\
+                    #drop-loading div{position: absolute;top: 0;left: 0;width: 480px;height: 40px;}\n\
                     .drop{display: none;}.drop-overlay{display:none;position:absolute;width:100%;left:0;top:0;}',
         reg: /[^a-zA-Z0-9]+/ig,
         autoPlayInterval: {},
@@ -1169,7 +1169,7 @@
                 clearInterval(loadingTimer);
                 return;
             }
-            $('div', loading).css('top', (loadingFrame * -40) + 'px');
+            $('div', loading).css('left', (loadingFrame * -40) + 'px');
             loadingFrame = (loadingFrame + 1) % 12;
         };
         $.drop.showLoading = function () {
