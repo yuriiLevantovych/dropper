@@ -1051,7 +1051,7 @@
         exists: function (selector) {
             return $(selector).length > 0 && $(selector) instanceof jQuery;
         },
-        url: (location.origin + location.pathname + $("[src*='drop']").attr('src') + '/../').replace(/(.[^\/]*?)\/\.\./g, ''),
+        url: (location.origin + location.pathname + $("[src$='drop.js']").attr('src') + '/../').replace(/(.[^\/]*?)\/\.\./g, ''),
         requireLength: 0,
         requireCur: 0
     };
@@ -1200,4 +1200,4 @@
                 $(D.selAutoInit).not('.' + D.isD).drop();
         }, 0);
     }).on('message.' + $.drop.nS, D.handlerMessageWindow);
-})(jQuery, $(window), $(document));
+})(jQuery, jQuery(window), jQuery(document));
