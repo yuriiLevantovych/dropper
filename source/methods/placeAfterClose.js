@@ -1,7 +1,5 @@
-(function () {
+(function ($, wnd) {
     $.drop.setMethod('placeAfterClose', function (drop, $this, opt) {
-        var $ = jQuery,
-                wnd = $(window);
         if (opt.place === 'inherit' || !opt.placeAfterClose)
             return false;
         if (!_isScrollable.call($('body'), 'y'))
@@ -62,4 +60,4 @@
                 y = el.clientHeight && el.scrollHeight > el.clientHeight;
         return !side ? (!(el.style.overflow && el.style.overflow === 'hidden') && (x || y)) : (side === 'x' ? !(el.style.overflowX === 'hidden') && x : !(el.style.overflowY === 'hidden') && y);
     };
-})();
+})(jQuery, jQuery(window));

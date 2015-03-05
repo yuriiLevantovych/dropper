@@ -1,8 +1,6 @@
-(function () {
+(function ($, wnd) {
     $.drop.setMethod('placeBeforeShow', function (drop, $this, opt) {
-        var self = this,
-                $ = jQuery,
-                wnd = $(window);
+        var self = this;
 
         if (opt.place === 'inherit')
             return false;
@@ -54,4 +52,4 @@
                 y = el.clientHeight && el.scrollHeight > el.clientHeight;
         return !side ? (!(el.style.overflow && el.style.overflow === 'hidden') && (x || y)) : (side === 'x' ? !(el.style.overflowX === 'hidden') && x : !(el.style.overflowY === 'hidden') && y);
     };
-})();
+})(jQuery, jQuery(window));

@@ -1,4 +1,4 @@
-$.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, el) {
+jQuery.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, el) {
     var self = this,
             $ = jQuery;
     if (opt.alert) {
@@ -29,7 +29,8 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
                     event: e,
                     anchor: el,
                     drop: drop,
-                    options: opt
+                    options: opt,
+                    methods: self
                 });
             });
         })(drop, _confirmF, opt);
@@ -61,7 +62,8 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
                     event: e,
                     anchor: el,
                     drop: drop,
-                    options: opt
+                    options: opt,
+                    methods: self
                 });
             });
         })(drop, _confirmF, opt);
@@ -105,7 +107,8 @@ $.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, 
                     event: e,
                     anchor: el,
                     drop: drop,
-                    options: opt
+                    options: opt,
+                    methods: self
                 });
             });
         })(drop, _confirmF, opt, optP);

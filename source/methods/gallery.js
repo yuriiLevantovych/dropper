@@ -1,7 +1,6 @@
-(function () {
+(function ($) {
     var _galleryDecorator = function (rel, btn, i) {
-        var self = this,
-                $ = jQuery;
+        var self = this;
         return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.drop.drp.activeClass).each(function () {
             var $this = $(this),
                     drp = $this.data('drp');
@@ -113,4 +112,4 @@
     $.drop.play = function (rel) {
         return _galleryDecorator(rel, null, null);
     };
-})();
+})(jQuery);

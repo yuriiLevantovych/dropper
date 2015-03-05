@@ -1,17 +1,17 @@
-$.drop.setMethod('droppable', function(drop) {
+jQuery.drop.setMethod('droppable', function(drop) {
     var $ = jQuery,
             wnd = $(window),
             doc = $(document);
     return (drop || this).each(function() {
         var drop = $(this);
-        drop.on('close.' + $.drop.nS, function() {
+        drop.off('dropClose.' + $.drop.nS).on('dropClose.' + $.drop.nS, function() {
             $(this).off('mousedown.' + $.drop.nS);
         });
         drop.find('img').off('dragstart.' + $.drop.nS).on('dragstart.' + $.drop.nS, function(e) {
             e.preventDefault();
         });
         wnd.off('scroll.droppable' + $.drop.nS);
-        drop.off('mousedown.' + $.drop.nS).on('mousedown.' + $.drop.nS, function(e) {
+        drop.on('mousedown.' + $.drop.nS, function(e) {
             var drop = $(this),
                     drp = drop.data('drp');
             if ($(e.target).is(':input, button') || $.drop.drp.existsN($(e.target).closest('button')))
@@ -41,10 +41,10 @@ $.drop.setMethod('droppable', function(drop) {
             var left = e.pageX - drop.offset().left,
                     top = e.pageY - drop.offset().top;
             drop.css('cursor', 'move');
-            doc.on('selectstart.' + $.drop.nS, function(e) {
+            doc.off('selectstart.' + $.drop.nS).on('selectstart.' + $.drop.nS, function(e) {
                 e.preventDefault();
             });
-            doc.on('mousemove.' + $.drop.nS, function(e) {
+            doc.off('mousemove.' + $.drop.nS).on('mousemove.' + $.drop.nS, function(e) {
                 e.preventDefault();
                 drp.droppableIn = true;
                 var l = e.pageX - left,

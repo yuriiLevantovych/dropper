@@ -346,6 +346,7 @@
                     drop.add(opt.dropOver).off('contextmenu.' + $.drop.nS).on('contextmenu.' + $.drop.nS, function (e) {
                         e.preventDefault();
                     });
+
                 var dropWH = opt.type === 'iframe' ? drop.find('iframe') : drop;
                 if (opt.width)
                     dropWH.css('width', opt.width);
@@ -368,7 +369,8 @@
                     event: e,
                     anchor: $this,
                     drop: drop,
-                    options: opt
+                    options: opt,
+                    methods: methods
                 });
                 methods._disableScroll(opt);
                 $('.drop-overlay.' + D.pC + 'for-remove').stop().remove();
@@ -409,7 +411,8 @@
                         event: e,
                         anchor: $this,
                         drop: drop,
-                        options: opt
+                        options: opt,
+                        methods: methods
                     });
                 });
             }
@@ -465,7 +468,8 @@
                             event: e,
                             anchor: opt.elrun,
                             drop: $this,
-                            options: opt
+                            options: opt,
+                            methods: methods
                         });
                         var dC = $this.find($(opt.placeContent)).data('jsp');
                         if (dC)
@@ -497,7 +501,8 @@
                     event: e,
                     anchor: opt.elrun,
                     drop: drop,
-                    options: opt
+                    options: opt,
+                    methods: methods
                 });
                 if (opt.close) {
                     var res = eval(opt.close).call(opt.elrun, opt, drop, e);
@@ -515,6 +520,8 @@
             var drop = this,
                 drp = drop.data('drp');
             if (!drp)
+                return false;
+            if (drp.isFullScreen)
                 return false;
             if (drp.limitSize)
                 methods._checkMethod(function () {
@@ -625,7 +632,8 @@
                 'top': '', 'left': '',
                 'bottom': '',
                 'right': '',
-                'position': ''
+                'position': '',
+                'box-sizing': ''
             });
         },
         _pasteNotify: function (datas, opt, hashChange, e) {
@@ -939,7 +947,8 @@
         type: 'auto',
         width: null,
         height: null,
-        rel: null
+        rel: null,
+        fullScreen: true
     };
     $.drop.drp = {
         handlerMessageWindow: function (e) {
