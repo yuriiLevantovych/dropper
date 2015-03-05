@@ -3,10 +3,10 @@
         init: function (options) {
             var set = $.extend({}, DP, options);
             if (!D.existsN(this))
-                throw 'this object is not exists';
+                throw "The object isn't exists";
             return this.each(function () {
                 var el = methods.destroy.call($(this)),
-                        opt = $.extend({}, set, el.data());
+                    opt = $.extend({}, set, el.data());
                 el.data('drp', opt);
                 var href = $.trim(el.attr('href') || opt.href);
                 opt.href = href && href.indexOf('#') === 0 ? null : href;
@@ -52,7 +52,7 @@
         destroy: function (el) {
             return (el || this).each(function () {
                 var el = $(this),
-                        opt = $(el).data('drp');
+                    opt = $(el).data('drp');
                 el.removeClass(D.isD).removeData('drp');
                 if (!opt)
                     return;
@@ -70,7 +70,7 @@
             if (!opt.isStart) //if few popup need show on start
                 $.drop.cancel();
             var el = this,
-                    elSet = el.data();
+                elSet = el.data();
             var _update = function (data) {
                 data = data ? data : 'response is empty';
                 if (opt.dropn)
@@ -97,7 +97,10 @@
                     this.onload = this.onerror = null;
                     $.drop.hideLoading();
                     D.busy = false;
-                    methods.open.call(null, {notify: true, datas: {answer: 'error', data: 'image is not found'}}, 'errorImage');
+                    methods.open.call(null, {
+                        notify: true,
+                        datas: {answer: 'error', data: 'image is not found'}
+                    }, 'errorImage');
                 };
                 img.src = opt.href + (opt.always ? '?' + (+new Date()) : '');
             };
@@ -116,7 +119,10 @@
                     error: function () {
                         $.drop.hideLoading();
                         D.busy = false;
-                        methods.open.call(null, {notify: true, datas: {answer: 'error', data: methods._errorM(arguments[2])}}, 'errorAjax');
+                        methods.open.call(null, {
+                            notify: true,
+                            datas: {answer: 'error', data: methods._errorM(arguments[2])}
+                        }, 'errorAjax');
                     }
                 }, opt.ajax));
             };
@@ -153,7 +159,7 @@
                 return false;
             D.busy = true;
             var $this = D.existsN(this) ? this : $([]),
-                    elSet = D.existsN($this) ? $this.data() : {};
+                elSet = D.existsN($this) ? $this.data() : {};
             opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp : {}, opt);
             e = e ? e : window.event;
             if (elSet.dropConfirmPromptAlert)
@@ -176,7 +182,7 @@
             var href = $this.attr('href') || opt.href;
             opt.href = href && $.trim(href).indexOf('#') === 0 ? null : href;
             var hrefC = opt.href ? opt.href.replace(D.reg, '') : null,
-                    rel = $this.attr('rel') || opt.rel;
+                rel = $this.attr('rel') || opt.rel;
             opt.hash = /#.+?$/.test(href) ? href.match(/(#.+?$)/g)[0] : opt.hash;
             if (rel && D.gallery[rel])
                 opt.rel = rel;
@@ -227,8 +233,9 @@
                 else if (opt.header || opt.content || opt.footer)
                     methods._show.call($this, methods._pasteDrop(opt, opt.pattern), e, opt, hashChange);
                 else
-                    throw 'insufficient data';
+                    throw 'Insufficient data';
             };
+
             function _show() {
                 if ($this.is(':disabled') || opt.drop && opt.start && !eval(opt.start).call($this, opt, drop, e))
                     return;
@@ -243,6 +250,7 @@
                 else
                     _confirmF();
             }
+
             if (!opt.moreOne && D.exists(D.aDS))
                 methods.close.call($(D.aDS), 'close more one element', _show);
             else
@@ -258,12 +266,14 @@
                 if (!D.existsN(drop))
                     return false;
                 e = e ? e : window.event;
-                var $this = this,
-                        dropOver = null;
+                var $this = this;
                 if (opt.overlay) {
                     if (!D.exists('[data-rel="' + opt.tempClassS + '"].drop-overlay'))
-                        $('body').append('<div class="drop-overlay" data-rel="' + opt.tempClassS + '"></div>');
-                    (opt.dropOver = dropOver = $('[data-rel="' + opt.tempClassS + '"].drop-overlay')).css({
+                        $('body').append($('<div/>', {
+                            'class': 'drop-overlay',
+                            'data-rel': opt.tempClassS
+                        }));
+                    opt.dropOver = $('[data-rel="' + opt.tempClassS + '"].drop-overlay').css({
                         'background-color': opt.overlayColor,
                         'opacity': opt.overlayOpacity,
                         'z-index': 1103 + D.cOD
@@ -278,7 +288,7 @@
                     methods._checkMethod(function () {
                         methods.gallery(drop, opt);
                     });
-                methods._setHeightAddons(dropOver);
+                methods._setHeightAddons(opt.dropOver);
                 methods._pasteContent($this, drop, opt);
                 methods._positionType(drop);
                 var ev = opt.drop ? opt.drop.replace(D.reg, '') : '';
@@ -297,7 +307,7 @@
                     if (opt.place === 'center' && opt.centerOnScroll)
                         methods['_' + opt.place].call(drop);
                 });
-                $(dropOver).fadeIn(100).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function (e) {
+                $(opt.dropOver).fadeIn(100).off('click.' + $.drop.nS + ev).on('click.' + $.drop.nS + ev, function (e) {
                     e.stopPropagation();
                     if (opt.closeClick && $(e.target).is('.drop-overlay'))
                         methods.close.call($($(e.target).attr('data-rel')), e);
@@ -333,7 +343,7 @@
                         opt.exit.hide();
                 }
                 if (opt.context)
-                    drop.add(dropOver).off('contextmenu.' + $.drop.nS).on('contextmenu.' + $.drop.nS, function (e) {
+                    drop.add(opt.dropOver).off('contextmenu.' + $.drop.nS).on('contextmenu.' + $.drop.nS, function (e) {
                         e.preventDefault();
                     });
                 var dropWH = opt.type === 'iframe' ? drop.find('iframe') : drop;
@@ -369,7 +379,7 @@
                     if (opt.type === 'iframe')
                         dropWH.attr('src', opt.href);
                     $('html, body').css({'overflow': '', 'overflow-x': ''});
-                    methods._setHeightAddons(dropOver);
+                    methods._setHeightAddons(opt.dropOver);
                     var inDrop = opt.type === 'iframe' ? drop.find('iframe').contents().find(D.selAutoInit) : drop.find(D.selAutoInit);
                     if (D.existsN(inDrop))
                         methods.init.call(inDrop);
@@ -403,15 +413,16 @@
                     });
                 });
             }
+
             return this;
         },
         close: function (e, f, hashChange, force) {
             var sel = this,
-                    drops = D.existsN(sel) ? sel : $('[data-elrun].' + D.activeClass);
+                drops = D.existsN(sel) ? sel : $('[data-elrun].' + D.activeClass);
             var closeLength = drops.length;
             drops.each(function (i) {
                 var drop = $(this),
-                        opt = $.extend({}, drop.data('drp'));
+                    opt = $.extend({}, drop.data('drp'));
                 if (!drop.data('drp') || hashChange && opt.hash && window.location.hash.indexOf(opt.hash) !== -1)
                     return;
                 var _hide = function () {
@@ -502,14 +513,14 @@
         },
         update: function () {
             var drop = this,
-                    drp = drop.data('drp');
+                drp = drop.data('drp');
             if (!drp)
                 return false;
             if (drp.limitSize)
                 methods._checkMethod(function () {
                     methods.limitSize(drop);
                 });
-            if (drp.place !== 'inherit' && !D.isTouch)
+            if (drp.place !== 'inherit')
                 methods._checkMethod(function () {
                     methods['_' + drp.place].call(drop);
                 }, drp.place);
@@ -518,21 +529,20 @@
         _center: function () {
             return this.each(function () {
                 var drop = $(this),
-                        drp = drop.data('drp');
+                    drp = drop.data('drp');
                 if (!drp)
                     return false;
                 var method = drp.animate || drp.placeBeforeShow ? 'animate' : 'css',
-                        dropV = drop.is(':visible'),
-                        w = dropV ? drop.outerWidth() : drop[D.actual]('outerWidth'),
-                        h = dropV ? drop.outerHeight() : drop[D.actual]('outerHeight'),
-                        wndT = wnd.scrollTop(),
-                        wndL = wnd.scrollLeft(),
-                        top = Math.floor((wnd.height() - h) / 2),
-                        left = Math.floor((wnd.width() - w) / 2);
+                    dropV = drop.is(':visible'),
+                    w = dropV ? drop.outerWidth() : drop[D.actual]('outerWidth'),
+                    h = dropV ? drop.outerHeight() : drop[D.actual]('outerHeight'),
+                    wndT = wnd.scrollTop(),
+                    wndL = wnd.scrollLeft(),
+                    top = Math.floor((wnd.height() - h) / 2),
+                    left = Math.floor((wnd.width() - w) / 2);
                 top = top > 0 ? top + wndT : wndT;
                 left = left > 0 ? left + wndL : wndL;
-                if (top + h > doc.height() || left + w > doc.width())
-                    return false;
+
                 drop[method]({
                     'top': top,
                     'left': left
@@ -545,23 +555,23 @@
         _global: function () {
             return this.each(function () {
                 var drop = $(this),
-                        drp = drop.data('drp');
+                    drp = drop.data('drp');
                 if (!drp && drp.droppableIn)
                     return false;
                 var method = drp.animate || drp.placeBeforeShow ? 'animate' : 'css',
-                        $this = drp.elrun,
-                        t = 0,
-                        l = 0,
-                        $thisW = $this.width(),
-                        $thisH = $this.height(),
-                        dropW = +drop[D.actual]('outerWidth'),
-                        dropH = +drop[D.actual]('outerHeight'),
-                        wndT = wnd.scrollTop(),
-                        wndL = wnd.scrollLeft(),
-                        offTop = $this.offset().top,
-                        offLeft = $this.offset().left,
-                        $thisT = 0,
-                        $thisL = 0;
+                    $this = drp.elrun,
+                    t = 0,
+                    l = 0,
+                    $thisW = $this.width(),
+                    $thisH = $this.height(),
+                    dropW = +drop[D.actual]('outerWidth'),
+                    dropH = +drop[D.actual]('outerHeight'),
+                    wndT = wnd.scrollTop(),
+                    wndL = wnd.scrollLeft(),
+                    offTop = $this.offset().top,
+                    offLeft = $this.offset().left,
+                    $thisT = 0,
+                    $thisL = 0;
                 if (!drop.is(':visible'))
                     drop.css({top: 'auto', bottom: 'auto', left: 'auto', right: 'auto'});
                 if ($.type(drp.placement) === 'object') {
@@ -610,7 +620,8 @@
             });
         },
         _resetStyleDrop: function () {
-            return this.stop().css({'z-index': '',
+            return this.stop().css({
+                'z-index': '',
                 'top': '', 'left': '',
                 'bottom': '',
                 'right': '',
@@ -664,14 +675,14 @@
             return this;
         },
         _setHeightAddons: function (dropOver) {
-            $(dropOver).css({width: '', height: ''}).css({width: doc.width(), height: doc.height()});
+            $(dropOver).css({width: '', height: ''}).css({width: wnd.width(), height: doc.height()});
         },
         _checkMethod: function (f) {
             try {
                 f();
             } catch (e) {
                 var method = f.toString().match(/\.\S*\(/);
-                throw  'need connect "' + method[0].substring(1, method[0].length - 1) + '" method';
+                throw  'Need connected "' + method[0].substring(1, method[0].length - 1) + '" method';
             }
             return this;
         },
@@ -684,8 +695,8 @@
         },
         _filterSource: function (s) {
             var btn = this,
-                    href = s.split(').'),
-                    regS, regM = '';
+                href = s.split(').'),
+                regS, regM = '';
             $.map(href, function (v) {
                 regS = (v[v.length - 1] !== ')' ? v + ')' : v).match(/\(.*\)/);
                 regM = regS['input'].replace(regS[0], '');
@@ -713,9 +724,9 @@
         _styleCreate: function (opt) {
             $('[data-rel="' + opt.tempClassS + '"]').remove();
             if (!D.theme[opt.theme])
-                throw 'theme' + ' "' + opt.theme + '" ' + 'not available';
+                throw "Theme" + " '" + opt.theme + "' " + "isn't available";
             var text = D.theme[opt.theme],
-                    coms = D.theme[opt.theme].match(/.*,([^{]*)/gm);
+                coms = D.theme[opt.theme].match(/.*,([^{]*)/gm);
             if (coms)
                 $.map(coms, function (n) {
                     n = n.split('{')[0];
@@ -751,14 +762,14 @@
     $.fn.drop = function (method) {
         if (methods[method]) {
             if (!/_/.test(method))
-                return methods[ method ].apply(this, Array.prototype.slice.call(arguments, 1));
+                return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
             else
                 throw 'Method ' + method + ' is private on $.drop';
         }
         else if ($.type(method) === 'object' || !method)
             return methods.init.apply(this, arguments);
         else
-            throw 'Method ' + method + ' does not exist on $.drop';
+            throw "Method " + method + " doesn't exist on $.drop";
     };
     $.drop = function (m, opt) {
         if (!opt)
@@ -788,7 +799,7 @@
                     if (D.gallery[opt.rel][0])
                         set = {href: D.gallery[opt.rel][0]};
                     else
-                        throw 'insufficient data';
+                        throw 'Insufficient data';
                 }
                 else if ($.type(m[0]) === 'object')
                     set = m[0];
@@ -806,7 +817,7 @@
         else if ($.type(m) === 'object')
             set = m;
         else
-            throw 'insufficient data';
+            throw 'Insufficient data';
         return methods.open.call(null, $.extend(opt, set), 'API');
     };
     $.drop.nS = 'drop';
@@ -938,7 +949,7 @@
             default: '*{margin: 0;padding: 0;}\n\
                     .drop-header{background-color: #f8f8f8;padding: 0 55px 0 12px;font-size: 14px;}\n\
                     input, select, textarea{margin-bottom: 6px;}\n\
-                    input, select, textarea, .drop-content button{outline: none;font-family: Arial, Helvetica CY, Nimbus Sans L, sans-serif;line-height: 1.5;border: 1px solid #d8d8d8;padding: 4px 6px;}\n\
+                    input, select, textarea, .drop-content button{outline: none;font-family: Arial, "Helvetica CY", "Nimbus Sans L", sans-serif;line-height: 1.5;border: 1px solid #d8d8d8;padding: 4px 6px;}\n\
                     button{background-color: #fafafa;color: #666;cursor: pointer;}\n\
                     .drop-header.drop-no-empty, .drop-footer.drop-no-empty{padding-top: 6px;padding-bottom: 7px;}\n\
                     .drop-header.drop-no-empty{border-bottom: 1px solid #d8d8d8;}\n\
@@ -951,13 +962,13 @@
                     .drop-content button{margin-right: 4px;}\n\
                     button:focus, input:focus, select:focus, textarea:focus{outline: #b3b3b3 solid 1px;}\n\
                     .drop-footer{background-color: #d5d5d5;padding: 0 12px;}\n\
-                    .drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;padding: 0;}\n\
+                    .drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;padding: 0;line-height: 0;}\n\
                     .drop-prev, .drop-next{width: 35%;height: 100%;top: 0;z-index: 2;}\n\
                     .drop-prev:focus, .drop-next:focus{outline: none;}\n\
                     .drop-icon-prev, .drop-icon-next{width: 20px;height: 80px;line-height: 80px;}\n\
                     .drop-icon-prev, .drop-icon-next, .drop-icon-close{font-family: "Trebuchet MS", "Helvetica CY", sans-serif;font-size: 21px;color: #999;background-color: #fff;display: inline-block;text-align: center;//display: inline;zoom: 1;}\n\
-                    .drop-icon-close{line-height: 17px;width: 19px;height: 19px;}\n\
-                    .drop-close{right: 5px;top: 4px;z-index: 2;}\n\
+                    .drop-icon-close{line-height: 19px;width: 19px;height: 19px;}\n\
+                    .drop-close{right: 5px;top: 4px;z-index: 3;}\n\
                     .drop-next{right: 5px;text-align: right;}\n\
                     .drop-prev{left: 5px;text-align: left;}\n\
                     [drop].drop-is-scroll .drop-next{right: 16px;}\n\
@@ -973,7 +984,8 @@
                     .drop-error{background-color: #f2dede;border-color: #ebccd1;color: #a94442;}\n\
                     .drop-info{background-color: #d9edf7;border-color: #bce8f1;color: #31708f;}\n\
                     [[.drop-context .drop-content .inside-padd]]{padding: 0;}\n\
-                    [drop]{font-family: Arial, "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}\n\
+                    [drop]{max-width: 100%;font-family: Arial, "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}\n\
+                    [drop] .placePaste img{max-width: 100%;}\n\
                     [drop].drop-is-scroll .placePaste img{max-width: none; max-height: none;width: auto;height: auto;}\n\
                     .jspContainer{overflow: hidden;position: relative;}\n\
                     .jspPane{position: absolute;}\n\
@@ -984,13 +996,13 @@
                     .jspTrack{background: #f9f8f7;position: relative;}\n\
                     .jspDrag{background: #d5d5d5;position: relative;top: 0;left: 0;cursor: pointer;}\n\
                     .jspHorizontalBar .jspTrack,.jspHorizontalBar .jspDrag{float: left;height: 100%;}\n\
-                    .jspArrow{background: #ccc;position: relative;display: block;cursor: pointer;padding: 0;margin: 0;}\n\
+                    .jspArrow{background: #ccc;position: relative;display: block;cursor: pointer;padding: 0;margin: 0;line-height: 0;}\n\
                     .jspArrow.jspDisabled{cursor: default;background: #eee;}\n\
                     .jspVerticalBar .jspArrow{height: 16px;}\n\
                     .jspHorizontalBar .jspArrow{width: 16px;float: left;height: 100%;}\n\
                     .jspVerticalBar .jspArrow:focus{outline: none;}\n\
                     .jspCorner{background: #eeeef4;float: left;height: 100%;}\n\
-                    .jspArrowUp:before, .jspArrowDown:before, .jspArrowLeft:before, .jspArrowRight:before{position: absolute;font-size: 10px;color: #777;left: 3px;top: 1px;}\n\
+                    .jspArrowUp:before, .jspArrowDown:before, .jspArrowLeft:before, .jspArrowRight:before{position: absolute;font-size: 10px;color: #777;width: 100%;height: 100%;text-align: center;line-height: 16px;}\n\
                     .jspArrowUp:before{content: "\\25b2";}\n\
                     .jspArrowDown:before{content: "\\25bc";}\n\
                     .jspArrowLeft:before{content: "\\25c4";}\n\
@@ -1046,21 +1058,21 @@
         },
         isTouch: document.createTouch !== undefined,
         existsN: function (nabir) {
-            return nabir && nabir.length > 0 && nabir instanceof jQuery;
+            return nabir && nabir.length > 0 && nabir instanceof $;
         },
         exists: function (selector) {
-            return $(selector).length > 0 && $(selector) instanceof jQuery;
+            return $(selector).length > 0 && $(selector) instanceof $;
         },
-        url: (location.origin + location.pathname + $("[src$='drop.js']").attr('src') + '/../').replace(/(.[^\/]*?)\/\.\./g, ''),
+        url: $("[src$='drop.js']").attr('src') + '/../',
         requireLength: 0,
         requireCur: 0
     };
     var D = $.drop.drp,
-            DP = $.drop.dP;
+        DP = $.drop.dP;
     $.fn[D.actual = $.fn.actual ? 'actual' + (+new Date()) : 'actual'] = function () {
         if (arguments.length && $.type(arguments[0]) === 'string') {
             var dim = arguments[0],
-                    clone = this.clone();
+                clone = this.clone();
             if (arguments[1] === undefined)
                 clone.css({
                     position: 'absolute',
@@ -1147,7 +1159,7 @@
                     success: function () {
                         if (++D.requireCur === D.requireLength) {
                             if (cb)
-                                cb();
+                                cb.call($.drop, arr);
                             doc.trigger('dropRequire');
                         }
                     },
@@ -1163,7 +1175,9 @@
         $('<style>', {html: D.mainStyle.replace(/\s{2,}/g, ' ').replace(/url\((.*)\)/g, 'url(' + D.url + 'images/default/$1)')}).appendTo($('body'));
         D.scrollTop = wnd.scrollTop();
         var loadingTimer, loadingFrame = 1,
-                loading = $('<div id="drop-loading"><div></div></div>').appendTo($('body'));
+            loading = $('<div/>', {
+                id: 'drop-loading'
+            }).append($('<div/>')).appendTo($('body'));
         var _animate_loading = function () {
             if (!loading.is(':visible')) {
                 clearInterval(loadingTimer);

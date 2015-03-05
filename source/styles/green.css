@@ -1,28 +1,24 @@
 *{margin: 0;padding: 0;}
 .drop-header{padding: 0 55px 0 12px;font-size: 14px;}
 input, select, textarea{margin-bottom: 6px;}
-input, select, textarea, .drop-content button{outline: none;font-family: Arial, Helvetica CY, Nimbus Sans L, sans-serif;line-height: 1.5;padding: 4px 6px;}
+input, select, textarea, .drop-content button{outline: none;font-family: Arial, "Helvetica CY", "Nimbus Sans L", sans-serif;line-height: 1.5;padding: 4px 6px;}
 button{background-color: #fafafa;color: #666;cursor: pointer;}
 .drop-header.drop-no-empty, .drop-footer.drop-no-empty{padding-top: 6px;padding-bottom: 7px;}
-[drop].drop-is-scroll .drop-header.drop-empty{height: 28px;}
 .drop-footer.drop-no-empty{border-top: 1px solid #d8d8d8;}
 .drop-content{position: relative;z-index: 1;}
 .drop-content .inside-padd{padding: 12px 28px 12px 12px;}
-[[.drop-image .drop-content .inside-padd]], [[.drop-alert .drop-content .inside-padd]]{padding: 10px;}
-[[.drop-alert .drop-group-btns]]{text-align: center;}
 .drop-content button{margin-right: 4px;}
 button:focus, input:focus, select:focus, textarea:focus{outline: #f8f7f5 solid 1px;}
 .drop-footer{padding: 0 12px;}
-.drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;padding: 0;}
+.drop-close, .drop-prev, .drop-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;padding: 0;line-height: 0;}
 .drop-prev, .drop-next{width: 35%;height: 100%;top: 0;z-index: 2;}
 .drop-prev:focus, .drop-next:focus{outline: none;}
 .drop-icon-prev, .drop-icon-next{width: 20px;height: 80px;line-height: 80px;}
 .drop-icon-prev, .drop-icon-next, .drop-icon-close{font-family: "Trebuchet MS", "Helvetica CY", sans-serif;font-size: 21px;background-color: #fff;display: inline-block;text-align: center;//display: inline;zoom: 1;}
 .drop-icon-close{line-height: 17px;width: 19px;height: 19px;}
-.drop-close{right: 5px;top: 4px;z-index: 2;}
+.drop-close{right: 5px;top: 4px;z-index: 3;}
 .drop-next{right: 5px;text-align: right;}
 .drop-prev{left: 5px;text-align: left;}
-[drop].drop-is-scroll .drop-next{right: 16px;}
 .drop-icon-next{text-align: center;}
 .icon-times-drop{position: absolute;z-index:1;right:0;top: 0;cursor: pointer;width: 15px;height: 15px;}
 .nav{list-style: none;margin-left: 0;}
@@ -34,9 +30,6 @@ button:focus, input:focus, select:focus, textarea:focus{outline: #f8f7f5 solid 1
 .drop-warning{background-color: #fcf8e3;border-color: #faebcc;color: #8a6d3b;}
 .drop-error{background-color: #f2dede;border-color: #ebccd1;color: #a94442;}
 .drop-info{background-color: #d9edf7;border-color: #bce8f1;color: #31708f;}
-[[.drop-context .drop-content .inside-padd]]{padding: 0;}
-[drop]{font-family: Arial, "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;background-color: #fff;}
-[drop].drop-is-scroll .placePaste img{max-width: none; max-height: none;width: auto;height: auto;}
 .jspContainer{overflow: hidden;position: relative;}
 .jspPane{position: absolute;}
 .jspVerticalBar{position: absolute;top: 0;right: 0;width: 16px;height: 100%;background: red;}
@@ -46,18 +39,17 @@ button:focus, input:focus, select:focus, textarea:focus{outline: #f8f7f5 solid 1
 .jspTrack{background: #f9f8f7;position: relative;}
 .jspDrag{background: #d5d5d5;position: relative;top: 0;left: 0;cursor: pointer;}
 .jspHorizontalBar .jspTrack,.jspHorizontalBar .jspDrag{float: left;height: 100%;}
-.jspArrow{background: #ccc;position: relative;display: block;cursor: pointer;padding: 0;margin: 0;}
+.jspArrow{background: #ccc;position: relative;display: block;cursor: pointer;padding: 0;margin: 0;line-height: 0;}
 .jspArrow.jspDisabled{cursor: default;background: #eee;}
 .jspVerticalBar .jspArrow{height: 16px;}
 .jspHorizontalBar .jspArrow{width: 16px;float: left;height: 100%;}
 .jspVerticalBar .jspArrow:focus{outline: none;}
 .jspCorner{background: #eeeef4;float: left;height: 100%;}
-.jspArrowUp:before, .jspArrowDown:before, .jspArrowLeft:before, .jspArrowRight:before{position: absolute;font-size: 10px;color: #777;left: 3px;top: 1px;}
+.jspArrowUp:before, .jspArrowDown:before, .jspArrowLeft:before, .jspArrowRight:before{position: absolute;font-size: 10px;color: #777;width: 100%;height: 100%;text-align: center;line-height: 16px;}
 .jspArrowUp:before{content: "\25b2";}
 .jspArrowDown:before{content: "\25bc";}
 .jspArrowLeft:before{content: "\25c4";}
 .jspArrowRight:before{content: "\25ba";}
-[[#drop-loading div]]{background-image: url(drop.gif);}
 
 /*colors*/
 .drop-header{background-color: #dff0d8;color: #3c763d;}
@@ -65,5 +57,15 @@ button:focus, input:focus, select:focus, textarea:focus{outline: #f8f7f5 solid 1
 input, select, textarea, .drop-content button{color: #3c763d;border: 1px solid #dff0d8;}
 .drop-footer{background-color: #a0ad9a;color: #f8f7f5;}
 .drop-icon-prev, .drop-icon-next, .drop-icon-close{color: #3c763d;}
-[drop]{border: 1px solid #bac7b5;}
 /*/colors*/
+
+[drop]{border: 1px solid #bac7b5;}
+[drop].drop-is-scroll .drop-header.drop-empty{height: 28px;}
+[[.drop-image .drop-content .inside-padd]], [[.drop-alert .drop-content .inside-padd]]{padding: 10px;}
+[[.drop-alert .drop-group-btns]]{text-align: center;}
+[drop].drop-is-scroll .drop-next{right: 16px;}
+[[.drop-context .drop-content .inside-padd]]{padding: 0;}
+[drop]{max-width: 100%;font-family: Arial, "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;background-color: #fff;}
+[drop] .placePaste img{max-width: 100%;}
+[drop].drop-is-scroll .placePaste img{max-width: none; max-height: none;width: auto;height: auto;}
+[[#drop-loading div]]{background-image: url(drop.gif);}
