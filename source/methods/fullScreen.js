@@ -13,19 +13,20 @@
         }
     }
 
-    function _shortScreen(self) {
+    function _shortScreen(self, native) {
         var drop = this,
             drp = drop.data('drp');
         drp.isFullScreen = false;
         drop.css($.drop.drp.standartScreenStyle);
-        changeScreen.call(document, clearFull);
+        if (!native)
+            changeScreen.call(document, clearFull);
         self._checkMethod(function () {
             self._heightContent(drop);
         });
         drp.limitSize = drp.oldLimitSize;
     }
 
-    function _fullScreen(self) {
+    function _fullScreen(self, native) {
         var drop = this,
             drp = drop.data('drp');
 
@@ -40,7 +41,9 @@
             top: drop.css('top')
         }
 
-        changeScreen.call(body, setFull);
+        console.log(native)
+        if (!native)
+            changeScreen.call(body, setFull);
 
         setTimeout(function () {
             drop.css({
@@ -67,17 +70,6 @@
             var drop = obj.drop,
                 header = drop.find(opt.placeHeader).first();
 
-            (function (obj, drop) {
-                $(window).off('keyup.fullScreen').on('keyup.fullScreen', function (e) {
-                    if (e.keyCode === 122) {
-                        if (drop.data('drp').isFullScreen)
-                            _shortScreen.call(drop, obj.methods);
-                        else
-                            _fullScreen.call(drop, obj.methods);
-                    }
-                });
-            })(obj, drop);
-
             if ($.drop.drp.existsN(header)) {
                 header.off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
                     $(document).on('mousedown.fullScreen', function (e) {
@@ -85,6 +77,14 @@
                     });
                 });
                 (function (obj, drop) {
+                    $(document).off('webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange').on('webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', function () {
+                        if ((document.fullscreenElement && document.fullscreenElement !== null) || // alternative standard methods
+                            document.mozFullScreen || document.webkitIsFullScreen)
+                            _fullScreen.call(drop, obj.methods, true);
+                        else
+                            _shortScreen.call(drop, obj.methods, true);
+                    });
+
                     header.off('dblclick.' + $.drop.nS).on('dblclick.' + $.drop.nS, function (e) {
                         $(document).off('mousedown.fullScreen');
                         if (drop.data('drp').isFullScreen)
