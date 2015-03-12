@@ -1,4 +1,4 @@
-jQuery.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, el) {
+jQuery.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, el, undefined) {
     var self = this,
             $ = jQuery;
     if (opt.alert) {

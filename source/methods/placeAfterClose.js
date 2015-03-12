@@ -1,4 +1,4 @@
-(function ($, wnd) {
+(function ($, wnd, undefined) {
     $.drop.setMethod('placeAfterClose', function (drop, $this, opt) {
         if (opt.place === 'inherit' || !opt.placeAfterClose)
             return false;

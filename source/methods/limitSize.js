@@ -1,4 +1,4 @@
-jQuery.drop.setMethod('_heightContent', function (drop) {
+jQuery.drop.setMethod('_heightContent', function (drop, undefined) {
     var self = this,
         $ = jQuery,
         wnd = $(window);
@@ -81,7 +81,7 @@ jQuery.drop.setMethod('_heightContent', function (drop) {
             drop.hide();
     });
 });
-jQuery.drop.setMethod('limitSize', function (drop) {
+jQuery.drop.setMethod('limitSize', function (drop, undefined) {
     var self = this,
         $ = jQuery;
     return drop.each(function () {
@@ -95,7 +95,7 @@ jQuery.drop.setMethod('limitSize', function (drop) {
         });
     });
 });
-jQuery.drop.setMethod('_limit', function (drop, drp, add) {
+jQuery.drop.setMethod('_limit', function (drop, drp, add, undefined) {
     var wnd = $(window);
     if (drp.type === 'image')
         var img = drop.find(drp.placePaste).children('img').css({'max-width': '', 'max-height': ''});

@@ -1,4 +1,4 @@
-(function ($, wnd, doc) {
+(function ($, wnd, doc, undefined) {
     var methods = {
         init: function (options) {
             var set = $.extend({}, DP, options);

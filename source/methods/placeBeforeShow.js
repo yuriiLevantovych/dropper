@@ -1,4 +1,4 @@
-(function ($, wnd) {
+(function ($, wnd, undefined) {
     $.drop.setMethod('placeBeforeShow', function (drop, $this, opt) {
         var self = this;
 

@@ -1,4 +1,4 @@
-jQuery.drop.setMethod('droppable', function(drop) {
+jQuery.drop.setMethod('droppable', function(drop, undefined) {
     var $ = jQuery,
             wnd = $(window),
             doc = $(document);

@@ -1,4 +1,4 @@
-(function ($) {
+(function ($, undefined) {
     var _galleryDecorator = function (rel, btn, i) {
         var self = this;
         return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.drop.drp.activeClass).each(function () {

@@ -1,6 +1,7 @@
-(function ($, body) {
+(function ($, body, undefined) {
     var setFull = body.requestFullScreen || body.webkitRequestFullScreen || body.mozRequestFullScreen || body.msRequestFullscreen,
-        clearFull = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msCancelFullscreen;
+        clearFull = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msCancelFullscreen,
+        nS = 'fullScreen';
 
     function changeScreen(method) {
         if (method) {
@@ -41,7 +42,6 @@
             top: drop.css('top')
         }
 
-        console.log(native)
         if (!native)
             changeScreen.call(body, setFull);
 
@@ -59,12 +59,12 @@
             });
         }, 100);
 
-        drop.off('dropClose.fullScreen').on('dropClose.fullScreen', function () {
+        drop.off('dropClose.' + nS).on('dropClose.' + nS, function () {
             changeScreen.call(document, clearFull);
         });
     }
 
-    $(document).off('dropBefore.fullScreen').on('dropBefore.fullScreen', function (event, obj) {
+    $(document).off('dropBefore.' + nS).on('dropBefore.' + nS, function (event, obj) {
         var opt = obj.options;
         if (opt.fullScreen) {
             var drop = obj.drop,
@@ -72,26 +72,35 @@
 
             if ($.drop.drp.existsN(header)) {
                 header.off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
-                    $(document).on('mousedown.fullScreen', function (e) {
+                    $(document).on('mousedown.' + nS, function (e) {
                         e.preventDefault();
                     });
                 });
                 (function (obj, drop) {
-                    $(document).off('webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange').on('webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', function () {
-                        if ((document.fullscreenElement && document.fullscreenElement !== null) || // alternative standard methods
-                            document.mozFullScreen || document.webkitIsFullScreen)
-                            _fullScreen.call(drop, obj.methods, true);
-                        else
-                            _shortScreen.call(drop, obj.methods, true);
+                    $(window).off('keyup.' + nS).on('keyup.' + nS, function (e) {
+                        if (e.keyCode === 122) {
+                            if (drop.data('drp').isFullScreen)
+                                _shortScreen.call(drop, obj.methods);
+                            else
+                                _fullScreen.call(drop, obj.methods);
+                        }
                     });
 
-                    header.off('dblclick.' + $.drop.nS).on('dblclick.' + $.drop.nS, function (e) {
-                        $(document).off('mousedown.fullScreen');
+                    header.off('click.' + nS).on('click.' + nS, function (e) {
+                        $(document).off('mousedown.' + nS);
                         if (drop.data('drp').isFullScreen)
                             _shortScreen.call(drop, obj.methods);
                         else
                             _fullScreen.call(drop, obj.methods);
                     });
+                    if ($.drop.drp.isTouch)
+                        $(document).off('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS).on('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS, function () {
+                            if ((document.fullscreenElement && document.fullscreenElement !== null) || // alternative standard methods
+                                document.mozFullScreen || document.webkitIsFullScreen)
+                                _fullScreen.call(drop, obj.methods, true);
+                            else
+                                _shortScreen.call(drop, obj.methods, true);
+                        });
                 })(obj, drop);
             }
         }
