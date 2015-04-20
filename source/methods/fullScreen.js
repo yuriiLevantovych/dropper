@@ -1,8 +1,10 @@
-(function ($, body, undefined) {
+(function ($, body) {
     var setFull = body.requestFullScreen || body.webkitRequestFullScreen || body.mozRequestFullScreen || body.msRequestFullscreen,
         clearFull = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msCancelFullscreen,
         nS = 'fullScreen';
 
+function checkFullScreen(){	
+return  ((document.fullscreenElement && document.fullscreenElement !== null) ||  document.mozFullScreen || document.webkitIsFullScreen) && window.innerHeight === screen.height;}
     function changeScreen(method) {
         if (method) {
             method.call(this);
@@ -44,9 +46,18 @@
 
         if (!native)
             changeScreen.call(body, setFull);
-
-        setTimeout(function () {
-            drop.css({
+	
+        (function () {
+        				var drop = this;
+		        		
+		        		if (!checkFullScreen()){
+		        				var callee = arguments.callee;
+		        				setTimeout(function(){
+		        						callee.call(drop);
+		        		 		}, 10)
+		        		 		return;
+		        		}
+		        		drop.css({
                 width: '100%',
                 height: '100%',
                 'box-sizing': 'border-box',
@@ -57,7 +68,7 @@
             self._checkMethod(function () {
                 self._heightContent(drop);
             });
-        }, 100);
+        }).call(drop);
 
         drop.off('dropClose.' + nS).on('dropClose.' + nS, function () {
             changeScreen.call(document, clearFull);
@@ -95,8 +106,7 @@
                     });
                     if ($.drop.drp.isTouch)
                         $(document).off('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS).on('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS, function () {
-                            if ((document.fullscreenElement && document.fullscreenElement !== null) || // alternative standard methods
-                                document.mozFullScreen || document.webkitIsFullScreen)
+                            if (checkFullScreen())
                                 _fullScreen.call(drop, obj.methods, true);
                             else
                                 _shortScreen.call(drop, obj.methods, true);
