@@ -3,63 +3,69 @@ module.exports = function (grunt) {
 // 1. All configuration goes here 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+
+        clean: ["dist"],
+
         concat: {
             jsfull: {
                 /*for general scripts*/
                 src: [
-                    'bower_components/jquery/dist/jquery.min.js',
                     'bower_components/jquery-mousewheel/jquery.mousewheel.min.js',
                     'bower_components/jscrollpane/script/jquery.jscrollpane.min.js',
-                    'drop/jquery.drop.js',
-                    'drop/methods/*.js'
+                    'src/jquery.drop.js',
+                    'src/methods/*.js'
                 ],
-                dest: 'dest/full.concat.js'
+                dest: 'dist/full.concat.js'
             },
 
         },
-        // sass: {
-        //     dist: {
-        //         /*for general style*/
-        //         options: {
-        //             style: 'compressed'
-        //         },
-        //         files: {
-        //             'css/build/style.css': 'css/build/style.concat.css'
-        //         }
-        //     },
-        //     dist2: {
-        //         /*for styles separate pages*/
-        //         options: {
-        //             style: 'compressed'
-        //         },
-        //         files: [{
-        //                 expand: true,
-        //                 cwd: 'css/process/other/',
-        //                 src: ['*.css'],
-        //                 dest: 'css/build/other'
-        //             }]
-        //     }
-        //     /*for styles separate pages*/
-        // },
         uglify: {
-            jsfull: {
-                src: 'dest/full.concat.js',
-                dest: 'dest/full.concat.min.js'
+            main: {
+                src: 'src/jquery.drop.js',
+                dest: 'dist/jquery.drop.min.js'
             },
-            // dist3: {
-            //     files: [{
-            //             expand: true,
-            //             cwd: 'js/process/plugins/',
-            //             src: ['*.js'],
-            //             dest: 'js/build/plugins/'
-            //         }]
-            // }
+            jsfull: {
+                src: 'dist/full.concat.js',
+                dest: 'dist/full.concat.min.js'
+            },
+            methods: {
+                 files: [{
+                         expand: true,
+                         cwd: 'src/methods',
+                         src: ['**/*.js'],
+                         dest: 'dist/methods',
+                         ext: '.min.js'
+                     }]
+            }
+        },
+        cssmin: {
+          target: {
+            files: [{
+              expand: true,
+              cwd: 'src/styles',
+              src: ['*.css',],
+              dest: 'dist/styles',
+              ext: '.min.css'
+            }]
+          }
+        },
+        imagemin: {
+            dynamic: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/images',
+                    src: ['**/*.{png,jpg,gif}'],
+                    dest: 'dist/images/'
+                }]
+            }
         }
     });
     // 3. Where we tell Grunt we plan to use this plug-in.
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
-    //grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-imagemin');
     // 4. Where we tell Grunt what to do when we type "grunt" into the terminal.
-    grunt.registerTask('default', ['concat', 'uglify']);
+    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'cssmin', 'imagemin']);
 };
