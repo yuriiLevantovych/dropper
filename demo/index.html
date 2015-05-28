@@ -3,12 +3,12 @@
     <title>TODO supply a title</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="bootstrap-theme.css"/>
-    <script src="../libs/jquery.js"></script>
-    <script src="../libs/jquery.jscrollpane.min.js"></script>
-    <script src="../libs/jquery.mousewheel.js"></script>
-    <script src="../source/jquery.drop.js"></script>
+    <link rel="stylesheet" type="text/css" href="../bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../bower_components/bootstrap/dist/css/bootstrap-theme.css"/>
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../bower_components/jscrollpane/script/jquery.jscrollpane.min.js"></script>
+    <script src="../bower_components/jquery-mousewheel/jquery.mousewheel.min.js"></script>
+    <script src="../src/jquery.drop.js"></script>
     <style>
         html, body, table, p, div, li, ul, ol, td, th, h1, h2, h3, h4, h5 {
             margin: 0;
@@ -163,20 +163,20 @@
         </li>
         <li>
             <div><h3>Simple Ajax</h3> <i>(without value of parametr <b>drop</b>)</i></div>
-            <a href="with_pattern.php" data-drop>ajax</a>
+            <a href="ext/with_pattern.php" data-drop>ajax</a>
         </li>
         <li>
             <div><h3>Simple Ajax without pattern</h3> <i>(with parametr <b>drop</b>)</i></div>
-            <a href="without_pattern.php" data-drop="#ajax">ajax without pattern</a>
+            <a href="ext/without_pattern.php" data-drop="#ajax">ajax without pattern</a>
         </li>
         <li>
             <div><h3>Ajax with constant loading</h3> <i>(without parametr <b>always: true</b> popup loading only
                 once)</i></div>
-            <a href="with_pattern.php" data-drop data-always="true">ajax always</a>
+            <a href="ext/with_pattern.php" data-drop data-always="true">ajax always</a>
         </li>
         <li>
             <div><h3>Simple Iframe</h3> <a href="#inheritDetail">detail about <b>type: iframe</b></a></div>
-            <a href="iframe.html" data-drop data-type="iframe">iframe</a>
+            <a href="ext/iframe.html" data-drop data-type="iframe">iframe</a>
         </li>
         <li>
             <div><h3>Simple notify inline</h3></div>
@@ -201,12 +201,12 @@
         </li>
         <li>
             <div><h3>Notify ajax</h3></div>
-            <a href="notify.php" data-drop data-notify="true">notify</a>
+            <a href="ext/notify.php" data-drop data-notify="true">notify</a>
         </li>
         <li>
             <div><h3>Parametr place with value (global)</h3> <a href="#inheritDetail">detail about <b>place: global</b></a>
             </div>
-            <a href="with_pattern.php" data-drop data-place="global" data-overlay="false">global position</a>
+            <a href="ext/with_pattern.php" data-drop data-place="global" data-overlay="false">global position</a>
         </li>
         <li>
             <div><h3>Simple context inline</h3> <i>(click right button mouse)</i> <a href="#inheritDetail">detail about
@@ -283,13 +283,13 @@
                 <a href="#inheritDetail">detail about <b>gallery</b></a></div>
             <ul class="items-gallery">
                 <li>
-                    <a href="1.jpg" rel="group" data-hash="#a1"><img src="1.jpg"/></a>
+                    <a href="img/1.jpg" rel="group" data-hash="#a1"><img src="img/1.jpg"/></a>
                 </li>
                 <li>
-                    <a href="2.jpg" rel="group" data-hash="#a2"><img src="2.jpg"/></a>
+                    <a href="img/2.jpg" rel="group" data-hash="#a2"><img src="img/2.jpg"/></a>
                 </li>
                 <li>
-                    <a href="3.jpg" rel="group" data-hash="#a3"><img src="3.jpg"/></a>
+                    <a href="img/3.jpg" rel="group" data-hash="#a3"><img src="img/3.jpg"/></a>
                 </li>
             </ul>
         </li>
@@ -1088,9 +1088,9 @@
                     <br/>
                     <code>$.drop( {href : 'with_pattern.php', header : 'Lorem lipsum'} );</code> - single object
                     <br/>
-                    <code>$.drop( ['1.jpg', '2.jpg'] );</code> - array containing links as strings (only images)
+                    <code>$.drop( ['img/1.jpg', 'img/2.jpg'] );</code> - array containing links as strings (only images)
                     <br/>
-                    <code>$.drop( '1.jpg' );</code> - string as source link (only images)
+                    <code>$.drop( 'img/1.jpg' );</code> - string as source link (only images)
                     <br/>
                     <code>$.drop( [jQuery object] );</code>
                     <br/>
@@ -1483,7 +1483,7 @@
                         <ul>
                             <li>
                                 <div><h3>Iframe with parameters width and height</h3></div>
-                                <a href="iframe.html" data-drop data-type="iframe" data-width="500" data-height="500">iframe</a>
+                                <a href="ext/iframe.html" data-drop data-type="iframe" data-width="500" data-height="500">iframe</a>
                             </li>
                             <li>
                                 <div><h3>Iframe from other domain</h3> <i>(window.parent.postMessage for opening inside "drop")</i></div>
@@ -1519,12 +1519,12 @@
                             </li>
                             <li>
                                 <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and href)</div>
-                                <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit">inherit position</a>
+                                <a href="ext/with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit">inherit position</a>
                                 <div class="placeInherit"><i>PlaceInherit</i></div>
                             </li>
                             <li>
                                 <div><h3>Parametr place with value inherit</h3> (inherit with parametr placeInherit and methoPlaceInherit "append")</div>
-                                <a href="with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit" data-method-place-inherit="append">inherit position</a>
+                                <a href="ext/with_pattern.php" data-drop data-place="inherit" data-overlay="false" data-close-active-click="true" data-place-inherit=".placeInherit" data-method-place-inherit="append">inherit position</a>
                             </li>
                         </ul>
                     </li>
@@ -1569,6 +1569,7 @@
         $.drop.require(['droppable', 'limitSize', 'gallery', 'placeBeforeShow', 'placeAfterClose', 'confirmPromptAlert', 'fullScreen'], function () {
             $('[rel]').drop({
                 scrollContent: false,
+                limitSize: true,
                 header: function (opt) {
                     return ($.inArray(opt.href, $.drop.drp.gallery[opt.rel]) + 1) + ' картинка';
                 }
