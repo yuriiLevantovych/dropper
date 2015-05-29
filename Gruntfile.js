@@ -6,14 +6,20 @@ module.exports = function (grunt) {
         clean: ["dist"],
 
         concat: {
+            jsdropfull: {
+                src: [
+                    'src/jquery.dropper.js',
+                    'src/methods/*.js'
+                ],
+                dest: 'dist/jquery.drop.full.js'
+            },
             jsfull: {
                 src: [
                     'bower_components/jquery-mousewheel/jquery.mousewheel.min.js',
                     'bower_components/jscrollpane/script/jquery.jscrollpane.min.js',
-                    'src/jquery.dropper.js',
-                    'src/methods/*.js'
+                    'dist/jquery.drop.full.js'
                 ],
-                dest: 'dist/full.concat.js'
+                dest: 'dist/full.js'
             }
         },
         uglify: {
@@ -21,9 +27,13 @@ module.exports = function (grunt) {
                 src: 'src/jquery.dropper.js',
                 dest: 'dist/jquery.dropper.min.js'
             },
+            jsdropfull: {
+                src: 'dist/jquery.drop.full.js',
+                dest: 'dist/jquery.drop.full.min.js'
+            },
             jsfull: {
-                src: 'dist/full.concat.js',
-                dest: 'dist/full.concat.min.js'
+                src: 'dist/full.js',
+                dest: 'dist/full.min.js'
             },
             methods: {
                 files: [{
@@ -35,17 +45,17 @@ module.exports = function (grunt) {
                 }]
             }
         },
-        cssmin: {
-            target: {
-                files: [{
-                    expand: true,
-                    cwd: 'src/styles',
-                    src: ['*.css'],
-                    dest: 'dist/styles',
-                    ext: '.min.css'
-                }]
-            }
-        },
+        //cssmin: {
+        //    target: {
+        //        files: [{
+        //            expand: true,
+        //            cwd: 'src/styles',
+        //            src: ['*.css'],
+        //            dest: 'dist/styles',
+        //            ext: '.min.css'
+        //        }]
+        //    }
+        //},
         imagemin: {
             dynamic: {
                 files: [{
@@ -55,14 +65,23 @@ module.exports = function (grunt) {
                     dest: 'dist/images/'
                 }]
             }
+        },
+        copy: {
+            main: {
+                expand: true,
+                cwd: 'src/styles',
+                src: '**',
+                dest: 'dist/styles'
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    //grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
-    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'cssmin', 'imagemin']);
+    grunt.registerTask('default', ['clean', 'concat', 'copy', 'uglify', 'imagemin']);
 };

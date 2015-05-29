@@ -759,9 +759,9 @@
             return $('<style>', {
                 'data-rel': opt.tempClassS,
                 html: text
-                    .replace(/\s{2,}/g, ' ')
-                    .replace(/\}[^$](?!\s*\[dropper\])/g, '} ' + opt.tempClassS + ' ')/*paste before begin row*/
-                    .replace(/\/\*\[(.*?)\]\*\//g, '$1')
+                    .replace(/\s\s+/g, ' ')
+                    .replace(/\}[^$\*](?!\s*(\[dropper\]|\{\s*\/\*))/g, '} ' + opt.tempClassS + ' ')/*paste before begin row*/
+                    .replace(/\{\s*\/\*(.*?)\*\/\s*\}/g, '$1')
                     .replace(/^(?!\s*\[dropper\])/, opt.tempClassS + ' ')/*for first row*/
                     .replace(/\[dropper\]/g, opt.tempClassS)
                     .replace(/url\((.*)\)/g, 'url(' + D.url + 'images/' + opt.theme + '/$1)')
@@ -1038,7 +1038,7 @@
                     .jspArrowUp:before{content: "\\25b2";}\n\
                     .jspArrowDown:before{content: "\\25bc";}\n\
                     .jspArrowLeft:before{content: "\\25c4";}\n\
-                    /*[#dropper-loading div{background-image: url(dropper.gif);}]*/\n\
+                    {/*#dropper-loading div{background-image: url(loader.gif);}*/}\n\
                     .jspArrowRight:before{content: "\\25ba";}'
         },
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
@@ -1095,7 +1095,7 @@
         exists: function (selector) {
             return $(selector).length > 0 && $(selector) instanceof $;
         },
-        url: $("[src$='dropper.js']").attr('src') + '/../',
+        url: $("[src$='dropper.js'], [src$='dropper.min.js']").attr('src') + '/../',
         requireLength: 0,
         requireCur: 0
     };
@@ -1124,25 +1124,30 @@
     $.dropper.setThemes = function () {
         for (var i = 0; i < arguments.length; i++) {
             var obj = {};
-            if (arguments[i].file !== undefined)
+            if (arguments[i].file !== undefined) {
                 (function (o, obj) {
                     $.ajax({
-                        url: D.url + 'styles/' + o.file,
+                        url: D.url + 'styles/' + o.file + '.css',
                         dataType: 'text',
                         cache: true,
                         success: function (data) {
                             obj[o.name] = data;
                             $.extend(D.theme, obj);
+                            if (o.callback)
+                                o.callback.call($.dropper, o.name);
                         },
                         error: function () {
                             throw methods._errorM(arguments[2]);
                         }
                     });
                 })(arguments[i], obj);
-            else {
+            }
+            else if (arguments[i].text) {
                 obj[arguments[i].name] = arguments[i].text;
                 $.extend(D.theme, obj);
             }
+            else
+                throw methods._errorM('Data not enough');
         }
         return this;
     };

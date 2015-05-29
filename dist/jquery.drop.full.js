@@ -1236,3 +1236,678 @@
         }, 0);
     }).on('message.' + $.dropper.nS, D.handlerMessageWindow);
 })(jQuery, jQuery(window), jQuery(document));
+jQuery.dropper.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, el, undefined) {
+    var self = this,
+            $ = jQuery;
+    if (opt.alert) {
+        var optC = $.extend({}, opt),
+                dropper = self._pasteDropper(optC, opt.patternAlert),
+                pp = dropper.find(opt.placePaste).empty();
+
+        if (opt.alertText && $.dropper.drp.existsN(pp))
+            pp.html(function () {
+                try {
+                    if ($.type(eval(opt.alertText)) === 'function')
+                        return eval(opt.alertText).call($(this), opt, dropper, el);
+                } catch (e) {
+                    return opt.alertText;
+                }
+            });
+
+        self._show.call(el, dropper, e, optC, hashChange);
+
+        (function (dropper, _confirmF, opt) {
+            dropper.find(opt.alertActionBtn).off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
+                e.stopPropagation();
+                self.close.call(dropper, e, _confirmF);
+                if (opt.ok)
+                    eval(opt.ok).call(el, opt, dropper, e, 'alert');
+                dropper.trigger('dropperOk', {
+                    type: 'alert',
+                    event: e,
+                    anchor: el,
+                    dropper: dropper,
+                    options: opt,
+                    methods: self
+                });
+            });
+        })(dropper, _confirmF, opt);
+    }
+    else if (opt.confirm) {
+        var optC = $.extend({}, opt),
+                dropper = self._pasteDropper(optC, opt.patternConfirm),
+                pp = dropper.find(opt.placePaste).empty();
+        if (opt.confirmText && $.dropper.drp.existsN(pp))
+            pp.html(function () {
+                try {
+                    if ($.type(eval(opt.confirmText)) === 'function')
+                        return eval(opt.confirmText).call($(this), opt, dropper, el);
+                } catch (e) {
+                    return opt.confirmText;
+                }
+            });
+
+        self._show.call(el, dropper, e, optC, hashChange);
+
+        (function (dropper, _confirmF, opt) {
+            dropper.find(opt.confirmActionBtn).off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
+                e.stopPropagation();
+                self.close.call(dropper, e, _confirmF);
+                if (opt.ok)
+                    eval(opt.ok).call(el, opt, dropper, e, 'confirm');
+                dropper.trigger('dropperOk', {
+                    type: 'confirm',
+                    event: e,
+                    anchor: el,
+                    dropper: dropper,
+                    options: opt,
+                    methods: self
+                });
+            });
+        })(dropper, _confirmF, opt);
+    }
+    else if (opt.prompt) {
+        var optP = $.extend({}, opt),
+                dropper = self._pasteDropper(optP, opt.patternPrompt),
+                pp = dropper.find(opt.placePaste).empty();
+
+        if (opt.promptText && $.dropper.drp.existsN(pp))
+            pp.html(function () {
+                try {
+                    if ($.type(eval(opt.promptText)) === 'function')
+                        return eval(opt.promptText).call($(this), opt, dropper, el);
+                } catch (e) {
+                    return opt.promptText;
+                }
+            });
+
+        self._show.call(el, dropper, e, optP, hashChange);
+
+        (function (dropper, _confirmF, opt, optP) {
+            dropper.find(opt.promptActionBtn).off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
+                e.stopPropagation();
+                var getUrlVars = function (url) {
+                    var hash, myJson = {}, hashes = url.slice(url.indexOf('?') + 1).split('&');
+                    for (var i = 0; i < hashes.length; i++) {
+                        hash = hashes[i].split('=');
+                        myJson[hash[0]] = hash[1];
+                    }
+                    return myJson;
+                };
+
+                optP.dataPrompt = opt.dataPrompt = getUrlVars($(this).closest('form').serialize());
+                self.close.call(dropper, e, _confirmF);
+                if (opt.ok)
+                    eval(opt.ok).call(el, opt, dropper, e, 'prompt', opt.dataPrompt);
+                dropper.trigger('dropperOk', {
+                    type: 'prompt',
+                    dataPrompt: opt.dataPrompt,
+                    event: e,
+                    anchor: el,
+                    dropper: dropper,
+                    options: opt,
+                    methods: self
+                });
+            });
+        })(dropper, _confirmF, opt, optP);
+    }
+    el.data('dropperConfirmPromptAlert', dropper);
+    return self;
+});
+jQuery.dropper.setMethod('droppable', function(dropper, undefined) {
+    var $ = jQuery,
+            wnd = $(window),
+            doc = $(document);
+    return (dropper || this).each(function() {
+        var dropper = $(this);
+        dropper.off('dropperClose.' + $.dropper.nS).on('dropperClose.' + $.dropper.nS, function() {
+            $(this).off('mousedown.' + $.dropper.nS);
+        });
+        dropper.find('img').off('dragstart.' + $.dropper.nS).on('dragstart.' + $.dropper.nS, function(e) {
+            e.preventDefault();
+        });
+        wnd.off('scroll.droppable' + $.dropper.nS);
+        dropper.on('mousedown.' + $.dropper.nS, function(e) {
+            var dropper = $(this),
+                    drp = dropper.data('drp');
+            if ($(e.target).is(':input, button') || $.dropper.drp.existsN($(e.target).closest('button')))
+                return false;
+            var dropper = $(this),
+                    w = dropper.outerWidth(),
+                    h = dropper.outerHeight(),
+                    wndW = wnd.width(),
+                    wndH = wnd.height();
+            if ((w > wndW || h > wndH) && drp.droppableLimit)
+                return false;
+            doc.on('mouseup.' + $.dropper.nS, function(e) {
+                dropper.css('cursor', '');
+                doc.off('selectstart.' + $.dropper.nS + ' mousemove.' + $.dropper.nS + ' mouseup.' + $.dropper.nS);
+                if (drp.droppableFixed) {
+                    $.dropper.drp.scrollTopD = wnd.scrollTop();
+                    drp.top = parseInt(dropper.css('top'));
+                    wnd.on('scroll.droppable' + $.dropper.nS, function(e) {
+                        var n = wnd.scrollTop(),
+                                top = drp.top - $.dropper.drp.scrollTopD + n;
+                        dropper.css('top', top);
+                        drp.top = top;
+                        $.dropper.drp.scrollTopD = n;
+                    });
+                }
+            });
+            var left = e.pageX - dropper.offset().left,
+                    top = e.pageY - dropper.offset().top;
+            dropper.css('cursor', 'move');
+            doc.off('selectstart.' + $.dropper.nS).on('selectstart.' + $.dropper.nS, function(e) {
+                e.preventDefault();
+            });
+            doc.off('mousemove.' + $.dropper.nS).on('mousemove.' + $.dropper.nS, function(e) {
+                e.preventDefault();
+                drp.droppableIn = true;
+                var l = e.pageX - left,
+                        t = e.pageY - top;
+                if (drp.droppableLimit) {
+                    l = l < 0 ? 0 : l;
+                    t = t < 0 ? 0 : t;
+                    l = l + w < wndW + wnd.scrollLeft() ? l : wndW - w;
+                    t = t + h < wndH + wnd.scrollTop() ? t : wndH - h + wnd.scrollTop();
+                    l = l < wnd.scrollLeft() ? wnd.scrollLeft() : l;
+                    t = t < wnd.scrollTop() ? wnd.scrollTop() : t;
+                }
+                dropper.css({
+                    'left': l,
+                    'top': t
+                });
+            });
+        });
+    });
+});
+(function ($, body) {
+    var setFull = body.requestFullScreen || body.webkitRequestFullScreen || body.mozRequestFullScreen || body.msRequestFullscreen,
+        clearFull = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msCancelFullscreen,
+        nS = 'fullScreen';
+
+    function checkFullScreen() {
+        return ((document.fullscreenElement && document.fullscreenElement !== null) || document.mozFullScreen || document.webkitIsFullScreen) && window.innerHeight === screen.height;
+    }
+
+    function changeScreen(method) {
+        if (method) {
+            method.call(this);
+        } else if (typeof window.ActiveXObject !== "undefined") {
+            var wscript = new ActiveXObject("WScript.Shell");
+            if (wscript !== null) {
+                wscript.SendKeys("{F11}");
+            }
+        }
+    }
+
+    function _shortScreen(self, native) {
+        var dropper = this,
+            drp = dropper.data('drp');
+        drp.isFullScreen = false;
+        dropper.css($.dropper.drp.standartScreenStyle);
+        if (!native)
+            changeScreen.call(document, clearFull);
+        self._checkMethod(function () {
+            self._heightContent(dropper);
+        });
+        drp.limitSize = drp.oldLimitSize;
+    }
+
+    function _fullScreen(self, native) {
+        var dropper = this,
+            drp = dropper.data('drp');
+
+        drp.isFullScreen = true;
+        drp.oldLimitSize = drp.limitSize;
+        drp.limitSize = true;
+
+        $.dropper.drp.standartScreenStyle = {
+            width: dropper.css('width'),
+            height: dropper.css('height'),
+            left: dropper.css('left'),
+            top: dropper.css('top')
+        }
+
+        if (!native)
+            changeScreen.call(body, setFull);
+
+        (function () {
+            var dropper = this;
+
+            if (!checkFullScreen()) {
+                var callee = arguments.callee;
+                setTimeout(function () {
+                    callee.call(dropper);
+                }, 10)
+                return;
+            }
+            dropper.css({
+                width: '100%',
+                height: '100%',
+                'box-sizing': 'border-box',
+                left: 0,
+                top: 0
+            });
+
+            self._checkMethod(function () {
+                self._heightContent(dropper);
+            });
+        }).call(dropper);
+
+        dropper.off('dropperClose.' + nS).on('dropperClose.' + nS, function () {
+            changeScreen.call(document, clearFull);
+        });
+    }
+
+    $(document).off('dropperBefore.' + nS).on('dropperBefore.' + nS, function (event, obj) {
+        var opt = obj.options;
+        if (opt.fullScreen) {
+            var dropper = obj.dropper,
+                header = dropper.find(opt.placeHeader).first();
+
+            if ($.dropper.drp.existsN(header)) {
+                header.off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
+                    $(document).on('mousedown.' + nS, function (e) {
+                        e.preventDefault();
+                    });
+                });
+                (function (obj, dropper) {
+                    $(window).off('keyup.' + nS).on('keyup.' + nS, function (e) {
+                        if (e.keyCode === 122) {
+                            if (dropper.data('drp').isFullScreen)
+                                _shortScreen.call(dropper, obj.methods);
+                            else
+                                _fullScreen.call(dropper, obj.methods);
+                        }
+                    });
+
+                    header.off('dblclick.' + nS).on('dblclick.' + nS, function (e) {
+                        $(document).off('mousedown.' + nS);
+                        if (dropper.data('drp').isFullScreen)
+                            _shortScreen.call(dropper, obj.methods);
+                        else
+                            _fullScreen.call(dropper, obj.methods);
+                    });
+                    if ($.dropper.drp.isTouch)
+                        $(document).off('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS).on('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS, function () {
+                            if (checkFullScreen())
+                                _fullScreen.call(dropper, obj.methods, true);
+                            else
+                                _shortScreen.call(dropper, obj.methods, true);
+                        });
+                })(obj, dropper);
+            }
+        }
+    });
+
+})(jQuery, document.body);
+(function ($, undefined) {
+    var _galleryDecorator = function (rel, btn, i) {
+        var self = this;
+        return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.dropper.drp.activeClass).each(function () {
+            var $this = $(this),
+                    drp = $this.data('drp');
+            self.gallery($this, drp, btn, i);
+        });
+    };
+    $.dropper.setMethod('_cIGallery', function (rel) {
+        var $ = jQuery;
+        clearInterval($.dropper.drp.autoPlayInterval[rel]);
+        delete $.dropper.drp.autoPlayInterval[rel];
+    });
+    $.dropper.setMethod('gallery', function (dropper, opt, btn, i) {
+        var $ = jQuery,
+                doc = $(document),
+                self = this,
+                relA = $.dropper.drp.gallery[opt.rel];
+        if (!relA)
+            return self;
+        var relL = relA.length;
+        if (relL <= 1)
+            return self;
+        var relP = $.inArray(opt.href, relA),
+                prev = $.type(opt.prev) === 'string' ? dropper.find(opt.prev) : opt.prev,
+                next = $.type(opt.next) === 'string' ? dropper.find(opt.next) : opt.next;
+        prev.add(next).hide().attr('disabled', 'disabled');
+        if (relP === -1)
+            return false;
+        if (!(relP !== relL - 1 || relP !== 0 || opt.cycle))
+            return false;
+        if (relP !== relL - 1)
+            next.show().removeAttr('disabled');
+        if (relP !== 0)
+            prev.show().removeAttr('disabled');
+        if (opt.cycle)
+            prev.add(next).show().removeAttr('disabled');
+        var _goto = function (i, e) {
+            if (!relA[i]) {
+                relP -= 1;
+                return false;
+            }
+            var $next = $('[data-href="' + relA[i] + '"][rel="' + opt.rel + '"], [href="' + relA[i] + '"][rel="' + opt.rel + '"]');
+            self._cIGallery(opt.rel);
+            self.open.call($next, $.extend($.extend({}, opt), $next.data('drp'), {href: relA[i], dropper: null}), e);
+        };
+        var _getnext = function (i) {
+            relP += i;
+            if (opt.cycle) {
+                if (relP >= relL)
+                    relP = 0;
+                if (relP < 0)
+                    relP = relL - 1;
+            }
+            return relP;
+        };
+        prev.add(next).off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
+            e.stopPropagation();
+            relP = $.inArray(opt.href, relA);
+            self._cIGallery(opt.rel);
+            _goto(_getnext($(this).is(prev) ? -1 : 1), e);
+        });
+        if (i !== undefined && i !== null && relP !== i && relA[i])
+            _goto(i, null);
+        if (btn)
+            _goto(_getnext(btn === 1 ? 1 : -1), null);
+        if (i === null)
+            if (opt.autoPlay) {
+                opt.autoPlay = false;
+                self._cIGallery(opt.rel);
+            }
+            else
+                opt.autoPlay = true;
+        if (opt.autoPlay) {
+            if ($.dropper.drp.autoPlayInterval[opt.rel])
+                self._cIGallery(opt.rel);
+            else
+                $.dropper.drp.autoPlayInterval[opt.rel] = setInterval(function () {
+                    self._cIGallery(opt.rel);
+                    _goto(_getnext(1));
+                }, opt.autoPlaySpeed);
+        }
+        dropper.off('dropperClose.' + $.dropper.nS).on('dropperClose.' + $.dropper.nS, function () {
+            self._cIGallery($(this).data('drp').rel);
+            doc.off('keydown.' + $.dropper.nS + opt.rel);
+        });
+        if (opt.keyNavigate)
+            dropper.off('dropperAfter.' + $.dropper.nS).on('dropperAfter.' + $.dropper.nS, function () {
+                var opt = $(this).data('drp');
+                doc.off('keydown.' + $.dropper.nS + opt.rel).on('keydown.' + $.dropper.nS + opt.rel, function (e) {
+                    var key = e.keyCode;
+                    if (key === 37 || key === 39) //that window scrollLeft nochange after press left & right buttons
+                        e.preventDefault();
+                    if (key === 37)
+                        _goto(_getnext(-1), e);
+                    if (key === 39)
+                        _goto(_getnext(1), e);
+                });
+            });
+        return self;
+    });
+    $.dropper.next = function (rel) {
+        return _galleryDecorator(rel, 1);
+    };
+    $.dropper.prev = function (rel) {
+        return _galleryDecorator(rel, -1);
+    };
+    $.dropper.jumpto = function (i, rel) {
+        return _galleryDecorator(rel, null, i);
+    };
+    $.dropper.play = function (rel) {
+        return _galleryDecorator(rel, null, null);
+    };
+})(jQuery);
+jQuery.dropper.setMethod('_heightContent', function (dropper, undefined) {
+    var self = this,
+        $ = jQuery,
+        wnd = $(window);
+    return (dropper || this).each(function (k) {
+        var dropper = $(this),
+            drp = dropper.data('drp');
+        if (drp.place === 'inherit')
+            return;
+        if (!drp.limitSize)
+            return;
+        var dropperV = dropper.is(':visible');
+        if (!dropperV)
+            dropper.show();
+
+        if (drp.placeContent) {
+            var el = dropper.find($(drp.placeContent)).filter(':visible');
+            if (el.data('jsp'))
+                el.data('jsp').destroy();
+            el = dropper.find($(drp.placeContent)).filter(':visible').css({'height': ''});
+            var pP = el.find(drp.placePaste).css('height', '');
+            if ($.dropper.drp.existsN(el)) {
+                var refer = drp.elrun,
+                    api = false,
+                    elCH = el.css({'overflow': ''}).outerHeight();
+                if (drp.scrollContent) {
+                    if ($.fn.jScrollPane) {
+                        api = el.jScrollPane(drp.jScrollPane).data('jsp');
+                        if ($.dropper.drp.existsN(el.find('.jspPane')))
+                            elCH = el.find('.jspPane').outerHeight();
+                    }
+                    else
+                        el.css('overflow', 'auto');
+                }
+                else
+                    el.css('overflow', 'hidden');
+                var dropperH = dropper.outerHeight(),
+                    dropperHm = dropper.height(),
+                    footerHeader = dropper.find($(drp.placeHeader)).outerHeight() + dropper.find($(drp.placeFooter)).outerHeight(),
+                    h;
+                if (drp.place === 'global') {
+                    var mayHeight = 0,
+                        placement = drp.placement;
+                    if ($.type(placement) === 'object') {
+                        if (placement.top !== undefined)
+                            mayHeight = placement.bottom - wnd.scrollTop() - footerHeader - (dropperH - dropperHm);
+                        if (placement.bottom !== undefined)
+                            mayHeight = wnd.height() - placement.top + wnd.scrollTop() - footerHeader - (dropperH - dropperHm);
+                    }
+                    else {
+                        if (placement.search(/top/) >= 0)
+                            mayHeight = refer.offset().top - wnd.scrollTop() - footerHeader - (dropperH - dropperHm);
+                        if (placement.search(/bottom/) >= 0)
+                            mayHeight = wnd.height() - refer.offset().top + wnd.scrollTop() - footerHeader - (dropperH - dropperHm) - refer.outerHeight();
+                    }
+                    if (mayHeight > elCH)
+                        h = elCH;
+                    else
+                        h = mayHeight;
+                }
+                else {
+                    if (elCH + footerHeader > dropperHm || drp.isFullScreen)
+                        h = dropperHm - footerHeader;
+                    else
+                        h = elCH;
+                }
+                if (elCH > h && drp.scrollContent)
+                    dropper.addClass($.dropper.drp.pC + 'is-scroll');
+                el.css('height', h);
+                if (!drp.scrollContent) {
+                    el.find(drp.placePaste).css({
+                        'height': h - pP.outerHeight() + pP.height(),
+                        'width': function () {
+                            return drp.type === 'image' ? $(this).children('img').width() : '';
+                        }
+                    });
+                }
+                if (api)
+                    api.reinitialise();
+                if (k !== true) { // for correct size content of popup if in style change size other elements if set class 'dropper-is-scroll'
+                    arguments.callee.call(dropper, true);
+                    self._limit(dropper, drp, true);
+                }
+            }
+        }
+        if (!dropperV)
+            dropper.hide();
+    });
+});
+jQuery.dropper.setMethod('limitSize', function (dropper, undefined) {
+    var self = this,
+        $ = jQuery;
+    return dropper.each(function () {
+        var dropper = $(this).removeClass($.dropper.drp.pC + 'is-limit-size'),
+            drp = dropper.data('drp');
+
+        self._limit(dropper, drp);
+
+        self._checkMethod(function () {
+            self._heightContent(dropper);
+        });
+    });
+});
+jQuery.dropper.setMethod('_limit', function (dropper, drp, add, undefined) {
+    var wnd = $(window);
+    if (drp.type === 'image')
+        var img = dropper.find(drp.placePaste).children('img').css({'max-width': '', 'max-height': ''});
+    if (drp.limitSize && drp.place === 'center') {
+        dropper.css({
+            width: '',
+            height: ''
+        });
+        if (drp.placeContent && !add) {
+            var jsp = dropper.find($(drp.placeContent)).filter(':visible').data('jsp');
+            if (jsp)
+                jsp.destroy();
+            dropper.removeClass($.dropper.drp.pC + 'is-scroll').find(drp.placeContent).add(dropper.find(drp.placePaste)).filter(':visible').css({
+                'height': '',
+                'width': ''
+            });
+        }
+        dropper.addClass($.dropper.drp.pC + 'is-limit-size');
+        if (drp.type === 'image' && !drp.scrollContent)
+            img.css({'max-width': '100%', 'max-height': '100%'});
+        var wndW = wnd.width(),
+            wndH = wnd.height(),
+            w = dropper[$.dropper.drp.actual]('outerWidth'),
+            h = dropper[$.dropper.drp.actual]('outerHeight'),
+            ws = dropper[$.dropper.drp.actual]('width'),
+            hs = dropper[$.dropper.drp.actual]('height');
+        if (w > wndW)
+            dropper.css('width', wndW - w + ws);
+        if (h > wndH)
+            dropper.css('height', wndH - h + hs);
+    }
+});
+(function ($, wnd, undefined) {
+    $.dropper.setMethod('placeAfterClose', function (dropper, $this, opt) {
+        if (opt.place === 'inherit' || !opt.placeAfterClose)
+            return false;
+        if (!_isScrollable.call($('body'), 'y'))
+            $('body').css('overflow-y', 'hidden');
+        if (!_isScrollable.call($('body'), 'x'))
+            $('body').css('overflow-x', 'hidden');
+        if (!opt)
+            return this;
+        var pmt = opt.placeAfterClose.toLowerCase().split(' '),
+                t = -dropper[$.dropper.drp.actual]('outerHeight'),
+                l = -dropper[$.dropper.drp.actual]('outerWidth');
+        if (pmt[1] === 'bottom')
+            t = wnd.height();
+        if (pmt[0] === 'right')
+            l = wnd.width();
+        if (pmt[0] === 'center' || pmt[1] === 'center') {
+            if (pmt[0] === 'left') {
+                l = -dropper[$.dropper.drp.actual]('outerWidth');
+                t = dropper.css('top');
+            }
+            if (pmt[0] === 'right') {
+                l = wnd.width();
+                t = dropper.css('top');
+            }
+            if (pmt[1] === 'top') {
+                t = -dropper[$.dropper.drp.actual]('outerHeight');
+                l = dropper.css('left');
+            }
+            if (pmt[1] === 'bottom') {
+                t = wnd.height();
+                l = dropper.css('left');
+            }
+        }
+        if (opt.placeAfterClose !== 'center center') {
+            if (pmt[0] === 'inherit') {
+                t = $this.offset().left;
+                l = $this.offset().top;
+            }
+            else {
+                t += wnd.scrollTop();
+                l += wnd.scrollLeft();
+            }
+            dropper.animate({
+                'left': l,
+                'top': t
+            }, {
+                queue: false,
+                duration: opt.durationOff
+            });
+        }
+        return this;
+    });
+    var _isScrollable = function (side) {
+        if (!$.dropper.drp.existsN(this))
+            return this;
+        var el = this.get(0),
+                x = el.clientWidth && el.scrollWidth > el.clientWidth,
+                y = el.clientHeight && el.scrollHeight > el.clientHeight;
+        return !side ? (!(el.style.overflow && el.style.overflow === 'hidden') && (x || y)) : (side === 'x' ? !(el.style.overflowX === 'hidden') && x : !(el.style.overflowY === 'hidden') && y);
+    };
+})(jQuery, jQuery(window));
+(function ($, wnd, undefined) {
+    $.dropper.setMethod('placeBeforeShow', function (dropper, $this, opt) {
+        var self = this;
+
+        if (opt.place === 'inherit')
+            return false;
+
+        if (!_isScrollable.call($('body'), 'y'))
+            $('body').css('overflow-y', 'hidden');
+        if (!_isScrollable.call($('body'), 'x'))
+            $('body').css('overflow-x', 'hidden');
+
+        var pmt = opt.placeBeforeShow.toLowerCase().split(' '),
+                t = -dropper[$.dropper.drp.actual]('outerHeight'),
+                l = -dropper[$.dropper.drp.actual]('outerWidth');
+        if (pmt[0] === 'center' || pmt[1] === 'center') {
+            self._checkMethod(function () {
+                self[opt.place].call(dropper, true);
+            });
+            t = dropper.css('top');
+            l = dropper.css('left');
+        }
+        if (pmt[1] === 'bottom')
+            t = wnd.height();
+        if (pmt[0] === 'right')
+            l = wnd.width();
+        if (pmt[0] === 'center' || pmt[1] === 'center') {
+            if (pmt[0] === 'left')
+                l = -dropper[$.dropper.drp.actual]('outerWidth');
+            if (pmt[0] === 'right')
+                l = wnd.width();
+            if (pmt[1] === 'top')
+                t = -dropper[$.dropper.drp.actual]('outerHeight');
+            if (pmt[1] === 'bottom')
+                t = wnd.height();
+        }
+        dropper.css({
+            'left': l + wnd.scrollLeft(), 'top': t + wnd.scrollTop()
+        });
+        if (pmt[0] === 'inherit')
+            dropper.css({
+                'left': $this.offset().left,
+                'top': $this.offset().top + $this.outerHeight()
+            });
+        return this;
+    });
+    var _isScrollable = function (side) {
+        if (!$.dropper.drp.existsN(this))
+            return this;
+        var el = this.get(0),
+                x = el.clientWidth && el.scrollWidth > el.clientWidth,
+                y = el.clientHeight && el.scrollHeight > el.clientHeight;
+        return !side ? (!(el.style.overflow && el.style.overflow === 'hidden') && (x || y)) : (side === 'x' ? !(el.style.overflowX === 'hidden') && x : !(el.style.overflowY === 'hidden') && y);
+    };
+})(jQuery, jQuery(window));
