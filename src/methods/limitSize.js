@@ -1,32 +1,32 @@
-jQuery.drop.setMethod('_heightContent', function (drop, undefined) {
+jQuery.dropper.setMethod('_heightContent', function (dropper, undefined) {
     var self = this,
         $ = jQuery,
         wnd = $(window);
-    return (drop || this).each(function (k) {
-        var drop = $(this),
-            drp = drop.data('drp');
+    return (dropper || this).each(function (k) {
+        var dropper = $(this),
+            drp = dropper.data('drp');
         if (drp.place === 'inherit')
             return;
         if (!drp.limitSize)
             return;
-        var dropV = drop.is(':visible');
-        if (!dropV)
-            drop.show();
+        var dropperV = dropper.is(':visible');
+        if (!dropperV)
+            dropper.show();
 
         if (drp.placeContent) {
-            var el = drop.find($(drp.placeContent)).filter(':visible');
+            var el = dropper.find($(drp.placeContent)).filter(':visible');
             if (el.data('jsp'))
                 el.data('jsp').destroy();
-            el = drop.find($(drp.placeContent)).filter(':visible').css({'height': ''});
+            el = dropper.find($(drp.placeContent)).filter(':visible').css({'height': ''});
             var pP = el.find(drp.placePaste).css('height', '');
-            if ($.drop.drp.existsN(el)) {
+            if ($.dropper.drp.existsN(el)) {
                 var refer = drp.elrun,
                     api = false,
                     elCH = el.css({'overflow': ''}).outerHeight();
                 if (drp.scrollContent) {
                     if ($.fn.jScrollPane) {
                         api = el.jScrollPane(drp.jScrollPane).data('jsp');
-                        if ($.drop.drp.existsN(el.find('.jspPane')))
+                        if ($.dropper.drp.existsN(el.find('.jspPane')))
                             elCH = el.find('.jspPane').outerHeight();
                     }
                     else
@@ -34,24 +34,24 @@ jQuery.drop.setMethod('_heightContent', function (drop, undefined) {
                 }
                 else
                     el.css('overflow', 'hidden');
-                var dropH = drop.outerHeight(),
-                    dropHm = drop.height(),
-                    footerHeader = drop.find($(drp.placeHeader)).outerHeight() + drop.find($(drp.placeFooter)).outerHeight(),
+                var dropperH = dropper.outerHeight(),
+                    dropperHm = dropper.height(),
+                    footerHeader = dropper.find($(drp.placeHeader)).outerHeight() + dropper.find($(drp.placeFooter)).outerHeight(),
                     h;
                 if (drp.place === 'global') {
                     var mayHeight = 0,
                         placement = drp.placement;
                     if ($.type(placement) === 'object') {
                         if (placement.top !== undefined)
-                            mayHeight = placement.bottom - wnd.scrollTop() - footerHeader - (dropH - dropHm);
+                            mayHeight = placement.bottom - wnd.scrollTop() - footerHeader - (dropperH - dropperHm);
                         if (placement.bottom !== undefined)
-                            mayHeight = wnd.height() - placement.top + wnd.scrollTop() - footerHeader - (dropH - dropHm);
+                            mayHeight = wnd.height() - placement.top + wnd.scrollTop() - footerHeader - (dropperH - dropperHm);
                     }
                     else {
                         if (placement.search(/top/) >= 0)
-                            mayHeight = refer.offset().top - wnd.scrollTop() - footerHeader - (dropH - dropHm);
+                            mayHeight = refer.offset().top - wnd.scrollTop() - footerHeader - (dropperH - dropperHm);
                         if (placement.search(/bottom/) >= 0)
-                            mayHeight = wnd.height() - refer.offset().top + wnd.scrollTop() - footerHeader - (dropH - dropHm) - refer.outerHeight();
+                            mayHeight = wnd.height() - refer.offset().top + wnd.scrollTop() - footerHeader - (dropperH - dropperHm) - refer.outerHeight();
                     }
                     if (mayHeight > elCH)
                         h = elCH;
@@ -59,69 +59,69 @@ jQuery.drop.setMethod('_heightContent', function (drop, undefined) {
                         h = mayHeight;
                 }
                 else {
-                    if (elCH + footerHeader > dropHm || drp.isFullScreen)
-                        h = dropHm - footerHeader;
+                    if (elCH + footerHeader > dropperHm || drp.isFullScreen)
+                        h = dropperHm - footerHeader;
                     else
                         h = elCH;
                 }
                 if (elCH > h && drp.scrollContent)
-                    drop.addClass($.drop.drp.pC + 'is-scroll');
+                    dropper.addClass($.dropper.drp.pC + 'is-scroll');
                 el.css('height', h);
                 if (!drp.scrollContent)
                     el.find(drp.placePaste).css('height', h - pP.outerHeight() + pP.height());
                 if (api)
                     api.reinitialise();
-                if (k !== true) { // for correct size content of popup if in style change size other elements if set class 'drop-is-scroll' 
-                    arguments.callee.call(drop, true);
-                    self._limit(drop, drp, true);
+                if (k !== true) { // for correct size content of popup if in style change size other elements if set class 'dropper-is-scroll'
+                    arguments.callee.call(dropper, true);
+                    self._limit(dropper, drp, true);
                 }
             }
         }
-        if (!dropV)
-            drop.hide();
+        if (!dropperV)
+            dropper.hide();
     });
 });
-jQuery.drop.setMethod('limitSize', function (drop, undefined) {
+jQuery.dropper.setMethod('limitSize', function (dropper, undefined) {
     var self = this,
         $ = jQuery;
-    return drop.each(function () {
-        var drop = $(this).removeClass($.drop.drp.pC + 'is-limit-size'),
-            drp = drop.data('drp');
+    return dropper.each(function () {
+        var dropper = $(this).removeClass($.dropper.drp.pC + 'is-limit-size'),
+            drp = dropper.data('drp');
 
-        self._limit(drop, drp);
+        self._limit(dropper, drp);
 
         self._checkMethod(function () {
-            self._heightContent(drop);
+            self._heightContent(dropper);
         });
     });
 });
-jQuery.drop.setMethod('_limit', function (drop, drp, add, undefined) {
+jQuery.dropper.setMethod('_limit', function (dropper, drp, add, undefined) {
     var wnd = $(window);
     if (drp.type === 'image')
-        var img = drop.find(drp.placePaste).children('img').css({'max-width': '', 'max-height': ''});
+        var img = dropper.find(drp.placePaste).children('img').css({'max-width': '', 'max-height': ''});
     if (drp.limitSize && drp.place === 'center') {
-        drop.css({
+        dropper.css({
             width: '',
             height: ''
         });
         if (drp.placeContent && !add) {
-            var jsp = drop.find($(drp.placeContent)).filter(':visible').data('jsp');
+            var jsp = dropper.find($(drp.placeContent)).filter(':visible').data('jsp');
             if (jsp)
                 jsp.destroy();
-            drop.removeClass($.drop.drp.pC + 'is-scroll').find(drp.placeContent).add(drop.find(drp.placePaste)).filter(':visible').css('height', '');
+            dropper.removeClass($.dropper.drp.pC + 'is-scroll').find(drp.placeContent).add(dropper.find(drp.placePaste)).filter(':visible').css('height', '');
         }
-        drop.addClass($.drop.drp.pC + 'is-limit-size');
+        dropper.addClass($.dropper.drp.pC + 'is-limit-size');
         if (drp.type === 'image' && !drp.scrollContent)
             img.css({'max-width': '100%', 'max-height': '100%'});
         var wndW = wnd.width(),
             wndH = wnd.height(),
-            w = drop[$.drop.drp.actual]('outerWidth'),
-            h = drop[$.drop.drp.actual]('outerHeight'),
-            ws = drop[$.drop.drp.actual]('width'),
-            hs = drop[$.drop.drp.actual]('height');
+            w = dropper[$.dropper.drp.actual]('outerWidth'),
+            h = dropper[$.dropper.drp.actual]('outerHeight'),
+            ws = dropper[$.dropper.drp.actual]('width'),
+            hs = dropper[$.dropper.drp.actual]('height');
         if (w > wndW)
-            drop.css('width', wndW - w + ws);
+            dropper.css('width', wndW - w + ws);
         if (h > wndH)
-            drop.css('height', wndH - h + hs);
+            dropper.css('height', wndH - h + hs);
     }
 });

@@ -1,92 +1,92 @@
-jQuery.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, el, undefined) {
+jQuery.dropper.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF, e, el, undefined) {
     var self = this,
             $ = jQuery;
     if (opt.alert) {
         var optC = $.extend({}, opt),
-                drop = self._pasteDrop(optC, opt.patternAlert),
-                pp = drop.find(opt.placePaste).empty();
+                dropper = self._pasteDropper(optC, opt.patternAlert),
+                pp = dropper.find(opt.placePaste).empty();
 
-        if (opt.alertText && $.drop.drp.existsN(pp))
+        if (opt.alertText && $.dropper.drp.existsN(pp))
             pp.html(function () {
                 try {
                     if ($.type(eval(opt.alertText)) === 'function')
-                        return eval(opt.alertText).call($(this), opt, drop, el);
+                        return eval(opt.alertText).call($(this), opt, dropper, el);
                 } catch (e) {
                     return opt.alertText;
                 }
             });
 
-        self._show.call(el, drop, e, optC, hashChange);
+        self._show.call(el, dropper, e, optC, hashChange);
 
-        (function (drop, _confirmF, opt) {
-            drop.find(opt.alertActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
+        (function (dropper, _confirmF, opt) {
+            dropper.find(opt.alertActionBtn).off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
                 e.stopPropagation();
-                self.close.call(drop, e, _confirmF);
+                self.close.call(dropper, e, _confirmF);
                 if (opt.ok)
-                    eval(opt.ok).call(el, opt, drop, e, 'alert');
-                drop.trigger('dropOk', {
+                    eval(opt.ok).call(el, opt, dropper, e, 'alert');
+                dropper.trigger('dropperOk', {
                     type: 'alert',
                     event: e,
                     anchor: el,
-                    drop: drop,
+                    dropper: dropper,
                     options: opt,
                     methods: self
                 });
             });
-        })(drop, _confirmF, opt);
+        })(dropper, _confirmF, opt);
     }
     else if (opt.confirm) {
         var optC = $.extend({}, opt),
-                drop = self._pasteDrop(optC, opt.patternConfirm),
-                pp = drop.find(opt.placePaste).empty();
-        if (opt.confirmText && $.drop.drp.existsN(pp))
+                dropper = self._pasteDropper(optC, opt.patternConfirm),
+                pp = dropper.find(opt.placePaste).empty();
+        if (opt.confirmText && $.dropper.drp.existsN(pp))
             pp.html(function () {
                 try {
                     if ($.type(eval(opt.confirmText)) === 'function')
-                        return eval(opt.confirmText).call($(this), opt, drop, el);
+                        return eval(opt.confirmText).call($(this), opt, dropper, el);
                 } catch (e) {
                     return opt.confirmText;
                 }
             });
 
-        self._show.call(el, drop, e, optC, hashChange);
+        self._show.call(el, dropper, e, optC, hashChange);
 
-        (function (drop, _confirmF, opt) {
-            drop.find(opt.confirmActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
+        (function (dropper, _confirmF, opt) {
+            dropper.find(opt.confirmActionBtn).off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
                 e.stopPropagation();
-                self.close.call(drop, e, _confirmF);
+                self.close.call(dropper, e, _confirmF);
                 if (opt.ok)
-                    eval(opt.ok).call(el, opt, drop, e, 'confirm');
-                drop.trigger('dropOk', {
+                    eval(opt.ok).call(el, opt, dropper, e, 'confirm');
+                dropper.trigger('dropperOk', {
                     type: 'confirm',
                     event: e,
                     anchor: el,
-                    drop: drop,
+                    dropper: dropper,
                     options: opt,
                     methods: self
                 });
             });
-        })(drop, _confirmF, opt);
+        })(dropper, _confirmF, opt);
     }
     else if (opt.prompt) {
         var optP = $.extend({}, opt),
-                drop = self._pasteDrop(optP, opt.patternPrompt),
-                pp = drop.find(opt.placePaste).empty();
+                dropper = self._pasteDropper(optP, opt.patternPrompt),
+                pp = dropper.find(opt.placePaste).empty();
 
-        if (opt.promptText && $.drop.drp.existsN(pp))
+        if (opt.promptText && $.dropper.drp.existsN(pp))
             pp.html(function () {
                 try {
                     if ($.type(eval(opt.promptText)) === 'function')
-                        return eval(opt.promptText).call($(this), opt, drop, el);
+                        return eval(opt.promptText).call($(this), opt, dropper, el);
                 } catch (e) {
                     return opt.promptText;
                 }
             });
 
-        self._show.call(el, drop, e, optP, hashChange);
+        self._show.call(el, dropper, e, optP, hashChange);
 
-        (function (drop, _confirmF, opt, optP) {
-            drop.find(opt.promptActionBtn).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
+        (function (dropper, _confirmF, opt, optP) {
+            dropper.find(opt.promptActionBtn).off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
                 e.stopPropagation();
                 var getUrlVars = function (url) {
                     var hash, myJson = {}, hashes = url.slice(url.indexOf('?') + 1).split('&');
@@ -98,21 +98,21 @@ jQuery.drop.setMethod('confirmPromptAlert', function (opt, hashChange, _confirmF
                 };
 
                 optP.dataPrompt = opt.dataPrompt = getUrlVars($(this).closest('form').serialize());
-                self.close.call(drop, e, _confirmF);
+                self.close.call(dropper, e, _confirmF);
                 if (opt.ok)
-                    eval(opt.ok).call(el, opt, drop, e, 'prompt', opt.dataPrompt);
-                drop.trigger('dropOk', {
+                    eval(opt.ok).call(el, opt, dropper, e, 'prompt', opt.dataPrompt);
+                dropper.trigger('dropperOk', {
                     type: 'prompt',
                     dataPrompt: opt.dataPrompt,
                     event: e,
                     anchor: el,
-                    drop: drop,
+                    dropper: dropper,
                     options: opt,
                     methods: self
                 });
             });
-        })(drop, _confirmF, opt, optP);
+        })(dropper, _confirmF, opt, optP);
     }
-    el.data('dropConfirmPromptAlert', drop);
+    el.data('dropperConfirmPromptAlert', dropper);
     return self;
 });

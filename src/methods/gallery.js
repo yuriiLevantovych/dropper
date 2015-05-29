@@ -1,30 +1,30 @@
 (function ($, undefined) {
     var _galleryDecorator = function (rel, btn, i) {
         var self = this;
-        return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.drop.drp.activeClass).each(function () {
+        return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.dropper.drp.activeClass).each(function () {
             var $this = $(this),
                     drp = $this.data('drp');
             self.gallery($this, drp, btn, i);
         });
     };
-    $.drop.setMethod('_cIGallery', function (rel) {
+    $.dropper.setMethod('_cIGallery', function (rel) {
         var $ = jQuery;
-        clearInterval($.drop.drp.autoPlayInterval[rel]);
-        delete $.drop.drp.autoPlayInterval[rel];
+        clearInterval($.dropper.drp.autoPlayInterval[rel]);
+        delete $.dropper.drp.autoPlayInterval[rel];
     });
-    $.drop.setMethod('gallery', function (drop, opt, btn, i) {
+    $.dropper.setMethod('gallery', function (dropper, opt, btn, i) {
         var $ = jQuery,
                 doc = $(document),
                 self = this,
-                relA = $.drop.drp.gallery[opt.rel];
+                relA = $.dropper.drp.gallery[opt.rel];
         if (!relA)
             return self;
         var relL = relA.length;
         if (relL <= 1)
             return self;
         var relP = $.inArray(opt.href, relA),
-                prev = $.type(opt.prev) === 'string' ? drop.find(opt.prev) : opt.prev,
-                next = $.type(opt.next) === 'string' ? drop.find(opt.next) : opt.next;
+                prev = $.type(opt.prev) === 'string' ? dropper.find(opt.prev) : opt.prev,
+                next = $.type(opt.next) === 'string' ? dropper.find(opt.next) : opt.next;
         prev.add(next).hide().attr('disabled', 'disabled');
         if (relP === -1)
             return false;
@@ -43,7 +43,7 @@
             }
             var $next = $('[data-href="' + relA[i] + '"][rel="' + opt.rel + '"], [href="' + relA[i] + '"][rel="' + opt.rel + '"]');
             self._cIGallery(opt.rel);
-            self.open.call($next, $.extend($.extend({}, opt), $next.data('drp'), {href: relA[i], drop: null}), e);
+            self.open.call($next, $.extend($.extend({}, opt), $next.data('drp'), {href: relA[i], dropper: null}), e);
         };
         var _getnext = function (i) {
             relP += i;
@@ -55,7 +55,7 @@
             }
             return relP;
         };
-        prev.add(next).off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
+        prev.add(next).off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
             e.stopPropagation();
             relP = $.inArray(opt.href, relA);
             self._cIGallery(opt.rel);
@@ -73,22 +73,22 @@
             else
                 opt.autoPlay = true;
         if (opt.autoPlay) {
-            if ($.drop.drp.autoPlayInterval[opt.rel])
+            if ($.dropper.drp.autoPlayInterval[opt.rel])
                 self._cIGallery(opt.rel);
             else
-                $.drop.drp.autoPlayInterval[opt.rel] = setInterval(function () {
+                $.dropper.drp.autoPlayInterval[opt.rel] = setInterval(function () {
                     self._cIGallery(opt.rel);
                     _goto(_getnext(1));
                 }, opt.autoPlaySpeed);
         }
-        drop.off('dropClose.' + $.drop.nS).on('dropClose.' + $.drop.nS, function () {
+        dropper.off('dropperClose.' + $.dropper.nS).on('dropperClose.' + $.dropper.nS, function () {
             self._cIGallery($(this).data('drp').rel);
-            doc.off('keydown.' + $.drop.nS + opt.rel);
+            doc.off('keydown.' + $.dropper.nS + opt.rel);
         });
         if (opt.keyNavigate)
-            drop.off('dropAfter.' + $.drop.nS).on('dropAfter.' + $.drop.nS, function () {
+            dropper.off('dropperAfter.' + $.dropper.nS).on('dropperAfter.' + $.dropper.nS, function () {
                 var opt = $(this).data('drp');
-                doc.off('keydown.' + $.drop.nS + opt.rel).on('keydown.' + $.drop.nS + opt.rel, function (e) {
+                doc.off('keydown.' + $.dropper.nS + opt.rel).on('keydown.' + $.dropper.nS + opt.rel, function (e) {
                     var key = e.keyCode;
                     if (key === 37 || key === 39) //that window scrollLeft nochange after press left & right buttons
                         e.preventDefault();
@@ -100,16 +100,16 @@
             });
         return self;
     });
-    $.drop.next = function (rel) {
+    $.dropper.next = function (rel) {
         return _galleryDecorator(rel, 1);
     };
-    $.drop.prev = function (rel) {
+    $.dropper.prev = function (rel) {
         return _galleryDecorator(rel, -1);
     };
-    $.drop.jumpto = function (i, rel) {
+    $.dropper.jumpto = function (i, rel) {
         return _galleryDecorator(rel, null, i);
     };
-    $.drop.play = function (rel) {
+    $.dropper.play = function (rel) {
         return _galleryDecorator(rel, null, null);
     };
 })(jQuery);

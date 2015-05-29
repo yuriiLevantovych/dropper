@@ -1,5 +1,5 @@
 (function ($, wnd, undefined) {
-    $.drop.setMethod('placeAfterClose', function (drop, $this, opt) {
+    $.dropper.setMethod('placeAfterClose', function (dropper, $this, opt) {
         if (opt.place === 'inherit' || !opt.placeAfterClose)
             return false;
         if (!_isScrollable.call($('body'), 'y'))
@@ -9,28 +9,28 @@
         if (!opt)
             return this;
         var pmt = opt.placeAfterClose.toLowerCase().split(' '),
-                t = -drop[$.drop.drp.actual]('outerHeight'),
-                l = -drop[$.drop.drp.actual]('outerWidth');
+                t = -dropper[$.dropper.drp.actual]('outerHeight'),
+                l = -dropper[$.dropper.drp.actual]('outerWidth');
         if (pmt[1] === 'bottom')
             t = wnd.height();
         if (pmt[0] === 'right')
             l = wnd.width();
         if (pmt[0] === 'center' || pmt[1] === 'center') {
             if (pmt[0] === 'left') {
-                l = -drop[$.drop.drp.actual]('outerWidth');
-                t = drop.css('top');
+                l = -dropper[$.dropper.drp.actual]('outerWidth');
+                t = dropper.css('top');
             }
             if (pmt[0] === 'right') {
                 l = wnd.width();
-                t = drop.css('top');
+                t = dropper.css('top');
             }
             if (pmt[1] === 'top') {
-                t = -drop[$.drop.drp.actual]('outerHeight');
-                l = drop.css('left');
+                t = -dropper[$.dropper.drp.actual]('outerHeight');
+                l = dropper.css('left');
             }
             if (pmt[1] === 'bottom') {
                 t = wnd.height();
-                l = drop.css('left');
+                l = dropper.css('left');
             }
         }
         if (opt.placeAfterClose !== 'center center') {
@@ -42,7 +42,7 @@
                 t += wnd.scrollTop();
                 l += wnd.scrollLeft();
             }
-            drop.animate({
+            dropper.animate({
                 'left': l,
                 'top': t
             }, {
@@ -53,7 +53,7 @@
         return this;
     });
     var _isScrollable = function (side) {
-        if (!$.drop.drp.existsN(this))
+        if (!$.dropper.drp.existsN(this))
             return this;
         var el = this.get(0),
                 x = el.clientWidth && el.scrollWidth > el.clientWidth,

@@ -17,47 +17,47 @@ return  ((document.fullscreenElement && document.fullscreenElement !== null) || 
     }
 
     function _shortScreen(self, native) {
-        var drop = this,
-            drp = drop.data('drp');
+        var dropper = this,
+            drp = dropper.data('drp');
         drp.isFullScreen = false;
-        drop.css($.drop.drp.standartScreenStyle);
+        dropper.css($.dropper.drp.standartScreenStyle);
         if (!native)
             changeScreen.call(document, clearFull);
         self._checkMethod(function () {
-            self._heightContent(drop);
+            self._heightContent(dropper);
         });
         drp.limitSize = drp.oldLimitSize;
     }
 
     function _fullScreen(self, native) {
-        var drop = this,
-            drp = drop.data('drp');
+        var dropper = this,
+            drp = dropper.data('drp');
 
         drp.isFullScreen = true;
         drp.oldLimitSize = drp.limitSize;
         drp.limitSize = true;
 
-        $.drop.drp.standartScreenStyle = {
-            width: drop.css('width'),
-            height: drop.css('height'),
-            left: drop.css('left'),
-            top: drop.css('top')
+        $.dropper.drp.standartScreenStyle = {
+            width: dropper.css('width'),
+            height: dropper.css('height'),
+            left: dropper.css('left'),
+            top: dropper.css('top')
         }
 
         if (!native)
             changeScreen.call(body, setFull);
 	
         (function () {
-        				var drop = this;
+        				var dropper = this;
 		        		
 		        		if (!checkFullScreen()){
 		        				var callee = arguments.callee;
 		        				setTimeout(function(){
-		        						callee.call(drop);
+		        						callee.call(dropper);
 		        		 		}, 10)
 		        		 		return;
 		        		}
-		        		drop.css({
+		        		dropper.css({
                 width: '100%',
                 height: '100%',
                 'box-sizing': 'border-box',
@@ -66,52 +66,52 @@ return  ((document.fullscreenElement && document.fullscreenElement !== null) || 
             });
 
             self._checkMethod(function () {
-                self._heightContent(drop);
+                self._heightContent(dropper);
             });
-        }).call(drop);
+        }).call(dropper);
 
-        drop.off('dropClose.' + nS).on('dropClose.' + nS, function () {
+        dropper.off('dropperClose.' + nS).on('dropperClose.' + nS, function () {
             changeScreen.call(document, clearFull);
         });
     }
 
-    $(document).off('dropBefore.' + nS).on('dropBefore.' + nS, function (event, obj) {
+    $(document).off('dropperBefore.' + nS).on('dropperBefore.' + nS, function (event, obj) {
         var opt = obj.options;
         if (opt.fullScreen) {
-            var drop = obj.drop,
-                header = drop.find(opt.placeHeader).first();
+            var dropper = obj.dropper,
+                header = dropper.find(opt.placeHeader).first();
 
-            if ($.drop.drp.existsN(header)) {
-                header.off('click.' + $.drop.nS).on('click.' + $.drop.nS, function (e) {
+            if ($.dropper.drp.existsN(header)) {
+                header.off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
                     $(document).on('mousedown.' + nS, function (e) {
                         e.preventDefault();
                     });
                 });
-                (function (obj, drop) {
+                (function (obj, dropper) {
                     $(window).off('keyup.' + nS).on('keyup.' + nS, function (e) {
                         if (e.keyCode === 122) {
-                            if (drop.data('drp').isFullScreen)
-                                _shortScreen.call(drop, obj.methods);
+                            if (dropper.data('drp').isFullScreen)
+                                _shortScreen.call(dropper, obj.methods);
                             else
-                                _fullScreen.call(drop, obj.methods);
+                                _fullScreen.call(dropper, obj.methods);
                         }
                     });
 
                     header.off('click.' + nS).on('click.' + nS, function (e) {
                         $(document).off('mousedown.' + nS);
-                        if (drop.data('drp').isFullScreen)
-                            _shortScreen.call(drop, obj.methods);
+                        if (dropper.data('drp').isFullScreen)
+                            _shortScreen.call(dropper, obj.methods);
                         else
-                            _fullScreen.call(drop, obj.methods);
+                            _fullScreen.call(dropper, obj.methods);
                     });
-                    if ($.drop.drp.isTouch)
+                    if ($.dropper.drp.isTouch)
                         $(document).off('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS).on('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS, function () {
                             if (checkFullScreen())
-                                _fullScreen.call(drop, obj.methods, true);
+                                _fullScreen.call(dropper, obj.methods, true);
                             else
-                                _shortScreen.call(drop, obj.methods, true);
+                                _shortScreen.call(dropper, obj.methods, true);
                         });
-                })(obj, drop);
+                })(obj, dropper);
             }
         }
     });

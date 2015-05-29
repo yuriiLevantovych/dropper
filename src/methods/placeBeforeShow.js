@@ -1,5 +1,5 @@
 (function ($, wnd, undefined) {
-    $.drop.setMethod('placeBeforeShow', function (drop, $this, opt) {
+    $.dropper.setMethod('placeBeforeShow', function (dropper, $this, opt) {
         var self = this;
 
         if (opt.place === 'inherit')
@@ -11,14 +11,14 @@
             $('body').css('overflow-x', 'hidden');
 
         var pmt = opt.placeBeforeShow.toLowerCase().split(' '),
-                t = -drop[$.drop.drp.actual]('outerHeight'),
-                l = -drop[$.drop.drp.actual]('outerWidth');
+                t = -dropper[$.dropper.drp.actual]('outerHeight'),
+                l = -dropper[$.dropper.drp.actual]('outerWidth');
         if (pmt[0] === 'center' || pmt[1] === 'center') {
             self._checkMethod(function () {
-                self[opt.place].call(drop, true);
+                self[opt.place].call(dropper, true);
             });
-            t = drop.css('top');
-            l = drop.css('left');
+            t = dropper.css('top');
+            l = dropper.css('left');
         }
         if (pmt[1] === 'bottom')
             t = wnd.height();
@@ -26,26 +26,26 @@
             l = wnd.width();
         if (pmt[0] === 'center' || pmt[1] === 'center') {
             if (pmt[0] === 'left')
-                l = -drop[$.drop.drp.actual]('outerWidth');
+                l = -dropper[$.dropper.drp.actual]('outerWidth');
             if (pmt[0] === 'right')
                 l = wnd.width();
             if (pmt[1] === 'top')
-                t = -drop[$.drop.drp.actual]('outerHeight');
+                t = -dropper[$.dropper.drp.actual]('outerHeight');
             if (pmt[1] === 'bottom')
                 t = wnd.height();
         }
-        drop.css({
+        dropper.css({
             'left': l + wnd.scrollLeft(), 'top': t + wnd.scrollTop()
         });
         if (pmt[0] === 'inherit')
-            drop.css({
+            dropper.css({
                 'left': $this.offset().left,
                 'top': $this.offset().top + $this.outerHeight()
             });
         return this;
     });
     var _isScrollable = function (side) {
-        if (!$.drop.drp.existsN(this))
+        if (!$.dropper.drp.existsN(this))
             return this;
         var el = this.get(0),
                 x = el.clientWidth && el.scrollWidth > el.clientWidth,
