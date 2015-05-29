@@ -744,9 +744,9 @@
                 'data-rel': opt.tempClassS,
                 html: text
                     .replace(/\s{2,}/g, ' ')
-                    .replace(/\}[^$](?!\s*\[dropper\])/g, '} ' + opt.tempClassS + ' ') /*paste before begin row*/
+                    .replace(/\}[^$](?!\s*\[dropper\])/g, '} ' + opt.tempClassS + ' ')/*paste before begin row*/
                     .replace(/\/\*\[(.*?)\]\*\//g, '$1')
-                    .replace(/^(?!\s*\[dropper\])/, opt.tempClassS + ' ') /*for first row*/
+                    .replace(/^(?!\s*\[dropper\])/, opt.tempClassS + ' ')/*for first row*/
                     .replace(/\[dropper\]/g, opt.tempClassS)
                     .replace(/url\((.*)\)/g, 'url(' + D.url + 'images/' + opt.theme + '/$1)')
             }).appendTo($('body'));
@@ -958,7 +958,8 @@
     };
     $.dropper.drp = {
         handlerMessageWindow: function (e) {
-            $.dropper(e.originalEvent.data);
+            if ($.type(e.originalEvent.data) === 'object')
+                return $.dropper(e.originalEvent.data);
         },
         theme: {
             default: '*{margin: 0;padding: 0;-webkit-box-sizing: content-box;-moz-box-sizing: content-box;box-sizing: content-box;}\n\

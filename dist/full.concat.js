@@ -760,9 +760,9 @@
                 'data-rel': opt.tempClassS,
                 html: text
                     .replace(/\s{2,}/g, ' ')
-                    .replace(/\}[^$](?!\s*\[dropper\])/g, '} ' + opt.tempClassS + ' ') /*paste before begin row*/
+                    .replace(/\}[^$](?!\s*\[dropper\])/g, '} ' + opt.tempClassS + ' ')/*paste before begin row*/
                     .replace(/\/\*\[(.*?)\]\*\//g, '$1')
-                    .replace(/^(?!\s*\[dropper\])/, opt.tempClassS + ' ') /*for first row*/
+                    .replace(/^(?!\s*\[dropper\])/, opt.tempClassS + ' ')/*for first row*/
                     .replace(/\[dropper\]/g, opt.tempClassS)
                     .replace(/url\((.*)\)/g, 'url(' + D.url + 'images/' + opt.theme + '/$1)')
             }).appendTo($('body'));
@@ -974,7 +974,8 @@
     };
     $.dropper.drp = {
         handlerMessageWindow: function (e) {
-            $.dropper(e.originalEvent.data);
+            if ($.type(e.originalEvent.data) === 'object')
+                return $.dropper(e.originalEvent.data);
         },
         theme: {
             default: '*{margin: 0;padding: 0;-webkit-box-sizing: content-box;-moz-box-sizing: content-box;box-sizing: content-box;}\n\
@@ -1436,8 +1437,10 @@ jQuery.dropper.setMethod('droppable', function(dropper, undefined) {
         clearFull = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msCancelFullscreen,
         nS = 'fullScreen';
 
-function checkFullScreen(){	
-return  ((document.fullscreenElement && document.fullscreenElement !== null) ||  document.mozFullScreen || document.webkitIsFullScreen) && window.innerHeight === screen.height;}
+    function checkFullScreen() {
+        return ((document.fullscreenElement && document.fullscreenElement !== null) || document.mozFullScreen || document.webkitIsFullScreen) && window.innerHeight === screen.height;
+    }
+
     function changeScreen(method) {
         if (method) {
             method.call(this);
@@ -1479,18 +1482,18 @@ return  ((document.fullscreenElement && document.fullscreenElement !== null) || 
 
         if (!native)
             changeScreen.call(body, setFull);
-	
+
         (function () {
-        				var dropper = this;
-		        		
-		        		if (!checkFullScreen()){
-		        				var callee = arguments.callee;
-		        				setTimeout(function(){
-		        						callee.call(dropper);
-		        		 		}, 10)
-		        		 		return;
-		        		}
-		        		dropper.css({
+            var dropper = this;
+
+            if (!checkFullScreen()) {
+                var callee = arguments.callee;
+                setTimeout(function () {
+                    callee.call(dropper);
+                }, 10)
+                return;
+            }
+            dropper.css({
                 width: '100%',
                 height: '100%',
                 'box-sizing': 'border-box',
@@ -1530,7 +1533,7 @@ return  ((document.fullscreenElement && document.fullscreenElement !== null) || 
                         }
                     });
 
-                    header.off('click.' + nS).on('click.' + nS, function (e) {
+                    header.off('dblclick.' + nS).on('dblclick.' + nS, function (e) {
                         $(document).off('mousedown.' + nS);
                         if (dropper.data('drp').isFullScreen)
                             _shortScreen.call(dropper, obj.methods);
@@ -1734,8 +1737,14 @@ jQuery.dropper.setMethod('_heightContent', function (dropper, undefined) {
                 if (elCH > h && drp.scrollContent)
                     dropper.addClass($.dropper.drp.pC + 'is-scroll');
                 el.css('height', h);
-                if (!drp.scrollContent)
-                    el.find(drp.placePaste).css('height', h - pP.outerHeight() + pP.height());
+                if (!drp.scrollContent) {
+                    el.find(drp.placePaste).css({
+                        'height': h - pP.outerHeight() + pP.height(),
+                        'width': function () {
+                            return drp.type === 'image' ? $(this).children('img').width() : '';
+                        }
+                    });
+                }
                 if (api)
                     api.reinitialise();
                 if (k !== true) { // for correct size content of popup if in style change size other elements if set class 'dropper-is-scroll'
@@ -1775,7 +1784,10 @@ jQuery.dropper.setMethod('_limit', function (dropper, drp, add, undefined) {
             var jsp = dropper.find($(drp.placeContent)).filter(':visible').data('jsp');
             if (jsp)
                 jsp.destroy();
-            dropper.removeClass($.dropper.drp.pC + 'is-scroll').find(drp.placeContent).add(dropper.find(drp.placePaste)).filter(':visible').css('height', '');
+            dropper.removeClass($.dropper.drp.pC + 'is-scroll').find(drp.placeContent).add(dropper.find(drp.placePaste)).filter(':visible').css({
+                'height': '',
+                'width': ''
+            });
         }
         dropper.addClass($.dropper.drp.pC + 'is-limit-size');
         if (drp.type === 'image' && !drp.scrollContent)

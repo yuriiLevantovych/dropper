@@ -67,8 +67,14 @@ jQuery.dropper.setMethod('_heightContent', function (dropper, undefined) {
                 if (elCH > h && drp.scrollContent)
                     dropper.addClass($.dropper.drp.pC + 'is-scroll');
                 el.css('height', h);
-                if (!drp.scrollContent)
-                    el.find(drp.placePaste).css('height', h - pP.outerHeight() + pP.height());
+                if (!drp.scrollContent) {
+                    el.find(drp.placePaste).css({
+                        'height': h - pP.outerHeight() + pP.height(),
+                        'width': function () {
+                            return drp.type === 'image' ? $(this).children('img').width() : '';
+                        }
+                    });
+                }
                 if (api)
                     api.reinitialise();
                 if (k !== true) { // for correct size content of popup if in style change size other elements if set class 'dropper-is-scroll'
@@ -108,7 +114,10 @@ jQuery.dropper.setMethod('_limit', function (dropper, drp, add, undefined) {
             var jsp = dropper.find($(drp.placeContent)).filter(':visible').data('jsp');
             if (jsp)
                 jsp.destroy();
-            dropper.removeClass($.dropper.drp.pC + 'is-scroll').find(drp.placeContent).add(dropper.find(drp.placePaste)).filter(':visible').css('height', '');
+            dropper.removeClass($.dropper.drp.pC + 'is-scroll').find(drp.placeContent).add(dropper.find(drp.placePaste)).filter(':visible').css({
+                'height': '',
+                'width': ''
+            });
         }
         dropper.addClass($.dropper.drp.pC + 'is-limit-size');
         if (drp.type === 'image' && !drp.scrollContent)

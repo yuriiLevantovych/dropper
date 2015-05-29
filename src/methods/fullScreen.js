@@ -3,8 +3,10 @@
         clearFull = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msCancelFullscreen,
         nS = 'fullScreen';
 
-function checkFullScreen(){	
-return  ((document.fullscreenElement && document.fullscreenElement !== null) ||  document.mozFullScreen || document.webkitIsFullScreen) && window.innerHeight === screen.height;}
+    function checkFullScreen() {
+        return ((document.fullscreenElement && document.fullscreenElement !== null) || document.mozFullScreen || document.webkitIsFullScreen) && window.innerHeight === screen.height;
+    }
+
     function changeScreen(method) {
         if (method) {
             method.call(this);
@@ -46,18 +48,18 @@ return  ((document.fullscreenElement && document.fullscreenElement !== null) || 
 
         if (!native)
             changeScreen.call(body, setFull);
-	
+
         (function () {
-        				var dropper = this;
-		        		
-		        		if (!checkFullScreen()){
-		        				var callee = arguments.callee;
-		        				setTimeout(function(){
-		        						callee.call(dropper);
-		        		 		}, 10)
-		        		 		return;
-		        		}
-		        		dropper.css({
+            var dropper = this;
+
+            if (!checkFullScreen()) {
+                var callee = arguments.callee;
+                setTimeout(function () {
+                    callee.call(dropper);
+                }, 10)
+                return;
+            }
+            dropper.css({
                 width: '100%',
                 height: '100%',
                 'box-sizing': 'border-box',
@@ -97,7 +99,7 @@ return  ((document.fullscreenElement && document.fullscreenElement !== null) || 
                         }
                     });
 
-                    header.off('click.' + nS).on('click.' + nS, function (e) {
+                    header.off('dblclick.' + nS).on('dblclick.' + nS, function (e) {
                         $(document).off('mousedown.' + nS);
                         if (dropper.data('drp').isFullScreen)
                             _shortScreen.call(dropper, obj.methods);
