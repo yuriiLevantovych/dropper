@@ -1,6 +1,6 @@
 {
-  "name": "modal-drop",
-  "main": "drop.jquery.js",
+  "name": "dropper",
+  "main": "dropper.jquery.js",
   "version": "0.0.1",
   "authors": [
     "yuraL_webcodium <yura.l@webcodium.com>"
