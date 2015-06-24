@@ -334,13 +334,10 @@
                 }
                 opt.exit = $.type(opt.exit) === 'string' ? dropper.find(opt.exit) : opt.exit;
                 if (D.existsN(opt.exit)) {
-                    if (opt.closeClick)
-                        opt.exit.show().off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
-                            e.stopPropagation();
-                            methods.close.call($(this).closest('[data-elrun]'), e);
-                        });
-                    else
-                        opt.exit.hide();
+                    opt.exit.off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
+                        e.stopPropagation();
+                        methods.close.call($(this).closest('[data-elrun]'), e);
+                    });
                 }
                 if (opt.context)
                     dropper.add(opt.dropperOver).off('contextmenu.' + $.dropper.nS).on('contextmenu.' + $.dropper.nS, function (e) {
@@ -397,7 +394,7 @@
                         _decoratorClose(e, opt.closeEsc && e.keyCode === 27);
                     };
                     D.activeDropperCClick[opt.dropper] = function (e) {
-                        _decoratorClose(e, opt.closeClick && !D.existsN($(e.target).closest('[data-elrun]')));
+                        _decoratorClose(e, !D.existsN($(e.target).closest('[data-elrun]')));
                     };
                     if (opt.notify && !isNaN(opt.notifyclosetime))
                         D.notifyTimeout[opt.dropper] = setTimeout(function () {

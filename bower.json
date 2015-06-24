@@ -1,6 +1,6 @@
 {
   "name": "dropper",
-  "main": "dropper.jquery.js",
+  "main": "dist/jquery.dropper.min.js",
   "version": "0.0.1",
   "authors": [
     "yuraL_webcodium <yura.l@webcodium.com>"

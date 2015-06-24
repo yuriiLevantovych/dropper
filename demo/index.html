@@ -155,7 +155,7 @@
         </li>
         <li>
             <div><h3>Simple inline html</h3></div>
-            <a href="#" data-html="inline html">inline html</a>
+            <a href="#" data-html="inline html" data-close-click="false">inline html</a>
         </li>
         <li>
             <div><h3>Simple inline with hash</h3> <i>(after opening popup and reload page popup will open)</i></div>
@@ -655,8 +655,7 @@
         </tr>
         <tr>
             <th>closeClick</th>
-            <td>If this parametr 'true' then popup closing via click outside popup and button 'exit' (above) will be
-                show.
+            <td>If this parametr 'true' then popup closing via click outside popup.
             </td>
             <td>boolean</td>
             <td>true</td>
@@ -1086,18 +1085,18 @@
 
                 <p>
                     First parameter can be in various types, examples:<br/>
-                    <code>$.dropper([<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : 'with_pattern.php', header : 'Title first
-                        document'},<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : 'notify.php', header : 'Title second
+                    <code>$.dropper([<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : 'ext/with_pattern.php', header : 'Title first
+                        document'},<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : 'ext/notify.php', header : 'Title second
                         document'}<br/>]);</code> - array containing objects
                     <br/>
-                    <code>$.dropper( {href : 'with_pattern.php', header : 'Lorem lipsum'} );</code> - single object
+                    <code>$.dropper( {href : 'ext/with_pattern.php', header : 'Lorem lipsum'} );</code> - single object
                     <br/>
                     <code>$.dropper( ['img/1.jpg', 'img/2.jpg'] );</code> - array containing links as strings (only
                     images)
                     <br/>
                     <code>$.dropper( 'img/1.jpg' );</code> - string as source link (only images)
                     <br/>
-                    <code>$.dropper( [jQuery object] );</code>
+                    <code>$.dropper( $('#inline') );</code>
                     <br/>
                     <code>$.dropper( '&lt;h1&gt;Lorem lipsum&lt;/h1&gt;' );</code>
                 </p>
@@ -1582,6 +1581,7 @@
         $.dropper.require(['droppable.min', 'limitSize.min', 'gallery.min', 'placeBeforeShow.min', 'placeAfterClose.min', 'confirmPromptAlert.min', 'fullScreen.min'], function () {
             $('[rel]').dropper({
                 scrollContent: false,
+                scroll:  true,
                 limitSize: true,
                 header: function (opt) {
                     return ($.inArray(opt.href, $.dropper.drp.gallery[opt.rel]) + 1) + ' picture';
