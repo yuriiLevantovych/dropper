@@ -1231,11 +1231,11 @@
             return this;
         };
     }).on('keyup.' + $.dropper.nS, function (e) {
-        console.log(!D.existsN($(this).closest('[data-elrun]')))
         if (e.bubbles && D.activeDropper[0] && D.activeDropperCEsc[D.activeDropper[0]])
             D.activeDropperCEsc[D.activeDropper[0]](e);
     }).on('click.' + $.dropper.nS, function (e) {
-        if (!D.existsN($(this).closest('[data-elrun]')) && !$(this).is('[data-elrun]') && e.bubbles && D.activeDropper[0] && D.activeDropperCClick[D.activeDropper[0]])
+        var $this = $(e.target);
+        if (!D.existsN($this.closest('[data-elrun]')) && !$this.is('[data-elrun]') && e.bubbles && D.activeDropper[0] && D.activeDropperCClick[D.activeDropper[0]])
             D.activeDropperCClick[D.activeDropper[0]](e);
     });
     wnd.on('load.' + $.dropper.nS, function () {
