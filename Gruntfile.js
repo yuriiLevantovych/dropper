@@ -6,13 +6,20 @@ module.exports = function (grunt) {
         clean: ["dist"],
 
         concat: {
+            jsdropfull: {
+                src: [
+                    'src/jquery.dropper.js',
+                    'src/methods/*.js'
+                ],
+                dest: 'dist/jquery.drop.full.js'
+            },
             jsfull: {
                 src: [
                     'bower_components/jquery-mousewheel/jquery.mousewheel.min.js',
                     'bower_components/jscrollpane/script/jquery.jscrollpane.min.js',
                     'dist/jquery.drop.full.js'
                 ],
-                dest: 'src/full.js'
+                dest: 'dist/full.js'
             }
         },
         uglify: {
@@ -20,8 +27,12 @@ module.exports = function (grunt) {
                 src: 'src/jquery.dropper.js',
                 dest: 'dist/jquery.dropper.min.js'
             },
+            jsdropfull: {
+                src: 'dist/jquery.drop.full.js',
+                dest: 'dist/jquery.drop.full.min.js'
+            },
             jsfull: {
-                src: 'src/full.js',
+                src: 'dist/full.js',
                 dest: 'dist/full.min.js'
             },
             methods: {
