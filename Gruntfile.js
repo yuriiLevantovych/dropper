@@ -6,20 +6,13 @@ module.exports = function (grunt) {
         clean: ["dist"],
 
         concat: {
-            jsdropfull: {
-                src: [
-                    'src/jquery.dropper.js',
-                    'src/methods/*.js'
-                ],
-                dest: 'dist/jquery.drop.full.js'
-            },
             jsfull: {
                 src: [
                     'bower_components/jquery-mousewheel/jquery.mousewheel.min.js',
                     'bower_components/jscrollpane/script/jquery.jscrollpane.min.js',
                     'dist/jquery.drop.full.js'
                 ],
-                dest: 'dist/full.js'
+                dest: 'src/full.js'
             }
         },
         uglify: {
@@ -27,12 +20,8 @@ module.exports = function (grunt) {
                 src: 'src/jquery.dropper.js',
                 dest: 'dist/jquery.dropper.min.js'
             },
-            jsdropfull: {
-                src: 'dist/jquery.drop.full.js',
-                dest: 'dist/jquery.drop.full.min.js'
-            },
             jsfull: {
-                src: 'dist/full.js',
+                src: 'src/full.js',
                 dest: 'dist/full.min.js'
             },
             methods: {
@@ -45,17 +34,6 @@ module.exports = function (grunt) {
                 }]
             }
         },
-        //cssmin: {
-        //    target: {
-        //        files: [{
-        //            expand: true,
-        //            cwd: 'src/styles',
-        //            src: ['*.css'],
-        //            dest: 'dist/styles',
-        //            ext: '.min.css'
-        //        }]
-        //    }
-        //},
         imagemin: {
             dynamic: {
                 files: [{
@@ -73,15 +51,25 @@ module.exports = function (grunt) {
                 src: '**',
                 dest: 'dist/styles'
             }
+        },
+        watch: {
+            scripts: {
+                files: ['src/**/*.js'],
+                tasks: ['clean', 'concat', 'uglify'],
+                options: {
+                    livereload: true,
+                    spawn: false
+                }
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    //grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('default', ['clean', 'concat', 'copy', 'uglify', 'imagemin']);
+    grunt.registerTask('default', ['clean', 'concat', 'copy', 'uglify', 'imagemin', 'watch']);
 };
