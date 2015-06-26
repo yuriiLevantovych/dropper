@@ -1231,10 +1231,10 @@
             return this;
         };
     }).on('keyup.' + $.dropper.nS, function (e) {
-        if (D.activeDropper[0] && D.activeDropperCEsc[D.activeDropper[0]])
+        if (e.bubbles && D.activeDropper[0] && D.activeDropperCEsc[D.activeDropper[0]])
             D.activeDropperCEsc[D.activeDropper[0]](e);
     }).on('click.' + $.dropper.nS, function (e) {
-        if (D.activeDropper[0] && D.activeDropperCClick[D.activeDropper[0]])
+        if (e.bubbles && D.activeDropper[0] && D.activeDropperCClick[D.activeDropper[0]])
             D.activeDropperCClick[D.activeDropper[0]](e);
     });
     wnd.on('load.' + $.dropper.nS, function () {
