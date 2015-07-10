@@ -664,7 +664,7 @@
                 dropper.appendTo($('body'));
             else if (opt.placeInherit)
                 $(opt.placeInherit)[opt.methodPlaceInherit](dropper);
-            return dropper.hide().addClass(opt.tempClass).attr('data-elrun', opt.dropper);
+            return dropper.hide().addClass(opt.tempClass).addClass('dropper').attr('data-elrun', opt.dropper);
         },
         _pasteContent: function ($this, dropper, opt) {
             var _checkCont = function (place) {
