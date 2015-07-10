@@ -1235,18 +1235,21 @@
             D.activeDropperCEsc[D.activeDropper[0]](e);
     }).on('click.' + $.dropper.nS, function (e) {
         var $this = $(e.target);
-        if (!D.existsN($this.closest('[data-elrun]')) && !$this.is('[data-elrun]') && e.bubbles && D.activeDropper[0] && D.activeDropperCClick[D.activeDropper[0]])
+        if (!D.existsN($this.closest('[data-elrun]')) && !$this.is('[data-elrun]') && $this.is(':visible') && e.bubbles && D.activeDropper[0] && D.activeDropperCClick[D.activeDropper[0]])
             D.activeDropperCClick[D.activeDropper[0]](e);
     });
     wnd.on('load.' + $.dropper.nS, function () {
         setTimeout(function () {
-            if (D.requireLength && D.requireCur !== D.requireLength)
-                doc.on('dropperRequire.' + $.dropper.nS, function () {
-                    if (D.existsN($(D.selAutoInit).not('.' + D.isD)))
-                        $(D.selAutoInit).not('.' + D.isD).dropper();
-                });
-            else
-                $(D.selAutoInit).not('.' + D.isD).dropper();
+            var autoInitObject = $(D.selAutoInit).not('.' + D.isD);
+            if (autoInitObject) {
+                if (D.requireLength && D.requireCur !== D.requireLength)
+                    doc.on('dropperRequire.' + $.dropper.nS, function () {
+                        autoInitObject.dropper();
+                    });
+                else {
+                    autoInitObject.dropper();
+                }
+            }
         }, 0);
     }).on('message.' + $.dropper.nS, D.handlerMessageWindow);
 })(jQuery, jQuery(window), jQuery(document));
