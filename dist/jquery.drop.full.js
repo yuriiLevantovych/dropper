@@ -1225,7 +1225,7 @@
     wnd.on('load.' + $.dropper.nS, function () {
         setTimeout(function () {
             var autoInitObject = $(D.selAutoInit).not('.' + D.isD);
-            if (autoInitObject) {
+            if (D.existsN(autoInitObject)) {
                 if (D.requireLength && D.requireCur !== D.requireLength)
                     doc.on('dropperRequire.' + $.dropper.nS, function () {
                         autoInitObject.dropper();
