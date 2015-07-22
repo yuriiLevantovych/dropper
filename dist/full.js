@@ -773,7 +773,7 @@
             if (opt.rel && opt.href) {
                 if (!D.gallery[opt.rel])
                     D.gallery[opt.rel] = [];
-                if ($.inArray(opt.href, D.gallery[opt.rel]) === -1 && opt.href.match(D.regImg))
+                if ($.inArray(opt.href, D.gallery[opt.rel]) === -1)
                     D.gallery[opt.rel].push(opt.href);
                 if (!D.galleryHashs[opt.rel] && opt.hash)
                     D.galleryHashs[opt.rel] = [];
