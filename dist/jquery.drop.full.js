@@ -458,8 +458,6 @@
                         $('html, body').css({'overflow': '', 'overflow-x': ''});
                         var $this = $(this);
                         methods._resetStyleDropper.call($(this));
-                        
-                        $this.removeClass(D.pC + opt.place + ' ' + D.pC + opt.type + ' ' + D.pC + 'context' + ' ' + D.pC + 'notify' + ' ' + opt.addClass);
                         if (opt.closed)
                             eval(opt.closed).call(opt.elrun, opt, $this, e);
                         $this.trigger('dropperClosed', {
@@ -972,6 +970,8 @@
                     .dropper-footer.dropper-no-empty{border-top: 1px solid #d8d8d8;}\n\
                     .dropper-content{position: relative;z-index: 1;}\n\
                     .dropper-content .inside-padd{padding: 12px 28px 12px 12px;}\n\
+                    [dropper].dropper-image .dropper-content .inside-padd{font-size: 0;}\n\
+                    \
                     [dropper].dropper-image .dropper-content .inside-padd, [dropper].dropper-alert .dropper-content .inside-padd{padding: 10px;}\n\
                     [dropper].dropper-alert .dropper-group-btns{text-align: center;}\n\
                     .dropper-content button{margin-right: 4px;}\n\
