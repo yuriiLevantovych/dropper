@@ -279,7 +279,7 @@
                         'z-index': 1103 + D.cOD
                     });
                 }
-                dropper.data('drp', opt).attr('data-rel', opt.rel).css('z-index', 1104 + D.cOD).attr('data-elrun', opt.dropper).addClass(D.pC + opt.place);
+                dropper.data('drp', opt).attr('data-rel', opt.rel).css('z-index', 1104 + D.cOD).attr('data-elrun', opt.dropper).addClass(D.pC + opt.place).addClass(opt.addClass);
                 if (opt.context)
                     dropper.addClass(D.pC + 'context');
                 if (opt.notify)
@@ -440,7 +440,7 @@
                     delete D.activeDropperCClick[opt.dropper];
                     if (D.activeDropper[0] && $(D.activeDropper[0]).data('drp'))
                         methods._disableScroll($(D.activeDropper[0]).data('drp'));
-                    dropper.add(opt.elrun).removeClass(D.activeClass);
+                    dropper.add(opt.elrun).removeClass(opt.addClass).removeClass(D.activeClass);
                     if (opt.hash && !hashChange) {
                         D.scrollTop = wnd.scrollTop();
                         wnd.off('hashchange.' + $.dropper.nS);
@@ -836,6 +836,7 @@
     $.dropper.dP = {
         dropper: null,
         html: null,
+        addClas: null,
         href: null,
         hash: null,
         placeContent: '.dropper-content',
