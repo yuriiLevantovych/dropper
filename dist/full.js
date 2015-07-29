@@ -456,7 +456,7 @@
                     delete D.activeDropperCClick[opt.dropper];
                     if (D.activeDropper[0] && $(D.activeDropper[0]).data('drp'))
                         methods._disableScroll($(D.activeDropper[0]).data('drp'));
-                    dropper.add(opt.elrun).removeClass(opt.addClass).removeClass(D.activeClass);
+                    dropper.add(opt.elrun).removeClass(D.activeClass);
                     if (opt.hash && !hashChange) {
                         D.scrollTop = wnd.scrollTop();
                         wnd.off('hashchange.' + $.dropper.nS);
@@ -474,7 +474,8 @@
                         $('html, body').css({'overflow': '', 'overflow-x': ''});
                         var $this = $(this);
                         methods._resetStyleDropper.call($(this));
-                        $this.removeClass(D.pC + opt.place).removeClass(D.pC + opt.type).removeClass(D.pC + 'context').removeClass(D.pC + 'notify');
+                        
+                        $this.removeClass(D.pC + opt.place + ' ' + D.pC + opt.type + ' ' + D.pC + 'context' + ' ' + D.pC + 'notify' + ' ' + opt.addClass);
                         if (opt.closed)
                             eval(opt.closed).call(opt.elrun, opt, $this, e);
                         $this.trigger('dropperClosed', {
