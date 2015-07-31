@@ -11,13 +11,13 @@ module.exports = function (grunt) {
                     'src/jquery.dropper.js',
                     'src/methods/*.js'
                 ],
-                dest: 'dist/jquery.drop.full.js'
+                dest: 'dist/jquery.dropper.full.js'
             },
             jsfull: {
                 src: [
                     'bower_components/jquery-mousewheel/jquery.mousewheel.min.js',
                     'bower_components/jscrollpane/script/jquery.jscrollpane.min.js',
-                    'dist/jquery.drop.full.js'
+                    'dist/jquery.dropper.full.js'
                 ],
                 dest: 'dist/full.js'
             }
@@ -28,8 +28,8 @@ module.exports = function (grunt) {
                 dest: 'dist/jquery.dropper.min.js'
             },
             jsdropfull: {
-                src: 'dist/jquery.drop.full.js',
-                dest: 'dist/jquery.drop.full.min.js'
+                src: 'dist/jquery.dropper.full.js',
+                dest: 'dist/jquery.dropper.full.min.js'
             },
             jsfull: {
                 src: 'dist/full.js',

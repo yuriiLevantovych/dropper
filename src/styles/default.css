@@ -1,4 +1,4 @@
-* {
+.dropper * {
     margin: 0;
     padding: 0;
     -webkit-box-sizing: content-box;
@@ -6,62 +6,82 @@
     box-sizing: content-box;
 }
 
-.dropper-header {
+.dropper .dropper-header {
+    background-color: #f8f8f8;
     padding: 0 55px 0 12px;
     font-size: 14px;
 }
 
-input, select, textarea {
+.dropper input, select, textarea {
     margin-bottom: 6px;
 }
 
-input, select, textarea, .dropper-content button {
+.dropper input, .dropper select, .dropper textarea, .dropper .dropper-content button {
     outline: none;
     font-family: Arial, "Helvetica CY", "Nimbus Sans L", sans-serif;
     line-height: 1.5;
+    border: 1px solid #d8d8d8;
     padding: 4px 6px;
 }
 
-button {
+.dropper button {
     background-color: #fafafa;
     color: #666;
     cursor: pointer;
 }
 
-.dropper-header.dropper-no-empty, .dropper-footer.dropper-no-empty {
+.dropper .dropper-header.dropper-no-empty, .dropper .dropper-footer.dropper-no-empty {
     padding-top: 6px;
     padding-bottom: 7px;
 }
 
-.dropper-footer.dropper-no-empty {
+.dropper .dropper-header.dropper-no-empty {
+    border-bottom: 1px solid #d8d8d8;
+}
+
+.dropper.dropper-is-scroll .dropper-header.dropper-empty {
+    height: 28px;
+}
+
+.dropper .dropper-footer.dropper-no-empty {
     border-top: 1px solid #d8d8d8;
 }
 
-.dropper-content {
+.dropper .dropper-content {
     position: relative;
     z-index: 1;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
 }
 
-.dropper-content .inside-padd {
+.dropper .dropper-content .inside-padd {
     padding: 12px 28px 12px 12px;
 }
 
-.dropper-content button {
+.dropper.dropper-image .dropper-content .inside-padd {
+    font-size: 0;
+}
+
+.dropper.dropper-image .dropper-content .inside-padd, .dropper.dropper-alert .dropper-content .inside-padd {
+    padding: 10px;
+}
+
+.dropper.dropper-alert .dropper-group-btns {
+    text-align: center;
+}
+
+.dropper .dropper-content button {
     margin-right: 4px;
 }
 
-button:focus, input:focus, select:focus, textarea:focus {
-    outline: #f8f7f5 solid 1px;
+.dropper button:focus, .dropper input:focus, .dropper select:focus, .dropper textarea:focus {
+    outline: #b3b3b3 solid 1px;
 }
 
-.dropper-footer {
+.dropper .dropper-footer {
+    background-color: #d5d5d5;
     padding: 0 12px;
 }
 
-.dropper-close, .dropper-prev, .dropper-next {
+.dropper .dropper-close, .dropper .dropper-prev, .dropper .dropper-next {
     outline: none;
     background: none;
     border: 0;
@@ -73,53 +93,58 @@ button:focus, input:focus, select:focus, textarea:focus {
     line-height: 0;
 }
 
-.dropper-prev, .dropper-next {
+.dropper .dropper-prev, .dropper .dropper-next {
     width: 35%;
     height: 100%;
     top: 0;
     z-index: 2;
 }
 
-.dropper-prev:focus, .dropper-next:focus {
+.dropper .dropper-prev:focus, .dropper .dropper-next:focus {
     outline: none;
 }
 
-.dropper-icon-prev, .dropper-icon-next {
+.dropper .dropper-icon-prev, .dropper .dropper-icon-next {
     width: 20px;
     height: 80px;
     line-height: 80px;
 }
 
-.dropper-icon-prev, .dropper-icon-next, .dropper-icon-close {
+.dropper .dropper-icon-prev, .dropper .dropper-icon-next, .dropper .dropper-icon-close {
     font-family: "Trebuchet MS", "Helvetica CY", sans-serif;
     font-size: 21px;
+    color: #999;
     background-color: #fff;
     display: inline-block;
     text-align: center;
-    //display : inline;
+/ / display : inline;
     zoom: 1;
 }
 
-.dropper-icon-close {
-    line-height: 17px;
+.dropper .dropper-icon-close {
+    line-height: 19px;
     width: 19px;
     height: 19px;
 }
 
-.dropper-close {
+.dropper .dropper-close {
     right: 5px;
     top: 4px;
     z-index: 3;
 }
 
-.dropper-next {
+.dropper .dropper-next {
     right: 5px;
     text-align: right;
 }
 
-.dropper-prev {
+.dropper .dropper-prev {
     left: 5px;
     text-align: left;
+}
+
+.dropper.dropper-is-scroll .dropper-next {
+    right: 16px;
 }
 
 .dropper-icon-next {
@@ -183,6 +208,30 @@ button:focus, input:focus, select:focus, textarea:focus {
     background-color: #d9edf7;
     border-color: #bce8f1;
     color: #31708f;
+}
+
+.dropper.dropper-context .dropper-content .inside-padd {
+    padding: 0;
+}
+
+.dropper {
+    max-width: 100%;
+    font-family: Arial, "Helvetica CY", "Nimbus Sans L", sans-serif;
+    font-size: 13px;
+    color: #333;
+    border: 1px solid #e4e4e4;
+    background-color: #fff;
+}
+
+.dropper .placePaste img {
+    max-width: 100%;
+}
+
+.dropper.dropper-is-scroll .placePaste img {
+    max-width: none;
+    max-height: none;
+    width: auto;
+    height: auto;
 }
 
 .jspContainer {
@@ -284,92 +333,19 @@ button:focus, input:focus, select:focus, textarea:focus {
 }
 
 .jspArrowUp:before {
-    content: "\25b2";
+    content: "\\25b2";
 }
 
 .jspArrowDown:before {
-    content: "\25bc";
+    content: "\\25bc";
 }
 
 .jspArrowLeft:before {
-    content: "\25c4";
+    content: "\\25c4";
 }
+
+#dropper-loading div{background-image: url(../images/loader.gif);}
 
 .jspArrowRight:before {
-    content: "\25ba";
-}
-
-/*colors*/
-.dropper-header {
-    background-color: #dff0d8;
-    color: #3c763d;
-}
-
-.dropper-header.dropper-no-empty {
-    border-bottom: 1px solid #d6e9c6;
-}
-
-input, select, textarea, .dropper-content button {
-    color: #3c763d;
-    border: 1px solid #dff0d8;
-}
-
-.dropper-footer {
-    background-color: #a0ad9a;
-    color: #f8f7f5;
-}
-
-.dropper-icon-prev, .dropper-icon-next, .dropper-icon-close {
-    color: #3c763d;
-}
-
-/*/colors*/
-
-[dropper] {
-    border: 1px solid #bac7b5;
-}
-
-[dropper].dropper-is-scroll .dropper-header.dropper-empty {
-    height: 28px;
-}
-
-[dropper].dropper-image .dropper-content .inside-padd, [dropper].dropper-alert .dropper-content .inside-padd {
-    padding: 10px;
-}
-
-[dropper].dropper-alert .dropper-group-btns {
-    text-align: center;
-}
-
-[dropper].dropper-is-scroll .dropper-next {
-    right: 16px;
-}
-
-[dropper].dropper-context .dropper-content .inside-padd {
-    padding: 0;
-}
-
-[dropper] {
-    max-width: 100%;
-    font-family: Arial, "Helvetica CY", "Nimbus Sans L", sans-serif;
-    font-size: 13px;
-    color: #333;
-    background-color: #fff;
-}
-
-[dropper] .placePaste img {
-    max-width: 100%;
-}
-
-[dropper].dropper-is-scroll .placePaste img {
-    max-width: none;
-    max-height: none;
-    width: auto;
-    height: auto;
-}
-
-{
-/*#dropper-loading div{
-    background-image: url(loader.gif);
-}*/
+    content: "\\25ba";
 }

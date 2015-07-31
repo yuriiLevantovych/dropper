@@ -216,7 +216,6 @@
             $this.attr('data-dropper', opt.dropper).data('dropper', opt.dropper);
             dropper = $(elSet.droppern);
             var _confirmF = function () {
-                opt.style = methods._styleCreate(opt);
                 if (opt.notify && opt.datas)
                     methods._pasteNotify.call($this, opt.datas, opt, hashChange, e);
                 else if (opt.filter)
@@ -242,7 +241,6 @@
                 if (opt.prompt || opt.confirm || opt.alert) {
                     elSet.droppern = elSet.dropper;
                     opt.dropper = opt.tempClassS;
-                    opt.style = methods._styleCreate(opt);
                     methods._checkMethod(function () {
                         methods.confirmPromptAlert(opt, hashChange, _confirmF, e, $this);
                     });
@@ -454,7 +452,6 @@
                         });
                     dropper[opt.effectOff](force ? 0 : opt.durationOff, function () {
                         D.busy = false;
-                        opt.style.remove();
                         $('html, body').css({'overflow': '', 'overflow-x': ''});
                         var $this = $(this);
                         methods._resetStyleDropper.call($(this));
@@ -725,28 +722,6 @@
                 D.wLH = D.wLHN;
             });
         },
-        _styleCreate: function (opt) {
-            $('[data-rel="' + opt.tempClassS + '"]').remove();
-            if (!D.theme[opt.theme])
-                throw "Theme" + " '" + opt.theme + "' " + "isn't available";
-            var text = D.theme[opt.theme],
-                coms = D.theme[opt.theme].match(/.*,([^{]*)/gm);
-            if (coms)
-                $.map(coms, function (n) {
-                    n = n.split('{')[0];
-                    text = text.replace(n, n.replace(/,(?!\s*\[dropper\])/g, ', ' + opt.tempClassS + ' '));
-                });
-            return $('<style>', {
-                'data-rel': opt.tempClassS,
-                html: text
-                    .replace(/\s\s+/g, ' ')
-                    .replace(/\}[^$\*](?!\s*(\[dropper\]|\{\s*\/\*))/g, '} ' + opt.tempClassS + ' ')/*paste before begin row*/
-                    .replace(/\{\s*\/\*(.*?)\*\/\s*\}/g, '$1')
-                    .replace(/^(?!\s*\[dropper\])/, opt.tempClassS + ' ')/*for first row*/
-                    .replace(/\[dropper\]/g, opt.tempClassS)
-                    .replace(/url\((.*)\)/g, 'url(' + D.url + 'images/' + opt.theme + '/$1)')
-            }).appendTo($('body'));
-        },
         _disableScroll: function (opt) {
             D.enableScroll();
             if (opt.place === 'center' && !opt.scroll)
@@ -951,77 +926,13 @@
         width: null,
         height: null,
         rel: null,
-        fullScreen: true
+        fullScreen: true,
+        loadingAnimate: true
     };
     $.dropper.drp = {
         handlerMessageWindow: function (e) {
             if ($.type(e.originalEvent.data) === 'object')
                 return $.dropper(e.originalEvent.data);
-        },
-        theme: {
-            default: '*{margin: 0;padding: 0;-webkit-box-sizing: content-box;-moz-box-sizing: content-box;box-sizing: content-box;}\n\
-                    .dropper-header{background-color: #f8f8f8;padding: 0 55px 0 12px;font-size: 14px;}\n\
-                    input, select, textarea{margin-bottom: 6px;}\n\
-                    input, select, textarea, .dropper-content button{outline: none;font-family: Arial, "Helvetica CY", "Nimbus Sans L", sans-serif;line-height: 1.5;border: 1px solid #d8d8d8;padding: 4px 6px;}\n\
-                    button{background-color: #fafafa;color: #666;cursor: pointer;}\n\
-                    .dropper-header.dropper-no-empty, .dropper-footer.dropper-no-empty{padding-top: 6px;padding-bottom: 7px;}\n\
-                    .dropper-header.dropper-no-empty{border-bottom: 1px solid #d8d8d8;}\n\
-                    [dropper].dropper-is-scroll .dropper-header.dropper-empty{height: 28px;}\n\
-                    .dropper-footer.dropper-no-empty{border-top: 1px solid #d8d8d8;}\n\
-                    .dropper-content{position: relative;z-index: 1;}\n\
-                    .dropper-content .inside-padd{padding: 12px 28px 12px 12px;}\n\
-                    [dropper].dropper-image .dropper-content .inside-padd{font-size: 0;}\n\
-                    [dropper].dropper-image .dropper-content .inside-padd, [dropper].dropper-alert .dropper-content .inside-padd{padding: 10px;}\n\
-                    [dropper].dropper-alert .dropper-group-btns{text-align: center;}\n\
-                    .dropper-content button{margin-right: 4px;}\n\
-                    button:focus, input:focus, select:focus, textarea:focus{outline: #b3b3b3 solid 1px;}\n\
-                    .dropper-footer{background-color: #d5d5d5;padding: 0 12px;}\n\
-                    .dropper-close, .dropper-prev, .dropper-next{outline: none;background: none;border: 0;cursor: pointer;vertical-align: middle;position: absolute;font-size: 0;padding: 0;line-height: 0;}\n\
-                    .dropper-prev, .dropper-next{width: 35%;height: 100%;top: 0;z-index: 2;}\n\
-                    .dropper-prev:focus, .dropper-next:focus{outline: none;}\n\
-                    .dropper-icon-prev, .dropper-icon-next{width: 20px;height: 80px;line-height: 80px;}\n\
-                    .dropper-icon-prev, .dropper-icon-next, .dropper-icon-close{font-family: "Trebuchet MS", "Helvetica CY", sans-serif;font-size: 21px;color: #999;background-color: #fff;display: inline-block;text-align: center;//display: inline;zoom: 1;}\n\
-                    .dropper-icon-close{line-height: 19px;width: 19px;height: 19px;}\n\
-                    .dropper-close{right: 5px;top: 4px;z-index: 3;}\n\
-                    .dropper-next{right: 5px;text-align: right;}\n\
-                    .dropper-prev{left: 5px;text-align: left;}\n\
-                    [dropper].dropper-is-scroll .dropper-next{right: 16px;}\n\
-                    .dropper-icon-next{text-align: center;}\n\
-                    .icon-times-dropper{position: absolute;z-index:1;right:0;top: 0;cursor: pointer;width: 15px;height: 15px;}\n\
-                    .nav{list-style: none;margin-left: 0;}\n\
-                    .nav-vertical > li{display: block;border-top: 1px solid #ebebeb;padding: 8px 35px 8px 15px;}\n\
-                    .nav-vertical > li > a{text-decoration: none;}\n\
-                    .nav-vertical > li:first-child{border-top: 0;}\n\
-                    .dropper-msg > div{border-width: 1px;border-style: solid;padding: 10px;}\n\
-                    .dropper-success{background-color: #dff0d8;border-color: #d6e9c6;color: #3c763d;}\n\
-                    .dropper-warning{background-color: #fcf8e3;border-color: #faebcc;color: #8a6d3b;}\n\
-                    .dropper-error{background-color: #f2dede;border-color: #ebccd1;color: #a94442;}\n\
-                    .dropper-info{background-color: #d9edf7;border-color: #bce8f1;color: #31708f;}\n\
-                    [dropper].dropper-context .dropper-content .inside-padd{padding: 0;}\n\
-                    [dropper]{max-width: 100%;font-family: Arial, "Helvetica CY", "Nimbus Sans L" sans-serif;font-size: 13px;color: #333;border: 1px solid #e4e4e4;background-color: #fff;}\n\
-                    [dropper] .placePaste img{max-width: 100%;}\n\
-                    [dropper].dropper-is-scroll .placePaste img{max-width: none; max-height: none;width: auto;height: auto;}\n\
-                    .jspContainer{overflow: hidden;position: relative;}\n\
-                    .jspPane{position: absolute;}\n\
-                    .jspVerticalBar{position: absolute;top: 0;right: 0;width: 16px;height: 100%;background: red;}\n\
-                    .jspHorizontalBar{position: absolute;bottom: 0;left: 0;width: 100%;height: 16px;background: red;}\n\
-                    .jspCap{display: none;}\n\
-                    .jspHorizontalBar .jspCap{float: left;}\n\
-                    .jspTrack{background: #f9f8f7;position: relative;}\n\
-                    .jspDrag{background: #d5d5d5;position: relative;top: 0;left: 0;cursor: pointer;}\n\
-                    .jspHorizontalBar .jspTrack,.jspHorizontalBar .jspDrag{float: left;height: 100%;}\n\
-                    .jspArrow{background: #ccc;position: relative;display: block;cursor: pointer;padding: 0;margin: 0;line-height: 0;}\n\
-                    .jspArrow.jspDisabled{cursor: default;background: #eee;}\n\
-                    .jspVerticalBar .jspArrow{height: 16px;}\n\
-                    .jspHorizontalBar .jspArrow{width: 16px;float: left;height: 100%;}\n\
-                    .jspVerticalBar .jspArrow:focus{outline: none;}\n\
-                    .jspCorner{background: #eeeef4;float: left;height: 100%;}\n\
-                    .jspArrowUp:before, .jspArrowDown:before, .jspArrowLeft:before, .jspArrowRight:before{position: absolute;font-size: 10px;color: #777;width: 100%;height: 100%;text-align: center;line-height: 16px;}\n\
-                    .jspArrowUp:before{content: "\\25b2";}\n\
-                    .jspArrowDown:before{content: "\\25bc";}\n\
-                    .jspArrowLeft:before{content: "\\25c4";}\n\
-                    {/*#dropper-loading div{background-image: url(loader.gif);}*/}\n\
-                    .jspArrowRight:before{content: "\\25ba";}'
         },
         regImg: /(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i,
         mainStyle: '#dropper-loading {position: fixed;top: 50%;left: 50%;width: 40px;height: 40px;margin-top: -20px;margin-left: -20px;cursor: pointer;overflow: hidden;z-index: 11104;display: none;}\n\
@@ -1076,10 +987,7 @@
         },
         exists: function (selector) {
             return $(selector).length > 0 && $(selector) instanceof $;
-        },
-        url: $("[src$='dropper.js'], [src$='dropper.min.js']").attr('src') + '/../',
-        requireLength: 0,
-        requireCur: 0
+        }
     };
     var D = $.dropper.drp,
         DP = $.dropper.dP;
@@ -1101,36 +1009,6 @@
     };
     $.dropper.setParameters = function (options) {
         $.extend(DP, options);
-        return this;
-    };
-    $.dropper.setThemes = function () {
-        for (var i = 0; i < arguments.length; i++) {
-            var obj = {};
-            if (arguments[i].file !== undefined) {
-                (function (o, obj) {
-                    $.ajax({
-                        url: D.url + 'styles/' + o.file + '.css',
-                        dataType: 'text',
-                        cache: true,
-                        success: function (data) {
-                            obj[o.name] = data;
-                            $.extend(D.theme, obj);
-                            if (o.callback)
-                                o.callback.call($.dropper, o.name);
-                        },
-                        error: function () {
-                            throw methods._errorM(arguments[2]);
-                        }
-                    });
-                })(arguments[i], obj);
-            }
-            else if (arguments[i].text) {
-                obj[arguments[i].name] = arguments[i].text;
-                $.extend(D.theme, obj);
-            }
-            else
-                throw methods._errorM('Data not enough');
-        }
         return this;
     };
     $.dropper.setMethod = function (n, v) {
@@ -1163,42 +1041,15 @@
             methods.update.call($(this));
         });
     };
-    $.dropper.require = function (arr, cb) {
-        (function (arr, cb) {
-            if ($.type(arr) !== 'array')
-                arr = arr.split(',');
-            D.requireLength += arr.length;
-            for (var i in arr) {
-                if (methods.hasOwnProperty(arr[i]))
-                    continue;
-                $.ajax({
-                    url: D.url + 'methods/' + arr[i] + '.js',
-                    dataType: 'script',
-                    cache: true,
-                    success: function () {
-                        if (++D.requireCur === D.requireLength) {
-                            if (cb)
-                                cb.call($.dropper, arr);
-                            doc.trigger('dropperRequire');
-                        }
-                    },
-                    error: function () {
-                        throw methods._errorM(arguments[2]);
-                    }
-                });
-            }
-        })(arr, cb);
-        return this;
-    };
     doc.ready(function () {
-        $('<style>', {html: D.mainStyle.replace(/\s{2,}/g, ' ').replace(/url\((.*)\)/g, 'url(' + D.url + 'images/default/$1)')}).appendTo($('body'));
+        $('<style>', {html: D.mainStyle.replace(/\s{2,}/g, ' ')}).appendTo($('body'));
         D.scrollTop = wnd.scrollTop();
         var loadingTimer, loadingFrame = 1,
             loading = $('<div/>', {
                 id: 'dropper-loading'
             }).append($('<div/>')).appendTo($('body'));
         var _animate_loading = function () {
-            if (!loading.is(':visible')) {
+            if (!loading.is(':visible') && DP.loadingAnimate) {
                 clearInterval(loadingTimer);
                 return;
             }
@@ -1206,9 +1057,11 @@
             loadingFrame = (loadingFrame + 1) % 12;
         };
         $.dropper.showLoading = function () {
-            clearInterval(loadingTimer);
             loading.show();
-            loadingTimer = setInterval(_animate_loading, 66);
+            if (DP.loadingAnimate) {
+                clearInterval(loadingTimer);
+                loadingTimer = setInterval(_animate_loading, 66);
+            }
             return this;
         };
         $.dropper.hideLoading = function () {
@@ -1227,13 +1080,7 @@
         setTimeout(function () {
             var autoInitObject = $(D.selAutoInit).not('.' + D.isD);
             if (D.existsN(autoInitObject)) {
-                if (D.requireLength && D.requireCur !== D.requireLength)
-                    doc.on('dropperRequire.' + $.dropper.nS, function () {
-                        autoInitObject.dropper();
-                    });
-                else {
-                    autoInitObject.dropper();
-                }
+                autoInitObject.dropper();
             }
         }, 0);
     }).on('message.' + $.dropper.nS, D.handlerMessageWindow);

@@ -8,7 +8,8 @@
     <script src="../bower_components/jquery/dist/jquery.min.js"></script>
     <script src="../bower_components/jscrollpane/script/jquery.jscrollpane.min.js"></script>
     <script src="../bower_components/jquery-mousewheel/jquery.mousewheel.min.js"></script>
-    <script src="../dist/jquery.dropper.min.js"></script>
+    <script src="../dist/jquery.dropper.full.js"></script>
+    <link rel="stylesheet" href="../src/styles/default.css"/>
     <style>
         html, body, table, p, div, li, ul, ol, td, th, h1, h2, h3, h4, h5 {
             margin: 0;
@@ -182,21 +183,17 @@
             <div><h3>Simple notify inline</h3></div>
             <ul>
                 <li>
-                    <a href="#" data-dropper data-notify="true"
-                       data-datas="{answer: 'success', data: 'simple notify success'}">notify success</a>
+                    <a href="#" data-dropper data-notify="true" data-datas="{answer: 'success', data: 'simple notify success'}">notify success</a>
                 </li>
                 <li>
-                    <a href="#" data-dropper data-notify="true"
-                       data-datas="{answer: 'info', data: 'simple notify info'}">notify
+                    <a href="#" data-dropper data-notify="true" data-datas="{answer: 'info', data: 'simple notify info'}">notify
                         info</a>
                 </li>
                 <li>
-                    <a href="#" data-dropper data-notify="true"
-                       data-datas="{answer: 'warning', data: 'simple notify warning'}">notify warning</a>
+                    <a href="#" data-dropper data-notify="true" data-datas="{answer: 'warning', data: 'simple notify warning'}">notify warning</a>
                 </li>
                 <li>
-                    <a href="#" data-dropper data-notify="true"
-                       data-datas="{answer: 'error', data: 'simple notify error'}">notify error</a>
+                    <a href="#" data-dropper data-notify="true" data-datas="{answer: 'error', data: 'simple notify error'}">notify error</a>
                 </li>
             </ul>
         </li>
@@ -258,15 +255,15 @@
             </ul>
         </li>
         <li>
-            <div><h3>Dropperable</h3> <i>require <b>droppable</b> method</i> <a href="#inheritDetail">detail about <b>droppable</b></a>
+            <div><h3>Dropperable</h3> <i>require <b>droppable</b> method</i>
+                <a href="#inheritDetail">detail about <b>droppable</b></a>
             </div>
             <a href="#" data-dropper="#inline" data-droppable="true">droppable</a>
         </li>
         <li>
-            <div><h3>Limit size popup && scroll Content</h3> <i>require <b>limitSize</b> method</i> <a
-                    href="#inheritDetail">detail about <b>limitSize</b></a></div>
-            <a href="#" data-dropper data-limit-size="true"
-               data-content="Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>">limit
+            <div><h3>Limit size popup && scroll Content</h3><i>require <b>limitSize</b> method</i>
+                <a href="#inheritDetail">detail about <b>limitSize</b></a></div>
+            <a href="#" data-dropper data-limit-size="true" data-content="Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>">limit
                 size and scroll content</a>
         </li>
         <li>
@@ -298,37 +295,34 @@
     <h2>Options</h2>
 
     <p>
-        For set any option can use three methods <i>priority these methods of set parameter(-s) sort in order</i>:
-    </p>
+        For set any option can use three methods <i>priority these methods of set parameter(-s) sort in order</i>: </p>
     <ol>
         <li>
             <p>
-                By set default parametrs
-                <code>$.dropper.setParameters({object of options})</code>
+                By set default parametrs <code>$.dropper.setParameters({object of options})</code>
             </p>
 
-            <p><i>but this set option(-s) need make before initialization</i> <a href="#inheritDetail">detail about <b>initialization</b></a>
+            <p><i>but this set option(-s) need make before initialization</i>
+                <a href="#inheritDetail">detail about <b>initialization</b></a>
             </p>
         </li>
         <li>By initializtion <code>$(selector initialization).dropper({object of options})</code></li>
         <li>
             <p>
-                By data atribute with html or code, for example:<br/>
-                <b>html (data-dropper):</b><br/>
+                By data atribute with html or code, for example:<br/> <b>html (data-dropper):</b><br/>
                 <code>&lt;a href="#" id="popup-refer" data-dropper="#inline"&gt;inline&lt;/a&gt;</code><br/>
-                <b>code:</b><br/>
-                <code>$('#popup-refer').data('dropper', '#inline');</code>
+                <b>code:</b><br/> <code>$('#popup-refer').data('dropper', '#inline');</code>
             </p>
 
-            <p><i>but set this option(-s) need make before initialization</i> <a href="#inheritDetail">detail about <b>initialization</b></a>
+            <p><i>but set this option(-s) need make before initialization</i>
+                <a href="#inheritDetail">detail about <b>initialization</b></a>
             </p>
         </li>
     </ol>
     <p>
         For auto initialization need that element had html atributes: <code>data-dropper</code> or
         <code>data-html</code> (<i>they
-        may be without values</i>)
-    </p>
+        may be without values</i>) </p>
     <table>
         <colgroup>
             <col width="10%"/>
@@ -348,10 +342,9 @@
         <tr>
             <th>dropper</th>
             <td>
-                This parameter server as init initializer of plugin, and for inline opens popup, also works with
-                parametr <code>source</code> - about this below.
-                Has second priority if set next parameters: <code>source</code>, <code>notify</code> and
-                <code>datas</code>, <code>html</code>, <code>filter</code>.
+                This parameter server as init initializer of plugin, and for inline opens popup, also works with parametr
+                <code>source</code> - about this below. Has second priority if set next parameters: <code>source</code>,
+                <code>notify</code> and <code>datas</code>, <code>html</code>, <code>filter</code>.
             </td>
             <td>string <i>selector</i> or jQuery Object</td>
             <td>null</td>
@@ -390,11 +383,18 @@
         </tr>
         <tr>
             <th>hash</th>
-            <td>Must have valid hash, this parametr may be set as attribute href, if parametr <code>moreOne</code> below
-                is 'true' then url can have multiply hashs, after reload all popups which related with the corresponding
-                hash will open
+            <td>Must have valid hash, this parametr may be set as attribute href, if parametr
+                <code>moreOne</code> below is 'true' then url can have multiply hashs, after reload all popups which related with the corresponding hash will open
             </td>
             <td>string</td>
+            <td>null</td>
+        </tr>
+        <tr>
+            <th>addClass</th>
+            <td>
+                Add class to popup.
+            </td>
+            <td>string <i>selector of class</i></td>
             <td>null</td>
         </tr>
         <tr>
@@ -417,10 +417,7 @@
         </tr>
         <tr>
             <th>place</th>
-            <td>If center then popup situated on the center of window browser, if global then situated of popup depends
-                on elements which opens popup, detail below in parametr placement. If inherit popup opens in place where
-                he situated, detail below in parametr placeInerit. If parametr context(below) is true, that place get
-                value 'global'.
+            <td>If center then popup situated on the center of window browser, if global then situated of popup depends on elements which opens popup, detail below in parametr placement. If inherit popup opens in place where he situated, detail below in parametr placeInerit. If parametr context(below) is true, that place get value 'global'.
             </td>
             <td>string <i>(center, inherit, global)</i></td>
             <td>center</td>
@@ -428,9 +425,8 @@
         <tr>
             <th>placement</th>
             <td>
-                If <code>place</code> has value 'global' this parametr defines how popup will be situated relatively
-                element which open his, if type of object popup will be situated relatively visible part of docuemnt
-                (window)
+                If
+                <code>place</code> has value 'global' this parametr defines how popup will be situated relatively element which open his, if type of object popup will be situated relatively visible part of docuemnt (window)
             </td>
             <td>string, object. String - <i>(left top, left bottom, left center, right top, right bottom, right center,
                 center center)</i> or object with properies left, right, top, bottom with number or string values
@@ -448,8 +444,8 @@
         <tr>
             <th>methodPlaceInherit</th>
             <td>
-                Defines which method will be paste popup where parametr <code>place</code> has value 'inherit'. It may
-                have any method (insertion) of Jquery.
+                Defines which method will be paste popup where parametr
+                <code>place</code> has value 'inherit'. It may have any method (insertion) of Jquery.
             </td>
             <td>string</td>
             <td>html</td>
@@ -476,9 +472,8 @@
         </tr>
         <tr>
             <th>placeHeader</th>
-            <td>Place in dropper where paste content generated by parametr <code>header</code> (below), if this element
-                is
-                not empty plugin add class 'dropper-no-empty' else 'dropper-empty'
+            <td>Place in dropper where paste content generated by parametr
+                <code>header</code> (below), if this element is not empty plugin add class 'dropper-no-empty' else 'dropper-empty'
             </td>
             <td>string <i>selector</i> or jQuery Object</td>
             <td>.dropper-header</td>
@@ -497,8 +492,7 @@
         </tr>
         <tr>
             <th>placePaste</th>
-            <td>Place in dropper where insert content of ajax, iframe, image priority have: content generated by
-                parametr
+            <td>Place in dropper where insert content of ajax, iframe, image priority have: content generated by parametr
                 <code>content</code> (below) and content of parametr <code>html</code> (above), must be in
                 <code>pattern</code>(-s) (below)
             </td>
@@ -507,33 +501,34 @@
         </tr>
         <tr>
             <th>header</th>
-            <td>Content paste in header which determinated by parametr <code>placeHeader</code> if this parametr has
-                type of function, then function must something return, if data html attribute data-header function
-                should look so: <code>data-header="(function(){return &lt;something&gt;})"</code></td>
+            <td>Content paste in header which determinated by parametr
+                <code>placeHeader</code> if this parametr has type of function, then function must something return, if data html attribute data-header function should look so:
+                <code>data-header="(function(){return &lt;something&gt;})"</code></td>
             <td>string, name or code of function</td>
             <td>null</td>
         </tr>
         <tr>
             <th>content</th>
-            <td>Content paste in content which determinated by parametr <code>placeContent</code> if this parametr has
-                type of function, then function must something return, if data html attribute data-content function
-                should look so: <code>data-content="(function(){return &lt;something&gt;})"</code></td>
+            <td>Content paste in content which determinated by parametr
+                <code>placeContent</code> if this parametr has type of function, then function must something return, if data html attribute data-content function should look so:
+                <code>data-content="(function(){return &lt;something&gt;})"</code></td>
             <td>string, name or code of function</td>
             <td>null</td>
         </tr>
         <tr>
             <th>footer</th>
-            <td>Content paste in footer which determinated by parametr <code>placeFooter</code> if this parametr has
-                type of function, then function must something return, if data html attribute data-footer function
-                should look so: <code>data-footer="(function(){return &lt;something&gt;})"</code></td>
+            <td>Content paste in footer which determinated by parametr
+                <code>placeFooter</code> if this parametr has type of function, then function must something return, if data html attribute data-footer function should look so:
+                <code>data-footer="(function(){return &lt;something&gt;})"</code></td>
             <td>string, name or code of function</td>
             <td>null</td>
         </tr>
         <tr>
             <th>filter</th>
             <td>
-                String Jquery set for example - <i>closest('body').find('#inline')</i><br/>
-                Jquery element has exists in document, relatively element which opens popup, for example - <i>$(element).closest('body').find('#inline')</i><br/>
+                String Jquery set for example -
+                <i>closest('body').find('#inline')</i><br/> Jquery element has exists in document, relatively element which opens popup, for example -
+                <i>$(element).closest('body').find('#inline')</i><br/>
             </td>
             <td>string Jquery set</td>
             <td>null</td>
@@ -624,8 +619,7 @@
         </tr>
         <tr>
             <th>datas</th>
-            <td>Must have default look, for example (<code>{answer: 'success' | 'info' | 'warning' | 'error', data:
-                'text | html'}</code>), or may change function handler which defined of parametr
+            <td>Must have default look, for example (<code>{answer: 'success' | 'info' | 'warning' | 'error', data: 'text | html'}</code>), or may change function handler which defined of parametr
                 <code>handlerNotify</code> (below)
             </td>
             <td>object</td>
@@ -647,8 +641,7 @@
         </tr>
         <tr>
             <th>exit</th>
-            <td>If click on this element then popup closing. If type is string then this element find inside popup, else
-                element giving as jQuery set and don't find in popup.
+            <td>If click on this element then popup closing. If type is string then this element find inside popup, else element giving as jQuery set and don't find in popup.
             </td>
             <td>string <i>selector</i> or jQuery Object</td>
             <td>[data-closed]</td>
@@ -686,80 +679,77 @@
         </tr>
         <tr>
             <th>inheritClose</th>
-            <td>If true and pupup has value 'inherit' of parametr <code>place</code> (above) if click outside popup or
-                push key 'esc' then popup will be close.
+            <td>If true and pupup has value 'inherit' of parametr
+                <code>place</code> (above) if click outside popup or push key 'esc' then popup will be close.
             </td>
             <td>boolean</td>
             <td>false</td>
         </tr>
         <tr>
             <th>alert</th>
-            <td>If this parametr is 'true' then opening popup use parametr <code>patternAlert</code> (above) this
-                parametr plays a role of a decorator
+            <td>If this parametr is 'true' then opening popup use parametr
+                <code>patternAlert</code> (above) this parametr plays a role of a decorator
             </td>
             <td>boolean</td>
             <td>false</td>
         </tr>
         <tr>
             <th>alertText</th>
-            <td>Text will be show above button 'ok', if this parametr has type of function, then function must something
-                return, if data html attribute data-alert-text function should look so: <code>data-alert-text="(function(){return
-                    &lt;something&gt;})"</td>
+            <td>Text will be show above button 'ok', if this parametr has type of function, then function must something return, if data html attribute data-alert-text function should look so:
+                <code>data-alert-text="(function(){return &lt;something&gt;})"</td>
             <td>string, name or code of function</td>
             <td>null</td>
         </tr>
         <tr>
             <th>alertActionBtn</th>
-            <td>if click on this element which contains in popup then user agrees with this alert and whereafter will be
-                continue that as without parameter <code>alert</code> with value 'true'
+            <td>if click on this element which contains in popup then user agrees with this alert and whereafter will be continue that as without parameter
+                <code>alert</code> with value 'true'
             </td>
             <td>string <i>selector</i> or jQuery Object</td>
             <td>[data-button-alert]</td>
         </tr>
         <tr>
             <th>confirm</th>
-            <td>If this parametr is 'true' then opening popup use parametr <code>patternConfirm</code> (above) this
-                parametr plays a role of a decorator
+            <td>If this parametr is 'true' then opening popup use parametr
+                <code>patternConfirm</code> (above) this parametr plays a role of a decorator
             </td>
             <td>boolean</td>
             <td>false</td>
         </tr>
         <tr>
             <th>confirmText</th>
-            <td>Text will be show above buttons 'ok' and 'cancel', if this parametr has type of function, then function
-                must something return, if data html attribute data-confirm-text function should look so: <code>data-confirm-text="(function(){return
-                    &lt;something&gt;})"</td>
+            <td>Text will be show above buttons 'ok' and 'cancel', if this parametr has type of function, then function must something return, if data html attribute data-confirm-text function should look so:
+                <code>data-confirm-text="(function(){return &lt;something&gt;})"</td>
             <td>string, name or code of function</td>
             <td>null</td>
         </tr>
         <tr>
             <th>confirmActionBtn</th>
-            <td>if click on this element which contains in popup then user agrees with this alert and whereafter will be
-                continue that as without parameter <code>confirm</code> with value 'true'
+            <td>if click on this element which contains in popup then user agrees with this alert and whereafter will be continue that as without parameter
+                <code>confirm</code> with value 'true'
             </td>
             <td>string <i>selector</i> or jQuery Object</td>
             <td>[data-button-confirm]</td>
         </tr>
         <tr>
             <th>prompt</th>
-            <td>If this parametr is 'true' then opening popup use parametr <code>patternConfirm</code> (above) this
-                parametr plays a role of a decorator
+            <td>If this parametr is 'true' then opening popup use parametr
+                <code>patternConfirm</code> (above) this parametr plays a role of a decorator
             </td>
             <td>boolean</td>
             <td>false</td>
         </tr>
         <tr>
             <th>promptText</th>
-            <td>Text will be show above input, if this parametr has type of function, then function must something
-                return, if data html attribute data-prompt-text function should look so: <code>data-prompt-text="(function(){return
-                    &lt;something&gt;})"</td>
+            <td>Text will be show above input, if this parametr has type of function, then function must something return, if data html attribute data-prompt-text function should look so:
+                <code>data-prompt-text="(function(){return &lt;something&gt;})"</td>
             <td>string, name or code of function</td>
             <td>null</td>
         </tr>
         <tr>
             <th>promptActionBtn</th>
-            <td>if click on this element which contains in popup then user agrees with this alert and whereafter will be
-                continue that as without parameter <code>confirm</code> with value 'true'
+            <td>if click on this element which contains in popup then user agrees with this alert and whereafter will be continue that as without parameter
+                <code>confirm</code> with value 'true'
             </td>
             <td>string <i>selector</i> or jQuery Object</td>
             <td>[data-button-prompt]</td>
@@ -778,8 +768,8 @@
         </tr>
         <tr>
             <th>dataPrompt</th>
-            <td>Object in which will be write in names and values fileds of form in Prompt popup, this object is
-                available in popup which will open after close the prompt in any callbacks or straight refer <code>$(popup).data('drp').dataPrompt</code>
+            <td>Object in which will be write in names and values fileds of form in Prompt popup, this object is available in popup which will open after close the prompt in any callbacks or straight refer
+                <code>$(popup).data('drp').dataPrompt</code>
             </td>
             <td>object</td>
             <td>null</td>
@@ -824,25 +814,21 @@
         </tr>
         <tr>
             <th>next</th>
-            <td>If click on this element then opens next popup in array this rel. If type is string then this element
-                find inside popup, else element giving as jQuery set and don't find in popup.
+            <td>If click on this element then opens next popup in array this rel. If type is string then this element find inside popup, else element giving as jQuery set and don't find in popup.
             </td>
             <td>string <i>selector</i> or jQuery Object</td>
             <td>.dropper-next</td>
         </tr>
         <tr>
             <th>prev</th>
-            <td>If click on this element then opens prev popup in array this rel. If type is string then this element
-                find inside popup, else element giving as jQuery set and don't find in popup.
+            <td>If click on this element then opens prev popup in array this rel. If type is string then this element find inside popup, else element giving as jQuery set and don't find in popup.
             </td>
             <td>string <i>selector</i> or jQuery Object</td>
             <td>.dropper-prev</td>
         </tr>
         <tr>
             <th>cycle</th>
-            <td>If true then popups which united in one 'rel' opens in cycle (if click on next button in popup which is
-                last in array of rel then opens first popup, and if click on prev button in popup which is first in
-                array of rel then opens last popup)
+            <td>If true then popups which united in one 'rel' opens in cycle (if click on next button in popup which is last in array of rel then opens first popup, and if click on prev button in popup which is first in array of rel then opens last popup)
             </td>
             <td>boolean</td>
             <td>true</td>
@@ -873,17 +859,16 @@
         </tr>
         <tr>
             <th>limitSize</th>
-            <td>If true then popup in which parameter <code>place</code> has value 'center' will have sizes not more
-                then visible part of document
+            <td>If true then popup in which parameter
+                <code>place</code> has value 'center' will have sizes not more then visible part of document
             </td>
             <td>boolean</td>
             <td>false</td>
         </tr>
         <tr>
             <th>scrollContent</th>
-            <td>If true then part of popup - content will be has scroll if height of content greater then available (if
-                parametr <code>limitSize</code> is false then this parametr no has influence). Scroll can be default of
-                browser or not standart if on page conected plugin jScrollPane.
+            <td>If true then part of popup - content will be has scroll if height of content greater then available (if parametr
+                <code>limitSize</code> is false then this parametr no has influence). Scroll can be default of browser or not standart if on page conected plugin jScrollPane.
             </td>
             <td>boolean</td>
             <td>true</td>
@@ -898,8 +883,8 @@
         </tr>
         <tr>
             <th>centerOnScroll</th>
-            <td>if true and parametr <code>scroll</code> is true and parametr <code>place</code> is 'center' then if
-                scroll page then popup will be situated by center.
+            <td>if true and parametr <code>scroll</code> is true and parametr
+                <code>place</code> is 'center' then if scroll page then popup will be situated by center.
             </td>
             <td>boolean</td>
             <td>false</td>
@@ -923,68 +908,49 @@
             <td>false</td>
         </tr>
         <tr>
-            <th>theme</th>
-            <td>Name css theme for popup</td>
-            <td>string</td>
-            <td>default</td>
-        </tr>
-        <tr>
             <th>start</th>
-            <td>If result this function is false then popup will not open, if this parametr sets as data atribute then
-                his look must have next - data-start="(function(){&lt;code of function&gt;})". Arguments are such: first
-                argument these are options, second these is a popup and third is a event. Context <code>this</code>
-                refers to the element which open popup.
+            <td>If result this function is false then popup will not open, if this parametr sets as data atribute then his look must have next - data-start="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these is a popup and third is a event. Context
+                <code>this</code> refers to the element which open popup.
             </td>
             <td>name or code of function</td>
             <td>null</td>
         </tr>
         <tr>
             <th>before</th>
-            <td>This function call before show of popup, if this parametr sets as data atribute then his look must have
-                next - data-before="(function(){&lt;code of function&gt;})". Arguments are such: first argument these
-                are options, second these is a popup and third is a event. Context <code>this</code> refers to the
-                element which open popup.
+            <td>This function call before show of popup, if this parametr sets as data atribute then his look must have next - data-before="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these is a popup and third is a event. Context
+                <code>this</code> refers to the element which open popup.
             </td>
             <td>name or code of function</td>
             <td>null</td>
         </tr>
         <tr>
             <th>after</th>
-            <td>This function call after show of popup, if this parametr sets as data atribute then his look must have
-                next - data-after="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are
-                options, second these is a popup and third is a event. Context <code>this</code> refers to the element
-                which open popup.
+            <td>This function call after show of popup, if this parametr sets as data atribute then his look must have next - data-after="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these is a popup and third is a event. Context
+                <code>this</code> refers to the element which open popup.
             </td>
             <td>name or code of function</td>
             <td>null</td>
         </tr>
         <tr>
             <th>close</th>
-            <td>This function call before close of popup, if this function return false or undefined then popup doesn't
-                closed, if this parametr sets as data atribute then his look must have next - data-close="(function(){&lt;code
-                of function&gt;})". Arguments are such: first argument these are options, second these is a popup and
-                third is a event. Context <code>this</code> refers to the element which open popup.
+            <td>This function call before close of popup, if this function return false or undefined then popup doesn't closed, if this parametr sets as data atribute then his look must have next - data-close="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these is a popup and third is a event. Context
+                <code>this</code> refers to the element which open popup.
             </td>
             <td>name or code of function</td>
             <td>null</td>
         </tr>
         <tr>
             <th>closed</th>
-            <td>This function call after close of popup, if this parametr sets as data atribute then his look must have
-                next - data-closed="(function(){&lt;code of function&gt;})". Arguments are such: first argument these
-                are options, second these is a popup and third is a event. Context <code>this</code> refers to the
-                element which open popup.
+            <td>This function call after close of popup, if this parametr sets as data atribute then his look must have next - data-closed="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these is a popup and third is a event. Context
+                <code>this</code> refers to the element which open popup.
             </td>
             <td>name or code of function</td>
             <td>null</td>
         </tr>
         <tr>
             <th>ok</th>
-            <td>This function call after click 'ok' into alert, confirm or pormpt popus, if this parametr sets as data
-                atribute then his look must have next - data-ok="(function(){&lt;code of function&gt;})". Arguments are
-                such: first argument these are options, second these is a popup and third is a event, fourth is a type
-                (alert, confirm or prompt) and fifth exists if prompt (the parametr is object entered fields of form).
-                Context <code>this</code> refers to the element which open popup.
+            <td>This function call after click 'ok' into alert, confirm or pormpt popus, if this parametr sets as data atribute then his look must have next - data-ok="(function(){&lt;code of function&gt;})". Arguments are such: first argument these are options, second these is a popup and third is a event, fourth is a type (alert, confirm or prompt) and fifth exists if prompt (the parametr is object entered fields of form). Context
+                <code>this</code> refers to the element which open popup.
             </td>
             <td>name or code of function</td>
             <td>null</td>
@@ -992,8 +958,7 @@
         </tbody>
     </table>
     <blockquote>
-        <i>If you want get current parameters of popup then you can use next expression:</i>
-        <br/>
+        <i>If you want get current parameters of popup then you can use next expression:</i> <br/>
         <code>$('selector of popup').data('drp')</code>
     </blockquote>
     <h2>Methods</h2>
@@ -1085,19 +1050,13 @@
 
                 <p>
                     First parameter can be in various types, examples:<br/>
-                    <code>$.dropper([<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : 'ext/with_pattern.php', header : 'Title first
-                        document'},<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : 'ext/notify.php', header : 'Title second
-                        document'}<br/>]);</code> - array containing objects
+                    <code>$.dropper([<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : 'ext/with_pattern.php', header : 'Title first document'},<br/>&nbsp;&nbsp;&nbsp;&nbsp;{href : 'ext/notify.php', header : 'Title second document'}<br/>]);</code> - array containing objects
                     <br/>
                     <code>$.dropper( {href : 'ext/with_pattern.php', header : 'Lorem lipsum'} );</code> - single object
                     <br/>
-                    <code>$.dropper( ['img/1.jpg', 'img/2.jpg'] );</code> - array containing links as strings (only
-                    images)
-                    <br/>
-                    <code>$.dropper( 'img/1.jpg' );</code> - string as source link (only images)
-                    <br/>
-                    <code>$.dropper( $('#inline') );</code>
-                    <br/>
+                    <code>$.dropper( ['img/1.jpg', 'img/2.jpg'] );</code> - array containing links as strings (only images)
+                    <br/> <code>$.dropper( 'img/1.jpg' );</code> - string as source link (only images) <br/>
+                    <code>$.dropper( $('#inline') );</code> <br/>
                     <code>$.dropper( '&lt;h1&gt;Lorem lipsum&lt;/h1&gt;' );</code>
                 </p>
             </td>
@@ -1109,8 +1068,8 @@
                     <code>$.dropper.close([selector|jQuery object], [force])</code>
                 </p>
 
-                <p>if to call without parameters closing all opened popups, if <i>force: true</i> popups closed without
-                    effect</p>
+                <p>if to call without parameters closing all opened popups, if
+                    <i>force: true</i> popups closed without effect</p>
             </td>
         </tr>
         <tr>
@@ -1164,20 +1123,6 @@
             </td>
         </tr>
         <tr>
-            <th>setThemes</th>
-            <td>
-                <p>
-                    <code>$.dropper.setThemes({name: string, text: 'css(string)', file: 'full name of file', 'callback',
-                        function(name){}[, {},
-                        ...])</code>
-                </p>
-
-                <p>extends Default themes<br/>
-                    <i>use parametr 'text' or 'file', if use two in priority will be 'file'</i>
-                </p>
-            </td>
-        </tr>
-        <tr>
             <th>showLoading</th>
             <td>
                 <p>
@@ -1198,20 +1143,6 @@
             </td>
         </tr>
         <tr>
-            <th>require</th>
-            <td>
-                <p>
-                    <code>$.dropper.require(files, callback)</code>
-                    where <i>files</i> has type array (<code>['filename', ...]</code>) or string (one filename)
-
-                </p>
-
-                <p>
-                    loads js - files
-                </p>
-            </td>
-        </tr>
-        <tr>
             <td colspan="2"><i>next methods available only if exists <b>gallery</b> method</i></td>
         </tr>
         <tr>
@@ -1221,8 +1152,7 @@
                     <code>$.dropper.next([rel])</code>
                 </p>
 
-                <p>Navigates to next gallery item (for visible popup galleries), or only one gallery identify by
-                    "rel"</p>
+                <p>Navigates to next gallery item (for visible popup galleries), or only one gallery identify by "rel"</p>
             </td>
         </tr>
         <tr>
@@ -1232,8 +1162,7 @@
                     <code>$.dropper.prev([rel])</code>
                 </p>
 
-                <p>Navigates to prev gallery item (for visible popup galleries), or only one gallery identify by
-                    "rel"</p>
+                <p>Navigates to prev gallery item (for visible popup galleries), or only one gallery identify by "rel"</p>
             </td>
         </tr>
         <tr>
@@ -1243,8 +1172,7 @@
                     <code>$.dropper.jumpto(index[, rel])</code>
                 </p>
 
-                <p>Navigates to gallery item by index (for visible popup galleries), or only one gallery identify by
-                    "rel". Begining at 0.</p>
+                <p>Navigates to gallery item by index (for visible popup galleries), or only one gallery identify by "rel". Begining at 0.</p>
             </td>
         </tr>
         <tr>
@@ -1254,8 +1182,7 @@
                     <code>$.dropper.play([rel])</code>
                 </p>
 
-                <p>Starts or stops (if already running) slideshow (for visible popup galleries), or only one gallery
-                    identify by "rel"</p>
+                <p>Starts or stops (if already running) slideshow (for visible popup galleries), or only one gallery identify by "rel"</p>
             </td>
         </tr>
         </tbody>
@@ -1268,13 +1195,12 @@
             <td>
                 <code>el.on('dropperBefore', function(event, object){})</code>
 
-                <p>Where <code>el</code> can be $('selector of popup') and/or $(document) or $('body') - if you haven't jQuery's object of
-                    popup but if you know selector of popup you can use note like this - <code>$('body').on('dropperBefore', 'selector of popup', function(event, object){})</code></p>
+                <p>Where
+                    <code>el</code> can be $('selector of popup') and/or $(document) or $('body') - if you haven't jQuery's object of popup but if you know selector of popup you can use note like this -
+                    <code>$('body').on('dropperBefore', 'selector of popup', function(event, object){})</code></p>
 
-                <p>The event happens before opening popup. The event sent to popup which opens popup (if popup not
-                    exists in moment sample handler that necessary sample handler to $(document)).
-                    <br/>Second argument in handler contains object.
-                </p>
+                <p>The event happens before opening popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)).
+                    <br/>Second argument in handler contains object. </p>
                 <ul>
                     <li>
                         <b>options</b>
@@ -1294,9 +1220,8 @@
                     <li>
                         <b>event</b>
 
-                        <p>jQuery event or string (e. g. when use API method <code>$.dropper</code> the parametr has
-                            value
-                            'API')</p>
+                        <p>jQuery event or string (e. g. when use API method
+                            <code>$.dropper</code> the parametr has value 'API')</p>
                     </li>
                 </ul>
             </td>
@@ -1306,13 +1231,12 @@
             <td>
                 <code>el.on('dropperAfter', function(event, object){})</code>
 
-                <p>Where <code>el</code> can be $('selector of popup') and/or $(document) or $('body') - if you haven't jQuery's object of
-                    popup but if you know selector of popup you can use note like this - <code>$('body').on('dropperBefore', 'selector of popup', function(event, object){})</code></p>
+                <p>Where
+                    <code>el</code> can be $('selector of popup') and/or $(document) or $('body') - if you haven't jQuery's object of popup but if you know selector of popup you can use note like this -
+                    <code>$('body').on('dropperBefore', 'selector of popup', function(event, object){})</code></p>
 
-                <p>The event happens after opening popup. The event sent to popup which opens popup (if popup not exists
-                    in moment sample handler that necessary sample handler to $(document)).
-                    <br/>Second argument in handler contains object.
-                </p>
+                <p>The event happens after opening popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)).
+                    <br/>Second argument in handler contains object. </p>
                 <ul>
                     <li>
                         <b>options</b>
@@ -1332,9 +1256,8 @@
                     <li>
                         <b>event</b>
 
-                        <p>jQuery event or string (e. g. when use API method <code>$.dropper</code> the parametr has
-                            value
-                            'API')</p>
+                        <p>jQuery event or string (e. g. when use API method
+                            <code>$.dropper</code> the parametr has value 'API')</p>
                     </li>
                 </ul>
             </td>
@@ -1344,13 +1267,12 @@
             <td>
                 <code>el.on('dropperClose', function(event, object){})</code>
 
-                <p>Where <code>el</code> can be $('selector of popup') and/or $(document) or $('body') - if you haven't jQuery's object of
-                    popup but if you know selector of popup you can use note like this - <code>$('body').on('dropperBefore', 'selector of popup', function(event, object){})</code></p>
+                <p>Where
+                    <code>el</code> can be $('selector of popup') and/or $(document) or $('body') - if you haven't jQuery's object of popup but if you know selector of popup you can use note like this -
+                    <code>$('body').on('dropperBefore', 'selector of popup', function(event, object){})</code></p>
 
-                <p>The event happens before close popup. The event sent to popup which opens popup (if popup not exists
-                    in moment sample handler that necessary sample handler to $(document)).
-                    <br/>Second argument in handler contains object.
-                </p>
+                <p>The event happens before close popup. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)).
+                    <br/>Second argument in handler contains object. </p>
                 <ul>
                     <li>
                         <b>options</b>
@@ -1370,9 +1292,8 @@
                     <li>
                         <b>event</b>
 
-                        <p>jQuery event or string (e. g. when use API method <code>$.dropper</code> the parametr has
-                            value
-                            'API')</p>
+                        <p>jQuery event or string (e. g. when use API method
+                            <code>$.dropper</code> the parametr has value 'API')</p>
                     </li>
                 </ul>
             </td>
@@ -1382,13 +1303,12 @@
             <td>
                 <code>el.on('dropperClosed', function(event, object){})</code>
 
-                <p>Where <code>el</code> can be $('selector of popup') and/or $(document) or $('body') - if you haven't jQuery's object of
-                    popup but if you know selector of popup you can use note like this - <code>$('body').on('dropperBefore', 'selector of popup', function(event, object){})</code></p>
+                <p>Where
+                    <code>el</code> can be $('selector of popup') and/or $(document) or $('body') - if you haven't jQuery's object of popup but if you know selector of popup you can use note like this -
+                    <code>$('body').on('dropperBefore', 'selector of popup', function(event, object){})</code></p>
 
-                <p>The event happens when popup already closed. The event sent to popup which opens popup (if popup not
-                    exists in moment sample handler that necessary sample handler to $(document)).
-                    <br/>Second argument in handler contains object.
-                </p>
+                <p>The event happens when popup already closed. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)).
+                    <br/>Second argument in handler contains object. </p>
                 <ul>
                     <li>
                         <b>options</b>
@@ -1408,9 +1328,8 @@
                     <li>
                         <b>event</b>
 
-                        <p>jQuery event or string (e. g. when use API method <code>$.dropper</code> the parametr has
-                            value
-                            'API')</p>
+                        <p>jQuery event or string (e. g. when use API method
+                            <code>$.dropper</code> the parametr has value 'API')</p>
                     </li>
                 </ul>
             </td>
@@ -1420,14 +1339,12 @@
             <td>
                 <code>el.on('dropperOk', function(event, object){})</code>
 
-                <p>Where <code>el</code> can be $('selector of popup') and/or $(document) or $('body') - if you haven't jQuery's object of
-                    popup but if you know selector of popup you can use note like this - <code>$('body').on('dropperBefore', 'selector of popup', function(event, object){})</code></p>
+                <p>Where
+                    <code>el</code> can be $('selector of popup') and/or $(document) or $('body') - if you haven't jQuery's object of popup but if you know selector of popup you can use note like this -
+                    <code>$('body').on('dropperBefore', 'selector of popup', function(event, object){})</code></p>
 
-                <p>The event happens when click 'ok' into alert, confirm or pormpt popus. The event sent to popup which
-                    opens popup (if popup not exists in moment sample handler that necessary sample handler to
-                    $(document)).
-                    <br/>Second argument in handler contains object.
-                </p>
+                <p>The event happens when click 'ok' into alert, confirm or pormpt popus. The event sent to popup which opens popup (if popup not exists in moment sample handler that necessary sample handler to $(document)).
+                    <br/>Second argument in handler contains object. </p>
                 <ul>
                     <li>
                         <b>options</b>
@@ -1447,9 +1364,8 @@
                     <li>
                         <b>event</b>
 
-                        <p>jQuery event or string (e. g. when use API method <code>$.dropper</code> the parametr has
-                            value
-                            'API')</p>
+                        <p>jQuery event or string (e. g. when use API method
+                            <code>$.dropper</code> the parametr has value 'API')</p>
                     </li>
                     <li>
                         <b>type</b>
@@ -1462,14 +1378,6 @@
                         <p>Object entered fields of form</p>
                     </li>
                 </ul>
-            </td>
-        </tr>
-        <tr>
-            <th>dropperRequire</th>
-            <td>
-                <code>$(document).on('dropperRequire')</code>
-
-                <p>The event happens when all requires are loaded. The event sent to $(document).</p>
             </td>
         </tr>
         </tbody>
@@ -1578,21 +1486,16 @@
                 <h3>Themes</h3>-->
 
     <script>
-        $.dropper.require(['droppable.min', 'limitSize.min', 'gallery.min', 'placeBeforeShow.min', 'placeAfterClose.min', 'confirmPromptAlert.min', 'fullScreen.min'], function () {
+        $(document).ready(function () {
             $('[rel]').dropper({
                 scrollContent: false,
-                scroll:  true,
+                scroll: true,
                 limitSize: true,
                 header: function (opt) {
                     return ($.inArray(opt.href, $.dropper.drp.gallery[opt.rel]) + 1) + ' picture';
                 }
             });
         });
-//        $.dropper.setThemes({
-//            name: 'green', file: 'green', callback: function (name) {
-//                $('[href]').data('theme', name);
-//            }
-//        });
     </script>
 
     <div id="inline" class="dropper">
