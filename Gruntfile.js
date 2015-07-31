@@ -3,8 +3,6 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
-        clean: ["dist"],
-
         concat: {
             jsdropfull: {
                 src: [
@@ -55,12 +53,12 @@ module.exports = function (grunt) {
                 }]
             }
         },
-        copy: {
-            main: {
-                expand: true,
-                cwd: 'src/styles',
-                src: '**',
-                dest: 'dist/styles'
+        compass: {
+            dist: {
+                options: {
+                    sassDir: 'src/styles/',
+                    cssDir: 'dist/styles/'
+                }
             }
         },
         watch: {
@@ -75,12 +73,11 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
-    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-compass');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('default', ['clean', 'concat', 'copy', 'uglify', 'imagemin', 'watch']);
+    grunt.registerTask('default', ['concat', 'compass', 'uglify', 'imagemin', 'watch']);
 };

@@ -653,7 +653,6 @@
             return methods._show.call($(this), dropper, e, opt, hashChange);
         },
         _pasteDropper: function (opt, dropper) {
-            
             dropper = $(dropper);
             if (opt.droppern)
                 dropper = D.existsN(dropper.filter(opt.dropper)) ? dropper.filter(opt.dropper) : (D.existsN(dropper.find(opt.dropper)) ? dropper.find(opt.dropper) : dropper);
