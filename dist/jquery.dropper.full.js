@@ -73,9 +73,8 @@
                 elSet = el.data();
             var _update = function (data) {
                 data = data ? data : 'response is empty';
-                if (opt.droppern) {
+                if (opt.droppern)
                     var dropper = methods._pasteDropper(opt, data);
-                }
                 else
                     dropper = methods._pasteDropper(opt, opt.pattern);
                 if (!opt.droppern)
@@ -638,8 +637,8 @@
             return methods._show.call($(this), dropper, e, opt, hashChange);
         },
         _pasteDropper: function (opt, dropper) {
+            
             dropper = $(dropper);
-            console.log(dropper)
             if (opt.droppern)
                 dropper = D.existsN(dropper.filter(opt.dropper)) ? dropper.filter(opt.dropper) : (D.existsN(dropper.find(opt.dropper)) ? dropper.find(opt.dropper) : dropper);
             if (opt.place !== 'inherit')
