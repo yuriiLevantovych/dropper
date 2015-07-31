@@ -56,6 +56,7 @@ module.exports = function (grunt) {
         compass: {
             dist: {
                 options: {
+                    imagesDir: 'dist/images',
                     sassDir: 'src/styles/',
                     cssDir: 'dist/styles/'
                 }
@@ -63,8 +64,16 @@ module.exports = function (grunt) {
         },
         watch: {
             scripts: {
-                files: ['src/**/*.js'],
-                tasks: ['clean', 'concat', 'uglify'],
+                files: ['src/methods/*.js', '*.js'],
+                tasks: ['concat', 'uglify'],
+                options: {
+                    livereload: true,
+                    spawn: false
+                }
+            },
+            styles: {
+                files: ['src/styles/*.scss'],
+                tasks: ['compass'],
                 options: {
                     livereload: true,
                     spawn: false

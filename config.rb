@@ -6,7 +6,6 @@ require 'bootstrap-sass'
 http_path = "/"
 css_dir = "/"
 sass_dir = "src/styles"
-images_dir = "src/images"
 javascripts_dir = "js"
 
 # You can select your preferred output style here (can be overridden via the command line):
