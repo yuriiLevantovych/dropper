@@ -8,8 +8,8 @@
     <script src="../bower_components/jquery/dist/jquery.min.js"></script>
     <script src="../bower_components/jscrollpane/script/jquery.jscrollpane.min.js"></script>
     <script src="../bower_components/jquery-mousewheel/jquery.mousewheel.min.js"></script>
-    <script src="../dist/jquery.dropper.full.js"></script>
-    <link rel="stylesheet" href="../src/styles/default.css"/>
+    <script src="../src/jquery.dropper.js"></script>
+    <link rel="stylesheet" href="../dist/styles/default.css"/>
     <style>
         html, body, table, p, div, li, ul, ol, td, th, h1, h2, h3, h4, h5 {
             margin: 0;
@@ -1487,7 +1487,7 @@
 
     <script>
         $(document).ready(function () {
-            $('[rel]').dropper({
+            $('a[rel]').dropper({
                 scrollContent: false,
                 scroll: true,
                 limitSize: true,

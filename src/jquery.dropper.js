@@ -1042,7 +1042,7 @@
         });
     };
     doc.ready(function () {
-        $('<style>', {html: D.mainStyle.replace(/\s{2,}/g, ' ')}).appendTo($('body'));
+        $('<style>' + D.mainStyle.replace(/\s{2,}/g, ' ') + '</style>').appendTo($('body'));
         D.scrollTop = wnd.scrollTop();
         var loadingTimer, loadingFrame = 1,
             loading = $('<div/>', {
