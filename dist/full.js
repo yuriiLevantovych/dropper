@@ -346,9 +346,9 @@
                     };
                     setTimeout(focusFunc, 0);
                 }
-                opt.exit = $.type(opt.exit) === 'string' ? dropper.find(opt.exit) : opt.exit;
-                if (D.existsN(opt.exit)) {
-                    opt.exit.off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
+                var exit = $.type(opt.exit) === 'string' ? dropper.find(opt.exit) : opt.exit;
+                if (D.existsN(exit)) {
+                    exit.off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
                         e.stopPropagation();
                         methods.close.call($(this).closest('[data-elrun]'), e);
                     });
