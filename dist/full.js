@@ -1422,16 +1422,16 @@ jQuery(function () {
                 $.dropper.getMethods().gallery($this, drp, btn, i);
             });
         };
-        $.dropper.setMethod('_cIGallery', function (rel) {
+        var _cIGallery = function (rel) {
             var $ = jQuery;
             clearInterval($.dropper.drp.autoPlayInterval[rel]);
             delete $.dropper.drp.autoPlayInterval[rel];
-        });
+        }
+        $.dropper.setMethod('_cIGallery', _cIGallery);
         $.dropper.setMethod('gallery', function (dropper, opt, btn, i) {
             var $ = jQuery,
                 doc = $(document),
-                self = $.dropper.getMethods(),
-
+                self = this,
                 relA = $.dropper.drp.gallery[opt.rel];
             if (!relA)
                 return self;
@@ -1458,7 +1458,7 @@ jQuery(function () {
                     return false;
                 }
                 var $next = $('[data-href="' + relA[i] + '"][rel="' + opt.rel + '"], [href="' + relA[i] + '"][rel="' + opt.rel + '"]');
-                self._cIGallery(opt.rel);
+                _cIGallery(opt.rel);
                 self.open.call($next, $.extend($.extend({}, opt), $next.data('drp'), {
                     href: relA[i],
                     dropper: null
@@ -1477,7 +1477,7 @@ jQuery(function () {
             prev.add(next).off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
                 e.stopPropagation();
                 relP = $.inArray(opt.href, relA);
-                self._cIGallery(opt.rel);
+                _cIGallery(opt.rel);
                 _goto(_getnext($(this).is(prev) ? -1 : 1), e);
             });
             if (i !== undefined && i !== null && relP !== i && relA[i])
@@ -1487,21 +1487,21 @@ jQuery(function () {
             if (i === null)
                 if (opt.autoPlay) {
                     opt.autoPlay = false;
-                    self._cIGallery(opt.rel);
+                    _cIGallery(opt.rel);
                 }
                 else
                     opt.autoPlay = true;
             if (opt.autoPlay) {
                 if ($.dropper.drp.autoPlayInterval[opt.rel])
-                    self._cIGallery(opt.rel);
+                    _cIGallery(opt.rel);
                 else
                     $.dropper.drp.autoPlayInterval[opt.rel] = setInterval(function () {
-                        self._cIGallery(opt.rel);
+                        _cIGallery(opt.rel);
                         _goto(_getnext(1));
                     }, opt.autoPlaySpeed);
             }
             dropper.off('dropperClose.' + $.dropper.nS).on('dropperClose.' + $.dropper.nS, function () {
-                self._cIGallery($(this).data('drp').rel);
+                _cIGallery($(this).data('drp').rel);
                 doc.off('keydown.' + $.dropper.nS + opt.rel);
             });
             if (opt.keyNavigate)
