@@ -1400,11 +1400,10 @@ jQuery(function () {
 jQuery(function () {
     (function ($, undefined) {
         var _galleryDecorator = function (rel, btn, i) {
-            var self = this;
             return $('[data-elrun][data-rel' + (rel ? '="' + rel + '"' : '') + '].' + $.dropper.drp.activeClass).each(function () {
                 var $this = $(this),
                     drp = $this.data('drp');
-                self.gallery($this, drp, btn, i);
+                $.dropper.getMethods().gallery($this, drp, btn, i);
             });
         };
         $.dropper.setMethod('_cIGallery', function (rel) {
