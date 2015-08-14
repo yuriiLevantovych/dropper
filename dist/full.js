@@ -95,7 +95,7 @@
                     dropper = methods._pasteDropper(opt, opt.pattern);
                 if (!opt.droppern)
                     dropper.find($(opt.placePaste)).html(data);
-                dropper.addClass(D.pC + opt.type);
+                dropper.addClass(D.pC + opt.type).attr('data-type', opt.type);
                 if (!opt.always)
                     D.droppers[hrefC] = dropper.clone();
                 methods._show.call(el, dropper, e, opt, hashChange);
@@ -660,6 +660,7 @@
                 dropper.appendTo($('body'));
             else if (opt.placeInherit)
                 $(opt.placeInherit)[opt.methodPlaceInherit](dropper);
+
             return dropper.hide().addClass(opt.tempClass).addClass('dropper').attr('data-elrun', opt.dropper);
         },
         _pasteContent: function ($this, dropper, opt) {
