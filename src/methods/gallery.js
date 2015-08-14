@@ -15,7 +15,7 @@ jQuery(function () {
         $.dropper.setMethod('gallery', function (dropper, opt, btn, i) {
             var $ = jQuery,
                 doc = $(document),
-                self = this,
+                self = $.dropper.getMethods(),
                 relA = $.dropper.drp.gallery[opt.rel];
             if (!relA)
                 return self;

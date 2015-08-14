@@ -1433,7 +1433,7 @@ jQuery(function () {
                 self = this,
                 relA = $.dropper.drp.gallery[opt.rel];
             if (!relA)
-                return self;
+                return $.dropper.getMethods();
             var relL = relA.length;
             if (relL <= 1)
                 return self;
