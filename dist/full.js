@@ -661,6 +661,9 @@
             else if (opt.placeInherit)
                 $(opt.placeInherit)[opt.methodPlaceInherit](dropper);
 
+            //update type
+            if (opt.type === 'auto' && dropper.data('type'))
+                opt.type = dropper.data('type');
             return dropper.hide().addClass(opt.tempClass).addClass('dropper').attr('data-elrun', opt.dropper);
         },
         _pasteContent: function ($this, dropper, opt) {
