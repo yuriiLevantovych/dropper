@@ -1414,10 +1414,11 @@ jQuery(function () {
         $.dropper.setMethod('gallery', function (dropper, opt, btn, i) {
             var $ = jQuery,
                 doc = $(document),
-                self = this,
+                self = $.dropper.getMethods(),
+
                 relA = $.dropper.drp.gallery[opt.rel];
             if (!relA)
-                return $.dropper.getMethods();
+                return self;
             var relL = relA.length;
             if (relL <= 1)
                 return self;
