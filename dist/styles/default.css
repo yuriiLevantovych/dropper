@@ -9,7 +9,7 @@
 .dropper .dropper.dropper-is-scroll .dropper-header.dropper-empty { height: 28px; }
 .dropper .dropper-footer.dropper-no-empty { border-top: 1px solid #d8d8d8; }
 .dropper .dropper-content { position: relative; z-index: 1; }
-.dropper .dropper-content .inside-padd { padding: 12px 28px 12px 12px; }
+.dropper .dropper-content .inside-padd { padding: 12px 28px 12px 12px; margin: auto; }
 .dropper .dropper.dropper-image .dropper-content .inside-padd { font-size: 0; }
 .dropper .dropper.dropper-image .dropper-content .inside-padd, .dropper .dropper.dropper-alert .dropper-content .inside-padd { padding: 10px; }
 .dropper .dropper.dropper-alert .dropper-group-btns { text-align: center; }
@@ -61,4 +61,4 @@
 .dropper .jspArrowLeft:before { content: "\\25c4"; }
 .dropper .jspArrowRight:before { content: "\\25ba"; }
 
-#dropper-loading div { background-image: url('../images/loader.gif?1438335291'); }
+#dropper-loading div { background-image: url('../images/loader.gif?1439557770'); }
