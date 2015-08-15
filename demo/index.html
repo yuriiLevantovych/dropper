@@ -261,7 +261,8 @@
             <a href="#" data-dropper="#inline" data-droppable="true">droppable</a>
         </li>
         <li>
-            <div><h3>Limit size popup && scroll Content</h3><i>require <b>limitSize</b> method</i>
+            <div>
+                <h3>Limit size popup && scroll Content</h3> <i>require <b>limitSize</b> method</i>
                 <a href="#inheritDetail">detail about <b>limitSize</b></a></div>
             <a href="#" data-dropper data-limit-size="true" data-content="Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>Lorem ipsum<br/>">limit
                 size and scroll content</a>
@@ -290,6 +291,11 @@
                     <a href="img/3.jpg" rel="group" data-hash="#a3"><img src="img/3.jpg"/></a>
                 </li>
             </ul>
+        </li>
+        <li>
+            <div><h3>Full screen</h3> <i>require <b>fullScreen</b> method</i> <a href="#inheritDetail">detail
+                about <b>Full screen</b></a></div>
+            <a href="#" data-dropper="#full-screen">Full screen</a>
         </li>
     </ol>
     <h2>Options</h2>
@@ -955,6 +961,20 @@
             <td>name or code of function</td>
             <td>null</td>
         </tr>
+        <tr>
+            <th>fullScreen</th>
+            <td>
+            </td>
+            <td>boolean</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <th>fullScreeButton</th>
+            <td>
+            </td>
+            <td>string <i>selector</i> or jQuery Object</td>
+            <td>[data-full-screen]</td>
+        </tr>
         </tbody>
     </table>
     <blockquote>
@@ -1501,6 +1521,10 @@
     <div id="inline" class="dropper">
         <div><h3>Simple inline</h3></div>
         <p>inline</p>
+    </div>
+    <div id="full-screen" class="dropper">
+        <p>Full screen</p>
+        <a href="#" data-full-screen>Trigger full screen</a>
     </div>
 </div>
 </body>

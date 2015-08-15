@@ -935,6 +935,7 @@
         height: null,
         rel: null,
         fullScreen: true,
+        fullScreenButton: '[data-full-screen]',
         loadingAnimate: true
     };
     $.dropper.drp = {

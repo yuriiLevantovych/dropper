@@ -951,6 +951,7 @@
         height: null,
         rel: null,
         fullScreen: true,
+        fullScreenButton: '[data-full-screen]',
         loadingAnimate: true
     };
     $.dropper.drp = {
@@ -1350,28 +1351,25 @@ jQuery(function () {
             if (!native)
                 changeScreen.call(body, setFull);
 
-            (function () {
-                var dropper = this;
+            if (!checkFullScreen()) {
+                var callee = arguments.callee;
+                setTimeout(function () {
+                    callee.call(dropper);
+                }, 10);
+                return;
+            }
 
-                if (!checkFullScreen()) {
-                    var callee = arguments.callee;
-                    setTimeout(function () {
-                        callee.call(dropper);
-                    }, 10)
-                    return;
-                }
-                dropper.css({
-                    width: '100%',
-                    height: '100%',
-                    'box-sizing': 'border-box',
-                    left: 0,
-                    top: 0
-                });
+            dropper.css({
+                width: '100%',
+                height: '100%',
+                'box-sizing': 'border-box',
+                left: 0,
+                top: 0
+            });
 
-                self._checkMethod(function () {
-                    self._heightContent(dropper);
-                });
-            }).call(dropper);
+            self._checkMethod(function () {
+                self._heightContent(dropper);
+            });
 
             dropper.off('dropperClose.' + nS).on('dropperClose.' + nS, function () {
                 changeScreen.call(document, clearFull);
@@ -1382,14 +1380,9 @@ jQuery(function () {
             var opt = obj.options;
             if (opt.fullScreen) {
                 var dropper = obj.dropper,
-                    header = dropper.find(opt.placeHeader).first();
+                    fullBtn = dropper.find(opt.fullScreenButton);
 
-                if ($.dropper.drp.existsN(header)) {
-                    header.off('click.' + $.dropper.nS).on('click.' + $.dropper.nS, function (e) {
-                        $(document).on('mousedown.' + nS, function (e) {
-                            e.preventDefault();
-                        });
-                    });
+                if ($.dropper.drp.existsN(fullBtn)) {
                     (function (obj, dropper) {
                         $(window).off('keyup.' + nS).on('keyup.' + nS, function (e) {
                             if (e.keyCode === 122) {
@@ -1400,20 +1393,20 @@ jQuery(function () {
                             }
                         });
 
-                        header.off('dblclick.' + nS).on('dblclick.' + nS, function (e) {
-                            $(document).off('mousedown.' + nS);
+                        fullBtn.off('click.' + nS).on('click.' + nS, function (e) {
+                            e.preventDefault();
                             if (dropper.data('drp').isFullScreen)
                                 _shortScreen.call(dropper, obj.methods);
                             else
                                 _fullScreen.call(dropper, obj.methods);
                         });
-                        if ($.dropper.drp.isTouch)
-                            $(document).off('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS).on('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS, function () {
-                                if (checkFullScreen())
-                                    _fullScreen.call(dropper, obj.methods, true);
-                                else
-                                    _shortScreen.call(dropper, obj.methods, true);
-                            });
+                        //if ($.dropper.drp.isTouch)
+                        //    $(document).off('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS).on('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS, function () {
+                        //        if (checkFullScreen())
+                        //            _fullScreen.call(dropper, obj.methods, true);
+                        //        else
+                        //            _shortScreen.call(dropper, obj.methods, true);
+                        //    });
                     })(obj, dropper);
                 }
             }
