@@ -44,10 +44,10 @@ jQuery(function () {
                 }
                 var $next = $('[data-href="' + relA[i] + '"][rel="' + opt.rel + '"], [href="' + relA[i] + '"][rel="' + opt.rel + '"]');
                 _cIGallery(opt.rel);
-                self.open.call($next, $.extend($.extend({}, opt), $next.data('drp'), {
+                self.open.call($next, $.extend({}, opt, $next.data('drp'), {
                     href: relA[i],
                     dropper: null
-                }), e);
+                }), e, false, true);
             };
             var _getnext = function (i) {
                 relP += i;

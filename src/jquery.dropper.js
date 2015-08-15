@@ -154,7 +154,7 @@
                 }
             return el;
         },
-        open: function (opt, e, hashChange) {
+        open: function (opt, e, hashChange, group) {
             if (D.busy)
                 return false;
             D.busy = true;
@@ -250,7 +250,7 @@
             }
 
             if (!opt.moreOne && D.exists(D.aDS))
-                methods.close.call($(D.aDS), 'close more one element', _show);
+                methods.close.call($(D.aDS), 'close more one element', _show, false, false, group);
             else
                 _show();
             return this;
@@ -266,12 +266,14 @@
                 e = e ? e : window.event;
                 var $this = this;
                 if (opt.overlay) {
-                    if (!D.exists('[data-rel="' + opt.tempClassS + '"].dropper-overlay'))
+                    var selOverlay = opt.rel ? '[data-group="' + opt.rel + '"].dropper-overlay' : '[data-rel="' + opt.tempClassS + '"].dropper-overlay';
+                    if (!D.exists(selOverlay))
                         $('body').append($('<div/>', {
                             'class': 'dropper-overlay',
-                            'data-rel': opt.tempClassS
+                            'data-rel': opt.tempClassS,
+                            'data-group': opt.rel
                         }));
-                    opt.dropperOver = $('[data-rel="' + opt.tempClassS + '"].dropper-overlay').css({
+                    opt.dropperOver = $(selOverlay).css({
                         'background-color': opt.overlayColor,
                         'opacity': opt.overlayOpacity,
                         'z-index': 1103 + D.cOD
@@ -368,7 +370,6 @@
                     methods: methods
                 });
                 methods._disableScroll(opt);
-                $('.dropper-overlay.' + D.pC + 'for-remove').stop().remove();
                 dropper[opt.effectOn](opt.durationOn, function () {
                     D.cOD++;
                     D.busy = false;
@@ -414,7 +415,7 @@
 
             return this;
         },
-        close: function (e, f, hashChange, force) {
+        close: function (e, f, hashChange, force, group) {
             var sel = this,
                 droppers = D.existsN(sel) ? sel : $('[data-elrun].' + D.activeClass);
             var closeLength = droppers.length;
@@ -480,9 +481,12 @@
                             $this.remove();
                         var condCallback = i === closeLength - 1 && $.isFunction(f);
                         if (opt.dropperOver) {
-                            opt.dropperOver.addClass(D.pC + 'for-remove').fadeOut(force ? 0 : opt.durationOff, function () {
-                                $(this).remove();
-                            });
+                            if (!group)
+                                opt.dropperOver.fadeOut(force ? 0 : opt.durationOff, function () {
+                                    $(this).remove();
+                                });
+                            else
+                                opt.dropperOver.attr('data-group', opt.rel);
                             if (condCallback)
                                 setTimeout(f, force ? 0 : opt.durationOff + 100);
                         }
