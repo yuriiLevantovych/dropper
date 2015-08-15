@@ -23,7 +23,7 @@ jQuery(function () {
             var dropper = this,
                 drp = dropper.data('drp');
             drp.isFullScreen = false;
-            dropper.css($.dropper.drp.standartScreenStyle);
+            dropper.css($.dropper.drp.standartScreenStyle).removeClass($.dropper.drp + 'full-screen');
             if (!native)
                 changeScreen.call(document, clearFull);
             self._checkMethod(function () {
@@ -64,7 +64,7 @@ jQuery(function () {
                 'box-sizing': 'border-box',
                 left: 0,
                 top: 0
-            });
+            }).addClass($.dropper.drp + 'full-screen');
 
             self._checkMethod(function () {
                 self._heightContent(dropper);
@@ -78,36 +78,33 @@ jQuery(function () {
         $(document).off('dropperBefore.' + nS).on('dropperBefore.' + nS, function (event, obj) {
             var opt = obj.options;
             if (opt.fullScreen) {
-                var dropper = obj.dropper,
-                    fullBtn = dropper.find(opt.fullScreenButton);
+                var dropper = obj.dropper;
 
-                if ($.dropper.drp.existsN(fullBtn)) {
-                    (function (obj, dropper) {
-                        $(window).off('keyup.' + nS).on('keyup.' + nS, function (e) {
-                            if (e.keyCode === 122) {
-                                if (dropper.data('drp').isFullScreen)
-                                    _shortScreen.call(dropper, obj.methods);
-                                else
-                                    _fullScreen.call(dropper, obj.methods);
-                            }
-                        });
-
-                        fullBtn.off('click.' + nS).on('click.' + nS, function (e) {
-                            e.preventDefault();
+                (function (obj, dropper) {
+                    $(window).off('keyup.' + nS).on('keyup.' + nS, function (e) {
+                        if (e.keyCode === 122) {
                             if (dropper.data('drp').isFullScreen)
                                 _shortScreen.call(dropper, obj.methods);
                             else
                                 _fullScreen.call(dropper, obj.methods);
+                        }
+                    });
+
+                    dropper.off('click.' + nS).on('click.' + nS, opt.fullScreenButton, function (e) {
+                        e.preventDefault();
+                        if (dropper.data('drp').isFullScreen)
+                            _shortScreen.call(dropper, obj.methods);
+                        else
+                            _fullScreen.call(dropper, obj.methods);
+                    });
+                    if ($.dropper.drp.isTouch)
+                        $(document).off('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS).on('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS, function () {
+                            if (checkFullScreen())
+                                _fullScreen.call(dropper, obj.methods, true);
+                            else
+                                _shortScreen.call(dropper, obj.methods, true);
                         });
-                        if ($.dropper.drp.isTouch)
-                            $(document).off('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS).on('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS, function () {
-                                if (checkFullScreen())
-                                    _fullScreen.call(dropper, obj.methods, true);
-                                else
-                                    _shortScreen.call(dropper, obj.methods, true);
-                            });
-                    })(obj, dropper);
-                }
+                })(obj, dropper)
             }
         });
 
