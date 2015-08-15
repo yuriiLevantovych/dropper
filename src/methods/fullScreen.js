@@ -94,8 +94,9 @@ jQuery(function () {
                 self._heightContent(dropper);
             });
 
-            dropper.off('dropperClose.' + nS).on('dropperClose.' + nS, function () {
-                changeScreen.call(dropper, clearFull);
+            dropper.off('dropperClose.' + nS).on('dropperClose.' + nS, function (e, obj) {
+                if (!obj.options.opening)
+                    changeScreen.call(dropper, clearFull);
             });
         }
 

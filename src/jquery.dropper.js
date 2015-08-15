@@ -462,7 +462,9 @@
                             event: e,
                             anchor: opt.elrun,
                             dropper: $this,
-                            options: opt,
+                            options: group ? $.extend({
+                                'opening': true
+                            }, opt) : opt,
                             methods: methods
                         });
                         var dC = $this.find($(opt.placeContent)).data('jsp');
