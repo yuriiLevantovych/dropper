@@ -1308,7 +1308,7 @@ jQuery(function () {
             var dropper = this,
                 drp = dropper.data('drp');
             drp.isFullScreen = false;
-            dropper.css($.dropper.drp.standartScreenStyle).removeClass($.dropper.drp + 'full-screen');
+            dropper.css($.dropper.drp.standartScreenStyle).removeClass($.dropper.drp.pC + 'full-screen');
             if (!native)
                 changeScreen.call(document, clearFull);
             self._checkMethod(function () {
@@ -1349,7 +1349,7 @@ jQuery(function () {
                 'box-sizing': 'border-box',
                 left: 0,
                 top: 0
-            }).addClass($.dropper.drp + 'full-screen');
+            }).addClass($.dropper.drp.pC + 'full-screen');
 
             self._checkMethod(function () {
                 self._heightContent(dropper);
