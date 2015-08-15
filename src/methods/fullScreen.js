@@ -107,6 +107,5 @@ jQuery(function () {
                 })(obj, dropper)
             }
         });
-
     })(jQuery, document.body);
 });
