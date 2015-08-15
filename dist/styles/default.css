@@ -6,13 +6,13 @@
 .dropper button { background-color: #fafafa; color: #666; cursor: pointer; }
 .dropper .dropper-header.dropper-no-empty, .dropper .dropper-footer.dropper-no-empty { padding-top: 6px; padding-bottom: 7px; }
 .dropper .dropper-header.dropper-no-empty { border-bottom: 1px solid #d8d8d8; }
-.dropper .dropper-is-scroll .dropper-header.dropper-empty { height: 28px; }
+.dropper.dropper-is-scroll .dropper-header.dropper-empty { height: 28px; }
 .dropper .dropper-footer.dropper-no-empty { border-top: 1px solid #d8d8d8; }
 .dropper .dropper-content { position: relative; z-index: 1; }
 .dropper .dropper-content .inside-padd { padding: 12px 28px 12px 12px; margin: auto; }
-.dropper .dropper-image .dropper-content .inside-padd { font-size: 0; }
-.dropper .dropper-image .dropper-content .inside-padd, .dropper .dropper-alert .dropper-content .inside-padd { padding: 10px; }
-.dropper .dropper-alert .dropper-group-btns { text-align: center; }
+.dropper.dropper-image .dropper-content .inside-padd { font-size: 0; }
+.dropper.dropper-image .dropper-content .inside-padd, .dropper.dropper-alert .dropper-content .inside-padd { padding: 10px; }
+.dropper.dropper-alert .dropper-group-btns { text-align: center; }
 .dropper .dropper-content button { margin-right: 4px; }
 .dropper button:focus, .dropper input:focus, .dropper select:focus, .dropper textarea:focus { outline: #b3b3b3 solid 1px; }
 .dropper .dropper-footer { background-color: #d5d5d5; padding: 0 12px; }
@@ -25,7 +25,7 @@
 .dropper .dropper-close { right: 5px; top: 4px; z-index: 3; }
 .dropper .dropper-next { right: 5px; text-align: right; }
 .dropper .dropper-prev { left: 5px; text-align: left; }
-.dropper .dropper-is-scroll .dropper-next { right: 16px; }
+.dropper.dropper-is-scroll .dropper-next { right: 16px; }
 .dropper .dropper-icon-next { text-align: center; }
 .dropper .icon-times-dropper { position: absolute; z-index: 1; right: 0; top: 0; cursor: pointer; width: 15px; height: 15px; }
 .dropper .nav { list-style: none; margin-left: 0; }
@@ -37,9 +37,9 @@
 .dropper .dropper-warning { background-color: #fcf8e3; border-color: #faebcc; color: #8a6d3b; }
 .dropper .dropper-error { background-color: #f2dede; border-color: #ebccd1; color: #a94442; }
 .dropper .dropper-info { background-color: #d9edf7; border-color: #bce8f1; color: #31708f; }
-.dropper .dropper-context .dropper-content .inside-padd { padding: 0; }
+.dropper.dropper-context .dropper-content .inside-padd { padding: 0; }
 .dropper .placePaste img { max-width: 100%; }
-.dropper .dropper-is-scroll .placePaste img { max-width: none; max-height: none; width: auto; height: auto; }
+.dropper.dropper-is-scroll .placePaste img { max-width: none; max-height: none; width: auto; height: auto; }
 .dropper .jspContainer { overflow: hidden; position: relative; }
 .dropper .jspPane { position: absolute; }
 .dropper .jspVerticalBar { position: absolute; top: 0; right: 0; width: 16px; height: 100%; background: red; }

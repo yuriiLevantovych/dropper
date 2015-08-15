@@ -47,7 +47,7 @@
     border-bottom: 1px solid #d8d8d8;
   }
 
-  .dropper-is-scroll .dropper-header.dropper-empty {
+  &.dropper-is-scroll .dropper-header.dropper-empty {
     height: 28px;
   }
 
@@ -65,15 +65,15 @@
     margin: auto;
   }
 
-  .dropper-image .dropper-content .inside-padd {
+  &.dropper-image .dropper-content .inside-padd {
     font-size: 0;
   }
 
-  .dropper-image .dropper-content .inside-padd, .dropper-alert .dropper-content .inside-padd {
+  &.dropper-image .dropper-content .inside-padd, &.dropper-alert .dropper-content .inside-padd {
     padding: 10px;
   }
 
-  .dropper-alert .dropper-group-btns {
+  &.dropper-alert .dropper-group-btns {
     text-align: center;
   }
 
@@ -152,7 +152,7 @@
     text-align: left;
   }
 
-  .dropper-is-scroll .dropper-next {
+  &.dropper-is-scroll .dropper-next {
     right: 16px;
   }
 
@@ -219,7 +219,7 @@
     color: #31708f;
   }
 
-  .dropper-context .dropper-content .inside-padd {
+  &.dropper-context .dropper-content .inside-padd {
     padding: 0;
   }
 
@@ -227,7 +227,7 @@
     max-width: 100%;
   }
 
-  .dropper-is-scroll .placePaste img {
+  &.dropper-is-scroll .placePaste img {
     max-width: none;
     max-height: none;
     width: auto;
