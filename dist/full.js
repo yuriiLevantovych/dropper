@@ -478,9 +478,7 @@
                             event: e,
                             anchor: opt.elrun,
                             dropper: $this,
-                            options: group ? $.extend({
-                                'opening': true
-                            }, opt) : opt,
+                            options: opt,
                             methods: methods
                         });
                         var dC = $this.find($(opt.placeContent)).data('jsp');
@@ -516,7 +514,9 @@
                     event: e,
                     anchor: opt.elrun,
                     dropper: dropper,
-                    options: opt,
+                    options: group ? $.extend({
+                        'opening': true
+                    }, opt) : opt,
                     methods: methods
                 });
                 if (opt.close) {
@@ -882,7 +882,7 @@
         close: null,
         closed: null,
         ok: null,
-        pattern: '<div class="dropper dropper-simple"><button type="button" class="dropper-close" data-closed><span class="dropper-icon-close">&#215;</span></button><button class="dropper-prev" type="button" style="display: none;"><i class="dropper-icon-prev">&#60;</i></button><button class="dropper-next" type="button" style="display: none;"><i class="dropper-icon-next">&#62;</i></button><div class="dropper-header"></div><div class="dropper-content"><div class="inside-padd placePaste"></div></div><div class="dropper-footer"></div></div>',
+        pattern: '<div class="dropper dropper-simple"><a href="#" data-full-screen style="margin-left: 400px">asdf</a><button type="button" class="dropper-close" data-closed><span class="dropper-icon-close">&#215;</span></button><button class="dropper-prev" type="button" style="display: none;"><i class="dropper-icon-prev">&#60;</i></button><button class="dropper-next" type="button" style="display: none;"><i class="dropper-icon-next">&#62;</i></button><div class="dropper-header"></div><div class="dropper-content"><div class="inside-padd placePaste"></div></div><div class="dropper-footer"></div></div>',
         patternConfirm: '<div class="dropper dropper-confirm"><button type="button" class="dropper-close" data-closed><span class="dropper-icon-close">&#215;</span></button><button class="dropper-prev" type="button" style="display: none;"><i class="dropper-icon-prev">&#60;</i></button><button class="dropper-next" type="button" style="display: none;"><i class="dropper-icon-next">&#62;</i></button><div class="dropper-header">Confirm</div><div class="dropper-content"><div class="inside-padd"><div class="placePaste"></div><div class="dropper-group-btns"><button type="button" class="dropper-button-confirm" data-button-confirm>ok</button><button type="button" class="dropper-btn-cancel" data-closed>cancel</button></div></div></div><div class="dropper-footer"></div></div>',
         patternPrompt: '<div class="dropper dropper-prompt"><button type="button" class="dropper-close" data-closed><span class="dropper-icon-close">&#215;</span></button><button class="dropper-prev" type="button" style="display: none;"><i class="dropper-icon-prev">&#60;</i></button><button class="dropper-next" type="button" style="display: none;"><i class="dropper-icon-next">&#62;</i></button><div class="dropper-header">Prompt</div><div class="dropper-content"><form class="inside-padd"><div class="placePaste"></div><input type="text" name="promptInput"/><div class="dropper-group-btns"><button data-button-prompt type="submit" class="dropper-button-prompt">ok</button><button type="button" data-closed class="dropper-btn-cancel">cancel</button></div></form></div><div class="dropper-footer"></div></div>',
         patternAlert: '<div class="dropper dropper-alert"><button type="button" class="dropper-close" data-closed><span class="dropper-icon-close">&#215;</span></button><button class="dropper-prev" type="button" style="display: none;"><i class="dropper-icon-prev">&#60;</i></button><button class="dropper-next" type="button" style="display: none;"><i class="dropper-icon-next">&#62;</i></button><div class="dropper-header">Alert</div><div class="dropper-content"><div class="inside-padd"><div class="placePaste"></div><div class="dropper-group-btns"><button type="button" class="dropper-button-alert" data-button-alert>ok</button></div></div></div><div class="dropper-footer"></div></div>',
@@ -1304,18 +1304,20 @@ jQuery(function () {
 jQuery(function () {
     (function ($, body) {
         var setFull = function () {
-                if (this.requestFullScreen) {
-                    this.requestFullScreen();
+                if (document.documentElement.requestFullScreen) {
+                    document.documentElement.requestFullScreen();
                 }
-                else if (this.webkitRequestFullScreen) {
-                    this.webkitRequestFullScreen();
+                else if (document.documentElement.webkitRequestFullScreen) {
+                    document.documentElement.webkitRequestFullScreen();
                 }
-                else if (this.mozRequestFullScreen) {
-                    this.mozRequestFullScreen();
+                else if (document.documentElement.mozRequestFullScreen) {
+                    document.documentElement.mozRequestFullScreen();
                 }
-                else if (this.msRequestFullscreen) {
-                    this.msRequestFullscreen();
+                else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
                 }
+                else
+                    return false;
             },
             clearFull = function () {
                 if (document.exitFullscreen) {
@@ -1327,6 +1329,8 @@ jQuery(function () {
                 } else if (document.webkitExitFullscreen) {
                     document.webkitExitFullscreen();
                 }
+                else
+                    return false;
             },
             nS = 'fullScreen';
 
@@ -1335,9 +1339,7 @@ jQuery(function () {
         }
 
         function changeScreen(method) {
-            try {
-                method.call(this.get(0));
-            } catch (err) {
+            if (method() === false) {
                 var wscript = new ActiveXObject("WScript.Shell");
                 if (wscript !== null) {
                     wscript.SendKeys("{F11}");
@@ -1348,7 +1350,6 @@ jQuery(function () {
         function _shortScreen(self, native) {
             var dropper = this,
                 drp = dropper.data('drp');
-            drp.isFullScreen = false;
             dropper.css($.dropper.drp.standartScreenStyle).removeClass($.dropper.drp.pC + 'full-screen');
             if (!native)
                 changeScreen.call(dropper, clearFull);
@@ -1362,7 +1363,6 @@ jQuery(function () {
             var dropper = this,
                 drp = dropper.data('drp');
 
-            drp.isFullScreen = true;
             drp.oldLimitSize = drp.limitSize;
             drp.limitSize = true;
 
@@ -1407,32 +1407,32 @@ jQuery(function () {
             if (obj.options.fullScreen) {
                 (function (obj) {
                     var dropper = obj.dropper;
+
+                    function triggerFullScreen(native) {
+                        if (checkFullScreen())
+                            _shortScreen.call(dropper, obj.methods, native)
+                        else
+                            _fullScreen.call(dropper, obj.methods, native);
+                    }
+
                     $(window).off('keyup.' + nS).on('keyup.' + nS, function (e) {
                         if (e.keyCode === 122) {
-                            if (dropper.data('drp').isFullScreen)
-                                _shortScreen.call(dropper, obj.methods);
-                            else
-                                _fullScreen.call(dropper, obj.methods);
+                            triggerFullScreen();
                         }
                     });
 
                     dropper.off('click.' + nS).on('click.' + nS, obj.options.fullScreenButton, function (e) {
                         e.preventDefault();
-                        if (dropper.data('drp').isFullScreen)
-                            _shortScreen.call(dropper, obj.methods);
-                        else
-                            _fullScreen.call(dropper, obj.methods);
+                        triggerFullScreen()
                     });
                     if ($.dropper.drp.isTouch)
                         $(document).off('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS).on('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS, function () {
-                            if (checkFullScreen())
-                                _fullScreen.call(dropper, obj.methods, true);
-                            else
-                                _shortScreen.call(dropper, obj.methods, true);
+                            triggerFullScreen(true);
                         });
                 })(obj);
-                if (window.innerHeight === screen.height)
+                if (checkFullScreen()) {
                     obj.dropper.addClass($.dropper.drp.pC + 'full-screen');
+                }
             }
         });
     })(jQuery, document.body);
