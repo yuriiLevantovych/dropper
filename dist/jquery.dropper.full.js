@@ -1399,12 +1399,6 @@ jQuery(function () {
                             _fullScreen.call(dropper, obj.methods, native);
                     }
 
-                    $(window).off('keyup.' + nS).on('keyup.' + nS, function (e) {
-                        if (e.keyCode === 122) {
-                            triggerFullScreen();
-                        }
-                    });
-
                     dropper.off('click.' + nS).on('click.' + nS, obj.options.fullScreenButton, function (e) {
                         e.preventDefault();
                         triggerFullScreen()
