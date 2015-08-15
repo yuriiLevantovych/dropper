@@ -1384,13 +1384,13 @@ jQuery(function () {
                             else
                                 _fullScreen.call(dropper, obj.methods);
                         });
-                        //if ($.dropper.drp.isTouch)
-                        //    $(document).off('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS).on('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS, function () {
-                        //        if (checkFullScreen())
-                        //            _fullScreen.call(dropper, obj.methods, true);
-                        //        else
-                        //            _shortScreen.call(dropper, obj.methods, true);
-                        //    });
+                        if ($.dropper.drp.isTouch)
+                            $(document).off('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS).on('webkitfullscreenchange.' + nS + ' mozfullscreenchange.' + nS + ' fullscreenchange.' + nS + ' MSFullscreenChange.' + nS, function () {
+                                if (checkFullScreen())
+                                    _fullScreen.call(dropper, obj.methods, true);
+                                else
+                                    _shortScreen.call(dropper, obj.methods, true);
+                            });
                     })(obj, dropper);
                 }
             }
