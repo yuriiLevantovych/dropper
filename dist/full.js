@@ -1301,8 +1301,31 @@ jQuery(function () {
 });
 jQuery(function () {
     (function ($, body) {
-        var setFull = body.requestFullScreen || body.webkitRequestFullScreen || body.mozRequestFullScreen || body.msRequestFullscreen,
-            clearFull = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msCancelFullscreen,
+        var setFull = function () {
+                if (this.requestFullScreen) {
+                    this.requestFullScreen();
+                }
+                else if (this.webkitRequestFullScreen) {
+                    this.webkitRequestFullScreen();
+                }
+                else if (this.mozRequestFullScreen) {
+                    this.mozRequestFullScreen();
+                }
+                else if (this.msRequestFullscreen) {
+                    this.msRequestFullscreen();
+                }
+            },
+            clearFull = function () {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            },
             nS = 'fullScreen';
 
         function checkFullScreen() {
@@ -1310,9 +1333,9 @@ jQuery(function () {
         }
 
         function changeScreen(method) {
-            if (method) {
-                method.call(this);
-            } else if (typeof window.ActiveXObject !== "undefined") {
+            try {
+                method.call(this.get(0));
+            } catch (err) {
                 var wscript = new ActiveXObject("WScript.Shell");
                 if (wscript !== null) {
                     wscript.SendKeys("{F11}");
@@ -1326,7 +1349,7 @@ jQuery(function () {
             drp.isFullScreen = false;
             dropper.css($.dropper.drp.standartScreenStyle).removeClass($.dropper.drp.pC + 'full-screen');
             if (!native)
-                changeScreen.call(document, clearFull);
+                changeScreen.call(dropper, clearFull);
             self._checkMethod(function () {
                 self._heightContent(dropper);
             });
@@ -1349,7 +1372,7 @@ jQuery(function () {
             }
 
             if (!native)
-                changeScreen.call(body, setFull);
+                changeScreen.call(dropper, setFull);
 
             if (!checkFullScreen()) {
                 var args = arguments,
@@ -1373,7 +1396,7 @@ jQuery(function () {
             });
 
             dropper.off('dropperClose.' + nS).on('dropperClose.' + nS, function () {
-                changeScreen.call(document, clearFull);
+                changeScreen.call(dropper, clearFull);
             });
         }
 
