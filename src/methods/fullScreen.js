@@ -51,9 +51,10 @@ jQuery(function () {
                 changeScreen.call(body, setFull);
 
             if (!checkFullScreen()) {
-                var callee = arguments.callee;
+                var args = arguments,
+                    callee = args.callee;
                 setTimeout(function () {
-                    callee.call(dropper);
+                    callee.apply(dropper, args);
                 }, 10);
                 return;
             }
@@ -76,11 +77,9 @@ jQuery(function () {
         }
 
         $(document).off('dropperBefore.' + nS).on('dropperBefore.' + nS, function (event, obj) {
-            var opt = obj.options;
-            if (opt.fullScreen) {
-                var dropper = obj.dropper;
-
-                (function (obj, dropper) {
+            if (obj.options.fullScreen)
+                (function (obj) {
+                    var dropper = obj.dropper;
                     $(window).off('keyup.' + nS).on('keyup.' + nS, function (e) {
                         if (e.keyCode === 122) {
                             if (dropper.data('drp').isFullScreen)
@@ -90,7 +89,7 @@ jQuery(function () {
                         }
                     });
 
-                    dropper.off('click.' + nS).on('click.' + nS, opt.fullScreenButton, function (e) {
+                    dropper.off('click.' + nS).on('click.' + nS, obj.options.fullScreenButton, function (e) {
                         e.preventDefault();
                         if (dropper.data('drp').isFullScreen)
                             _shortScreen.call(dropper, obj.methods);
@@ -104,8 +103,8 @@ jQuery(function () {
                             else
                                 _shortScreen.call(dropper, obj.methods, true);
                         });
-                })(obj, dropper)
-            }
+                })(obj);
         });
     })(jQuery, document.body);
-});
+})
+;
