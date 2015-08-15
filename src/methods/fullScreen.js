@@ -77,7 +77,7 @@ jQuery(function () {
         }
 
         $(document).off('dropperBefore.' + nS).on('dropperBefore.' + nS, function (event, obj) {
-            if (obj.options.fullScreen)
+            if (obj.options.fullScreen) {
                 (function (obj) {
                     var dropper = obj.dropper;
                     $(window).off('keyup.' + nS).on('keyup.' + nS, function (e) {
@@ -104,6 +104,9 @@ jQuery(function () {
                                 _shortScreen.call(dropper, obj.methods, true);
                         });
                 })(obj);
+                if (window.innerHeight === screen.height)
+                    obj.dropper.addClass($.dropper.drp.pC + 'full-screen');
+            }
         });
     })(jQuery, document.body);
 })
