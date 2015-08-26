@@ -417,8 +417,9 @@
         },
         close: function (e, f, hashChange, force, group) {
             var sel = this,
-                droppers = D.existsN(sel) ? sel : $('[data-elrun].' + D.activeClass);
-            var closeLength = droppers.length;
+                droppers = sel === null ? $('[data-elrun].' + D.activeClass) : sel,
+                closeLength = droppers.length;
+            
             droppers.each(function (i) {
                 var dropper = $(this),
                     opt = $.extend({}, dropper.data('drp'));
