@@ -1,8 +1,8 @@
 module.exports = function (grunt) {
 
-    grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
+    require('load-grunt-tasks')(grunt);
 
+    grunt.initConfig({
         concat: {
             jsdropfull: {
                 src: [
@@ -41,6 +41,14 @@ module.exports = function (grunt) {
                 }]
             }
         },
+        autoprefixer: {
+            options: {
+                browsers: ['last 2 versions']
+            },
+            default: {
+                src: 'dist/styles/default.css'
+            }
+        },
         sass: {
             dist: {
                 options: {
@@ -62,7 +70,7 @@ module.exports = function (grunt) {
             },
             styles: {
                 files: ['src/styles/*.scss'],
-                tasks: ['sass'],
+                tasks: ['sass', 'autoprefixer'],
                 options: {
                     livereload: true,
                     spawn: false
@@ -70,12 +78,5 @@ module.exports = function (grunt) {
             }
         }
     });
-
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-imagemin');
-    grunt.loadNpmTasks('grunt-contrib-sass');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-
-    grunt.registerTask('default', ['concat', 'sass', 'uglify', 'imagemin', 'watch']);
+    grunt.registerTask('default', ['concat', 'sass', 'autoprefixer', 'uglify', 'imagemin', 'watch']);
 };
