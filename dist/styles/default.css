@@ -8,7 +8,7 @@
   .dropper * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box; }
+    box-sizing: content-box; }
   .dropper .dropper-header {
     background-color: #f8f8f8;
     padding: 0 55px 0 12px;
