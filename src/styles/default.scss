@@ -1,5 +1,3 @@
-@import "compass";
-
 .dropper {
   max-width: 100%;
   font-family: Arial, "Helvetica CY", "Nimbus Sans L", sans-serif;
@@ -11,7 +9,7 @@
   * {
     margin: 0;
     padding: 0;
-    @include box-sizing(content-box);
+    box-sizing: border-box;
   }
 
   .dropper-header {
@@ -350,5 +348,5 @@
 }
 
 #dropper-loading div {
-  background-image: image-url('loader.gif');
+  background-image: url('../images/loader.gif');
 }

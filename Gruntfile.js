@@ -10,14 +10,6 @@ module.exports = function (grunt) {
                     'src/methods/*.js'
                 ],
                 dest: 'dist/jquery.dropper.full.js'
-            },
-            jsfull: {
-                src: [
-                    'bower_components/jquery-mousewheel/jquery.mousewheel.min.js',
-                    'bower_components/jscrollpane/script/jquery.jscrollpane.min.js',
-                    'dist/jquery.dropper.full.js'
-                ],
-                dest: 'dist/full.js'
             }
         },
         uglify: {
@@ -28,10 +20,6 @@ module.exports = function (grunt) {
             jsdropfull: {
                 src: 'dist/jquery.dropper.full.js',
                 dest: 'dist/jquery.dropper.full.min.js'
-            },
-            jsfull: {
-                src: 'dist/full.js',
-                dest: 'dist/full.min.js'
             },
             methods: {
                 files: [{
@@ -53,12 +41,13 @@ module.exports = function (grunt) {
                 }]
             }
         },
-        compass: {
+        sass: {
             dist: {
                 options: {
-                    imagesDir: 'dist/images',
-                    sassDir: 'src/styles/',
-                    cssDir: 'dist/styles/'
+                    sourcemap: 'none'
+                },
+                files: {
+                    'dist/styles/default.css': 'src/styles/default.scss'
                 }
             }
         },
@@ -73,7 +62,7 @@ module.exports = function (grunt) {
             },
             styles: {
                 files: ['src/styles/*.scss'],
-                tasks: ['compass'],
+                tasks: ['sass'],
                 options: {
                     livereload: true,
                     spawn: false
@@ -85,8 +74,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
-    grunt.loadNpmTasks('grunt-contrib-compass');
+    grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('default', ['concat', 'compass', 'uglify', 'imagemin', 'watch']);
+    grunt.registerTask('default', ['concat', 'sass', 'uglify', 'imagemin', 'watch']);
 };
