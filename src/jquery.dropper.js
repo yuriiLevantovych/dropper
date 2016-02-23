@@ -309,8 +309,10 @@
                 });
                 $(opt.dropperOver).fadeIn(100).off('click.' + $.dropper.nS + ev).on('click.' + $.dropper.nS + ev, function (e) {
                     e.stopPropagation();
-                    if (opt.closeClick && $(e.target).is('.dropper-overlay'))
-                        methods.close.call($($(e.target).attr('data-rel')), e);
+                    if (opt.closeClick && $(e.target).is('.dropper-overlay')) {
+                        methods.close.call(
+                            $($(e.target).data('group') ? '[data-rel="' + $(e.target).data('group') + '"]' : $(e.target).data('rel')), e);
+                    }
                 });
                 if (opt.alert || opt.confirm || opt.prompt) {
                     var elFocus;
