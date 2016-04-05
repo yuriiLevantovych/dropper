@@ -1,1 +1,1 @@
-<a href="http://levantovych.pro100host.com/plugins/drop/demo/">Demo</a>
+<a href="https://domovoj.github.io/dropper/" target="_blank">Demo</a>
