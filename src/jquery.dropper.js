@@ -157,7 +157,6 @@
         open: function (opt, e, hashChange, group) {
             if (D.busy)
                 return false;
-            D.busy = true;
             var $this = D.existsN(this) ? this : $([]),
                 elSet = D.existsN($this) ? $this.data() : {};
             opt = $.extend({}, DP, elSet && elSet.drp ? elSet.drp : {}, opt);
@@ -372,6 +371,7 @@
                     methods: methods
                 });
                 methods._disableScroll(opt);
+                D.busy = true;
                 dropper[opt.effectOn](opt.durationOn, function () {
                     D.cOD++;
                     D.busy = false;
