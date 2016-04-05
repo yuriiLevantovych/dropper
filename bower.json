@@ -1,0 +1,26 @@
+{
+  "name": "dropper",
+  "main": "dist/jquery.dropper.min.js",
+  "version": "0.0.1",
+  "authors": [
+    "yuraL_webcodium <yura.l@webcodium.com>"
+  ],
+  "description": "Plugin for replace standart input type number",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "build"
+  ],
+  "dependencies": {
+    "jquery": "1.11.0",
+    "jscrollpane": "~2.0.21",
+    "jquery-mousewheel": "~3.1.12"
+  },
+  "devDependencies": {
+    "bootstrap": "~3.3.4"
+  }
+}
