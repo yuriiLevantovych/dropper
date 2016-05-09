@@ -1,5 +1,12 @@
 (function ($, wnd, doc, undefined) {
+    /**
+     * @type {{init: Function, destroy: Function, _get: Function, open: Function, _show: Function, close: Function, update: Function, _center: Function, _global: Function, _resetStyleDropper: Function, _pasteNotify: Function, _pasteDropper: Function, _pasteContent: Function, _setHeightAddons: Function, _checkMethod: Function, _positionType: Function, _filterSource: Function, _setEventHash: Function, _disableScroll: Function, _setGallery: Function, _errorM: Function}}
+     */
     var methods = {
+        /**
+         * @param options
+         * @returns {this}
+         */
         init: function (options) {
             var set = $.extend({}, DP, options);
             if (!D.existsN(this))
@@ -49,6 +56,10 @@
                     methods.open.call($(this), $.extend({isStart: true}, set, $(this).data('drp')), 'startHash');
             });
         },
+        /**
+         * @param el
+         * @returns {*}
+         */
         destroy: function (el) {
             return (el || this).each(function () {
                 var el = $(this),
@@ -65,6 +76,13 @@
                 el.off('contextmenu.' + $.dropper.nS).off('mouseup.' + $.dropper.nS).off('click.' + $.dropper.nS);
             });
         },
+        /**
+         * @param opt
+         * @param e
+         * @param hashChange
+         * @returns {methods}
+         * @private
+         */
         _get: function (opt, e, hashChange) {
             var hrefC = opt.href.replace(D.reg, '');
             if (!opt.isStart) //if few popup need show on start
@@ -85,6 +103,9 @@
                 methods._show.call(el, dropper, e, opt, hashChange);
                 return dropper;
             };
+            /**
+             * @private
+             */
             var _getImage = function () {
                 opt.type = elSet.type = 'image';
                 var img = D.imgPreload = new Image();
@@ -104,6 +125,9 @@
                 };
                 img.src = opt.href + (opt.always ? '?' + (+new Date()) : '');
             };
+            /**
+             * @private
+             */
             var _getAjax = function () {
                 opt.type = elSet.type = 'ajax';
                 D.curAjax = $.ajax($.extend({
@@ -126,6 +150,9 @@
                     }
                 }, opt.ajax));
             };
+            /**
+             * @private
+             */
             var _getIframe = function () {
                 opt.type = elSet.type = 'iframe';
                 var iframe = $('<iframe name="dropper-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen' + (navigator.userAgent.match(/msie/i) ? ' allowtransparency="true"' : '') + '></iframe>');
@@ -154,6 +181,13 @@
                 }
             return el;
         },
+        /**
+         * @param opt
+         * @param e
+         * @param hashChange
+         * @param group
+         * @returns {*}
+         */
         open: function (opt, e, hashChange, group) {
             if (D.busy)
                 return false;
@@ -234,6 +268,9 @@
                     throw 'Insufficient data';
             };
 
+            /**
+             * @private
+             */
             function _show() {
                 if ($this.is(':disabled') || opt.dropper && opt.start && !eval(opt.start).call($this, opt, dropper, e))
                     return;
@@ -254,6 +291,14 @@
                 _show();
             return this;
         },
+        /**
+         * @param dropper
+         * @param e
+         * @param opt
+         * @param hashChange
+         * @returns {methods}
+         * @private
+         */
         _show: function (dropper, e, opt, hashChange) {
             if (!opt.moreOne && D.exists(D.aDS))
                 methods.close.call($(D.aDS), 'close more one element', $.proxy(_show, this));
@@ -417,7 +462,15 @@
 
             return this;
         },
-        close: function (e, f, hashChange, force, group) {
+        /**
+         * @param e
+         * @param callback
+         * @param hashChange
+         * @param force
+         * @param group
+         * @returns {methods}
+         */
+        close: function (e, callback, hashChange, force, group) {
             var sel = this,
                 droppers = sel === null ? $('[data-elrun].' + D.activeClass) : sel,
                 closeLength = droppers.length;
@@ -482,7 +535,7 @@
                         $this.data('drp', null);
                         if (!$this.hasClass(D.wasCreateClass))
                             $this.remove();
-                        var condCallback = i === closeLength - 1 && $.isFunction(f);
+                        var condCallback = i === closeLength - 1 && $.isFunction(callback);
                         if (opt.dropperOver) {
                             if (!group)
                                 opt.dropperOver.fadeOut(force ? 0 : opt.durationOff, function () {
@@ -491,10 +544,10 @@
                             else
                                 opt.dropperOver.attr('data-group', opt.rel);
                             if (condCallback)
-                                setTimeout(f, force ? 0 : opt.durationOff + 100);
+                                setTimeout(callback, force ? 0 : opt.durationOff + 100);
                         }
                         else if (condCallback)
-                            f();
+                            callback();
                     });
                 };
                 dropper.trigger('dropperClose', {
@@ -518,6 +571,9 @@
             });
             return sel;
         },
+        /**
+         * @returns {boolean}
+         */
         update: function () {
             var dropper = this,
                 drp = dropper.data('drp');
@@ -535,6 +591,10 @@
                 }, drp.place);
             methods._setHeightAddons(drp.dropperOver);
         },
+        /**
+         * @returns {*}
+         * @private
+         */
         _center: function () {
             return this.each(function () {
                 var dropper = $(this),
@@ -561,6 +621,10 @@
                 });
             });
         },
+        /**
+         * @returns {*}
+         * @private
+         */
         _global: function () {
             return this.each(function () {
                 var dropper = $(this),
@@ -628,6 +692,10 @@
                 }
             });
         },
+        /**
+         * @returns {*}
+         * @private
+         */
         _resetStyleDropper: function () {
             return this.stop().css({
                 'z-index': '',
@@ -638,6 +706,14 @@
                 'box-sizing': ''
             });
         },
+        /**
+         * @param datas
+         * @param opt
+         * @param hashChange
+         * @param e
+         * @returns {*}
+         * @private
+         */
         _pasteNotify: function (datas, opt, hashChange, e) {
             if (!$.isFunction(opt.handlerNotify))
                 return false;
@@ -645,6 +721,12 @@
             opt.handlerNotify.call($(this), datas, opt);
             return methods._show.call($(this), dropper, e, opt, hashChange);
         },
+        /**
+         * @param opt
+         * @param dropper
+         * @returns {*}
+         * @private
+         */
         _pasteDropper: function (opt, dropper) {
             dropper = $(dropper);
             if (opt.droppern)
@@ -659,6 +741,13 @@
                 opt.type = dropper.data('type');
             return dropper.hide().addClass(opt.tempClass).addClass('dropper').attr('data-elrun', opt.dropper);
         },
+        /**
+         * @param $this
+         * @param dropper
+         * @param opt
+         * @returns {methods}
+         * @private
+         */
         _pasteContent: function ($this, dropper, opt) {
             var _checkCont = function (place) {
                 if (place.is(':empty'))
@@ -688,18 +777,32 @@
             _pasteContent(opt.footer, opt.placeFooter);
             return this;
         },
+        /**
+         * @param dropperOver
+         * @private
+         */
         _setHeightAddons: function (dropperOver) {
             $(dropperOver).css({width: '', height: ''}).css({width: wnd.width(), height: doc.height()});
         },
-        _checkMethod: function (f) {
+        /**
+         * @param mehodName
+         * @returns {methods}
+         * @private
+         */
+        _checkMethod: function (mehodName) {
             try {
-                f();
+                mehodName();
             } catch (e) {
-                var method = f.toString().match(/\.\S*\(/);
+                var method = mehodName.toString().match(/\.\S*\(/);
                 throw  'Need connected "' + method[0].substring(1, method[0].length - 1) + '" method';
             }
             return this;
         },
+        /**
+         * @param dropper
+         * @returns {methods}
+         * @private
+         */
         _positionType: function (dropper) {
             if (dropper.data('drp') && dropper.data('drp').place !== 'inherit')
                 dropper.css({
@@ -707,9 +810,14 @@
                 });
             return this;
         },
-        _filterSource: function (s) {
+        /**
+         * @param selector
+         * @returns {methods}
+         * @private
+         */
+        _filterSource: function (selector) {
             var btn = this,
-                href = s.split(').'),
+                href = selector.split(').'),
                 regS, regM = '';
             $.map(href, function (v) {
                 regS = (v[v.length - 1] !== ')' ? v + ')' : v).match(/\(.*\)/);
@@ -719,6 +827,9 @@
             });
             return btn;
         },
+        /**
+         * @private
+         */
         _setEventHash: function () {
             D.wLH = window.location.hash;
             wnd.off('hashchange.' + $.dropper.nS).on('hashchange.' + $.dropper.nS, function (e) {
@@ -735,11 +846,20 @@
                 D.wLH = D.wLHN;
             });
         },
+        /**
+         * @param opt
+         * @private
+         */
         _disableScroll: function (opt) {
             D.enableScroll();
             if (opt.place === 'center' && !opt.scroll)
                 D.disableScroll();
         },
+        /**
+         * @param opt
+         * @returns {methods}
+         * @private
+         */
         _setGallery: function (opt) {
             if (opt.rel && opt.href) {
                 if (!D.gallery[opt.rel])
@@ -753,6 +873,11 @@
             }
             return this;
         },
+        /**
+         * @param mes
+         * @returns {*}
+         * @private
+         */
         _errorM: function (mes) {
             return $.type(mes) === 'string' ? mes : mes.message;
         }
@@ -769,6 +894,11 @@
         else
             throw "Method " + method + " doesn't exist on $.dropper";
     };
+    /**
+     * @param m
+     * @param opt
+     * @returns {*}
+     */
     $.dropper = function (m, opt) {
         if (!opt)
             opt = {};
@@ -820,6 +950,9 @@
     };
     $.dropper.nS = 'dropper';
     $.dropper.version = '1.0';
+    /**
+     * @type {{dropper: null, html: null, addClas: null, href: null, hash: null, placeContent: string, placeHeader: string, placeFooter: string, placePaste: string, header: null, footer: null, content: null, placeInherit: null, methodPlaceInherit: string, filter: null, message: {success: Function, warning: Function, error: Function, info: Function}, trigger: string, triggerOn: null, triggerOff: null, effectOn: string, effectOff: string, place: string, placement: string, overlay: boolean, overlayColor: string, overlayOpacity: number, position: string, placeBeforeShow: null, placeAfterClose: null, start: null, before: null, after: null, close: null, closed: null, ok: null, pattern: string, patternConfirm: string, patternPrompt: string, patternAlert: string, confirmActionBtn: string, promptActionBtn: string, alertActionBtn: string, dataPrompt: null, promptInput: string, promptInputValue: null, exit: string, next: string, prev: string, autoPlay: boolean, autoPlaySpeed: number, ajax: {type: string}, jScrollPane: {animateScroll: boolean, showArrows: boolean}, durationOn: number, durationOff: number, notifyclosetime: number, notify: boolean, datas: null, handlerNotify: Function, confirm: boolean, confirmText: null, prompt: boolean, promptText: null, alert: boolean, alertText: null, always: boolean, animate: boolean, moreOne: boolean, closeAll: boolean, closeClick: boolean, closeEsc: boolean, closeActiveClick: boolean, cycle: boolean, scroll: boolean, limitSize: boolean, scrollContent: boolean, centerOnScroll: boolean, droppable: boolean, droppableLimit: boolean, droppableFixed: boolean, inheritClose: boolean, keyNavigate: boolean, context: boolean, theme: string, type: string, width: null, height: null, rel: null, fullScreen: boolean, fullScreenButton: string, loadingAnimate: boolean}}
+     */
     $.dropper.dP = {
         dropper: null,
         html: null,
@@ -943,6 +1076,9 @@
         fullScreenButton: '[data-full-screen]',
         loadingAnimate: true
     };
+    /**
+     * @type {{handlerMessageWindow: Function, regImg: RegExp, mainStyle: string, reg: RegExp, autoPlayInterval: {}, hashs: {}, droppers: {}, gallery: {}, galleryOpt: {}, galleryHashs: {}, notifyTimeout: {}, activeDropperCEsc: {}, activeDropperCClick: {}, isD: string, pC: string, activeClass: string, aDS: string, selAutoInit: string, tempClass: string, wasCreateClass: string, emptyClass: string, noEmptyClass: string, activeDropper: Array, cOD: number, disableScroll: Function, enableScroll: Function, isTouch: boolean, existsN: Function, exists: Function}}
+     */
     $.dropper.drp = {
         handlerMessageWindow: function (e) {
             if ($.type(e.originalEvent.data) === 'object')
@@ -1005,6 +1141,9 @@
     };
     var D = $.dropper.drp,
         DP = $.dropper.dP;
+    /**
+     * @returns {*}
+     */
     $.fn[D.actual = $.fn.actual ? 'actual' + (+new Date()) : 'actual'] = function () {
         if (arguments.length && $.type(arguments[0]) === 'string') {
             var dim = arguments[0],
@@ -1021,16 +1160,28 @@
         }
         return undefined;
     };
+    /**
+     * @param options
+     * @returns {$.dropper}
+     */
     $.dropper.setParameters = function (options) {
         $.extend(DP, options);
         return this;
     };
+    /**
+     * @param n
+     * @param v
+     * @returns {$.dropper}
+     */
     $.dropper.setMethod = function (n, v) {
         var nm = {};
         nm[n] = v;
         $.extend(methods, nm);
         return this;
     };
+    /**
+     * @returns {{}}
+     */
     $.dropper.getMethods = function () {
         var public = {};
         for (var i in methods)
@@ -1038,9 +1189,17 @@
                 public[i] = methods[i];
         return public;
     };
+    /**
+     * @param el
+     * @param force
+     * @returns {*}
+     */
     $.dropper.close = function (el, force) {
         return methods.close.call(el ? $(el) : null, 'artificial close element', 'API', null, force);
     };
+    /**
+     * @returns {$.dropper}
+     */
     $.dropper.cancel = function () {
         if (D.curAjax)
             D.curAjax.abort();
@@ -1050,6 +1209,10 @@
         $.dropper.hideLoading();
         return this;
     };
+    /**
+     * @param el
+     * @returns {*}
+     */
     $.dropper.update = function (el) {
         return (el ? $(el) : $('[data-elrun].' + D.activeClass)).each(function () {
             methods.update.call($(this));
